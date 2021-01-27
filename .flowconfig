@@ -1,3 +1,7 @@
+[untyped]
+# Issue with atlaskit/theme typing
+.*/node_modules/@atlaskit/theme
+
 [ignore]
 
 [include]
