@@ -1,0 +1,58 @@
+{
+  "name": "nox-macro",
+  "version": "0.1.0",
+  "description": "",
+  "author": "Arthur E. Jones",
+  "license": "MIT",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "prebuild": "npm run lint && npm run flow",
+    "start": "next start",
+    "client": "NODE_ENV=production webpack --progress",
+    "test": "babel-tape-runner src/**/*.test.js test/**/*.test.js",
+    "cov": "nyc babel-tape-runner src/**/*.test.js test/**/*.test.js",
+    "lint": "eslint ./src && echo Lint Complete",
+    "lint:fix": "eslint ./src --fix && echo Lint Fix Complete",
+    "flow": "flow",
+    "verify": "npm run -s test && flow && npm run -s lint",
+    "watch:flow": "watch -t 'npx flow'",
+    "watch:lint": "watch 'npm run lint'",
+    "watch:source": "watch 'clear && npm run verify' src test",
+    "watch": "npm run watch:server & npm run watch:source",
+    "lwatch": "watch -c -n 5 -t 'clear && npm run -s test && flow && npm run lint'"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run verify",
+      "pre-push": "npm test"
+    }
+  },
+  "dependencies": {
+    "next": "^10.0.5",
+    "react": "^17.0.1",
+    "react-beautiful-dnd": "^13.0.0",
+    "react-dom": "^17.0.1",
+    "sass": "^1.32.5"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-tape-runner": "^3.0.0",
+    "eslint": "^6.5.1",
+    "eslint-config-partylich": "^0.1.1",
+    "eslint-plugin-flowtype": "^4.5.2",
+    "eslint-plugin-react": "^7.16.0",
+    "flow-bin": "^0.112.0",
+    "husky": "^3.1.0",
+    "nyc": "^14.1.1",
+    "tape": "^4.11.0",
+    "watch": "^1.0.2",
+    "webpack": "^4.42.0"
+  }
+}
