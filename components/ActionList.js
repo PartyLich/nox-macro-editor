@@ -9,15 +9,19 @@ import styles from './ActionList.module.scss';
 
 type Props = {
   actions: Array<Action>,
+  selected: ?number,
+  setSelected: (number) => void,
 };
 
 const ActionList = ({
   actions = [],
+  selected,
+  setSelected,
 }: Props) => {
   return (
     <div className={styles.container}>
       <ul className={styles.list}>
-        {actions.map(ActionItem)}
+        {actions.map(ActionItem(selected, setSelected))}
       </ul>
     </div>
   );

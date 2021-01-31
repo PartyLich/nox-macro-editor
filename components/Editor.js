@@ -29,6 +29,7 @@ const onFileSelect = (setStateFn) => (evt) => {
 
 const Editor = () => {
   const [actions: Array<Action>, setActions] = useState([]);
+  const [selected: ?number, setSelected] = useState(null);
 
   return (
     <>
@@ -36,6 +37,8 @@ const Editor = () => {
       <div className={styles.container}>
         <ActionList {...{
           actions,
+          selected,
+          setSelected,
         }}
         />
         <Controls />
