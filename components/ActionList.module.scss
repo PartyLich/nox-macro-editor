@@ -1,5 +1,13 @@
 .container {
+  width: 50%;
 }
 
 .list {
+  list-style: none;
+  min-width: 100px;
+  padding: 5px;
+
+  & * + * {
+    margin-top: .25em;
+  }
 }
