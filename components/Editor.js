@@ -41,7 +41,10 @@ const Editor = () => {
           setSelected,
         }}
         />
-        <Controls />
+        <Controls
+          actions={actions}
+          selected={selected}
+        />
       </div>
     </>
   );
