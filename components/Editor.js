@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 
-import { ActionList } from '.';
+import { ActionList, Controls } from '.';
 
 import styles from './Editor.module.scss';
 
@@ -12,6 +12,7 @@ const Editor = () => {
       <input type="file" />
       <div className={styles.container}>
         <ActionList />
+        <Controls />
       </div>
     </>
   );
