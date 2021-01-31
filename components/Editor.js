@@ -34,7 +34,10 @@ const Editor = () => {
     <>
       <input type="file" onChange={onFileSelect(setActions)} />
       <div className={styles.container}>
-        <ActionList />
+        <ActionList {...{
+          actions,
+        }}
+        />
         <Controls />
       </div>
     </>
