@@ -19,8 +19,12 @@ const trace = (msg: string = 'trace') => <T>(val: T) => {
   return val;
 };
 
+// return true if string contains an integer (base 10)
+const isInt: PredicateFn<string> = (str) => /^[+-]?\d+$/.test(str.trim());
+
 export {
   filter,
+  isInt,
   map,
   pipe,
   trace,
