@@ -7,11 +7,11 @@ const pipe = (...fns: Array<Function>) =>
 // map an array within a pipe
 const map = (fn: Function) => <T, U>(arr: Array<T>): Array<U> => arr.map(fn);
 
-type PredicateFn = (any) => boolean;
+type PredicateFn<T> = (T) => boolean;
 
 // filter an array within a pipe
-const filter = (predicate: PredicateFn) =>
-  <T>(arr: Array<T>): Array<T> => arr.filter(predicate);
+const filter = <T>(predicate: PredicateFn<T>) =>
+  (arr: Array<T>): Array<T> => arr.filter(predicate);
 
 // log within a pipe
 const trace = (msg: string = 'trace') => <T>(val: T) => {
