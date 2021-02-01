@@ -9,7 +9,12 @@ import {
   waitAction,
   types as actType,
 } from './actions';
-import type { Action, Coord } from './actions';
+import type {
+  Action,
+  Coord,
+  ClickAction,
+  DragAction,
+} from './actions';
 
 
 // Returns true if a string is empty, false otherwise
@@ -23,6 +28,7 @@ export const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
 // Split a string at '|' characters
 export const splitPipes = (str: string): Array<string> => str.split('|');
 
+const NOX_SEPARATOR = 'ScRiPtSePaRaToR';
 // Split strings in an array at Nox macro script separator tokens
 export const splitSeparators = (arr: Array<string>): Array<string> => arr.flatMap((x) => x.split('ScRiPtSePaRaToR'));
 
@@ -41,18 +47,18 @@ const parseCoord = (arr: Array<string>): Coord => {
   };
 };
 
+// actions
+const MOUSE_DOWN = 'MULTI';
+const MOUSE_RELEASE = 'MSBRL';
+const KB_PRESS = 'KBDPR';
+const KB_RELEASE = 'KBDFL';
+
+const MSTATE_DOWN = '1';
+const MOD_DRAG = '2';
+const MOD_CLICK = '0';
+
 // parse the action segment of a Nox macro string
 const parseAction = (str: string): Action => {
-  // actions
-  const MOUSE_DOWN = 'MULTI';
-  const MOUSE_RELEASE = 'MSBRL';
-  const KB_PRESS = 'KBDPR';
-  const KB_RELEASE = 'KBDFL';
-
-  const MSTATE_DOWN = '1';
-  const MOD_DRAG = '2';
-  const MOD_CLICK = '0';
-
   const parts = str.split(':');
   const word = parts.shift();
 
@@ -166,6 +172,72 @@ const deserialize: (lines: string) => Array<Action> = pipe(
     util.trace('deserialize'),
 );
 
+const basicLine = (
+    resolution: Coord,
+    time: number,
+    actionText: string,
+): string =>
+  `0${ NOX_SEPARATOR }${ [resolution.x, resolution.y, actionText].join('|') }${ NOX_SEPARATOR }${ time }`;
+
+export const clickLine = (
+    resolution: Coord,
+    time: number,
+    action: ClickAction,
+): string => {
+  const actionText = [MOUSE_DOWN, MSTATE_DOWN, MOD_CLICK, action.x, action.y].join(':');
+  return basicLine(resolution, time, actionText);
+};
+
+export const mdragLine = (
+    resolution: Coord,
+    time: number,
+    action: DragAction,
+): string => {
+  const actionText = [MOUSE_DOWN, MSTATE_DOWN, MOD_DRAG, action.x, action.y].join(':');
+  return basicLine(resolution, time, actionText);
+};
+
+export const mreleaseLine = (resolution: Coord, time: number): string => {
+  const actionText = [MOUSE_RELEASE, 0, 0].join(':');
+  return basicLine(resolution, time, actionText);
+};
+
+// serialize Action array to Nox macro format
+const serialize = (resolution: Coord, actions: Array<Action>): string => {
+  const LINEBREAK = '\r\n';
+  let time = 0;
+
+  const res =
+  actions.reduce(
+      (acc: string, action: Action, ind: number) => {
+        const linebreak = acc.length > 0
+          ? LINEBREAK
+          : '';
+
+        switch (action.type) {
+          case actType.CLICK:
+            return [acc, clickLine(resolution, time, action)].join(linebreak);
+
+          case actType.MDRAG:
+            return [acc, mdragLine(resolution, time, action)].join(linebreak);
+
+          case actType.MRELEASE:
+            return [acc, mreleaseLine(resolution, time)].join(linebreak);
+
+          case actType.WAIT:
+            time += action.duration;
+            break;
+        }
+
+        return acc;
+      },
+      '',
+  );
+
+  return res;
+};
+
 export {
   deserialize,
+  serialize,
 };
