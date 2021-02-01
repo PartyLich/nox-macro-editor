@@ -1,8 +1,13 @@
 // @flow
 import React, { useState } from 'react';
 
-import { pipe, trace, reorder } from '../src/util';
-import { deserialize } from '../src/serialize';
+import {
+  pipe,
+  trace,
+  reorder,
+  download,
+} from '../src/util';
+import { deserialize, serialize } from '../src/serialize';
 import { ActionList, Controls } from '.';
 import { types } from '../src/actions.js';
 import type { Action } from '../src/actions.js';
@@ -73,9 +78,21 @@ const Editor = () => {
   const [actions: Array<Action>, setActions] = useState([]);
   const [selected: ?number, setSelected] = useState(null);
 
+  const saveFile = () => {
+    const resolution = { x: 900, y: 1600 };
+    const macro = serialize(resolution, actions);
+    const filename = 'nox_macro';
+    // it's a text file, but we don't want to add a default .txt extension
+    download('application/octet-stream', macro, filename);
+  };
+
   return (
     <>
       <input type="file" onChange={onFileSelect(setActions)} />
+      <button
+        onClick={ saveFile }
+      >Save
+      </button>
       <div className={styles.container}>
         <ActionList {...{
           actions,
