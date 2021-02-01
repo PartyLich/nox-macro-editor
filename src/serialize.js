@@ -30,7 +30,8 @@ export const splitPipes = (str: string): Array<string> => str.split('|');
 
 const NOX_SEPARATOR = 'ScRiPtSePaRaToR';
 // Split strings in an array at Nox macro script separator tokens
-export const splitSeparators = (arr: Array<string>): Array<string> => arr.flatMap((x) => x.split('ScRiPtSePaRaToR'));
+export const splitSeparators = (arr: Array<string>): Array<string> =>
+  arr.flatMap((x) => x.split(NOX_SEPARATOR));
 
 //
 const tokenize: (string) => Array<string> = pipe(
