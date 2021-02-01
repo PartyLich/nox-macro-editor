@@ -15,7 +15,7 @@
     "prebuild": "npm run lint && npm run flow",
     "start": "next start",
     "client": "NODE_ENV=production webpack --progress",
-    "test": "babel-tape-runner src/**/*.test.js test/**/*.test.js",
+    "test": "babel-tape-runner src/**/*.test.js test/**/*.test.js | tap-summary",
     "cov": "nyc babel-tape-runner src/**/*.test.js test/**/*.test.js",
     "lint": "eslint ./src && echo Lint Complete",
     "lint:fix": "eslint ./src --fix && echo Lint Fix Complete",
@@ -51,6 +51,7 @@
     "flow-bin": "^0.112.0",
     "husky": "^3.1.0",
     "nyc": "^14.1.1",
+    "tap-summary": "^4.0.0",
     "tape": "^4.11.0",
     "watch": "^1.0.2",
     "webpack": "^4.42.0"
