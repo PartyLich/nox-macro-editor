@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "next build && next export",
     "prebuild": "npm run lint && npm run flow",
     "start": "next start",
     "client": "NODE_ENV=production webpack --progress",
