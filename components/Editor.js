@@ -1,7 +1,7 @@
 // @flow
 import React, { useState } from 'react';
 
-import { pipe, trace } from '../src/util';
+import { pipe, trace, reorder } from '../src/util';
 import { deserialize } from '../src/serialize';
 import { ActionList, Controls } from '.';
 import { types } from '../src/actions.js';
@@ -81,6 +81,10 @@ const Editor = () => {
           actions,
           selected,
           setSelected,
+          reorder: (from: number, to: number) => {
+            setActions(reorder(actions)(from, to));
+            setSelected(to);
+          },
         }}
         />
         <Controls

@@ -1,5 +1,8 @@
 // @flow
 import React from 'react';
+import {
+  Draggable,
+} from 'react-beautiful-dnd';
 
 import type {
   Action,
@@ -88,13 +91,23 @@ const ActionItem = (selected: ?number, setSelected: (number) => void) =>
     const id = `${ ind }`;
 
     return (
-      <li
-        className={ styles.row + rowModifier }
+      <Draggable
         key={id}
-        onClick={handleClick(setSelected, ind)}
+        draggableId={id}
+        index={ind}
       >
-        {children}
-      </li>
+        {(provided) => (
+          <li
+            className={ styles.row + rowModifier }
+            onClick={handleClick(setSelected, ind)}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+          >
+            {children}
+          </li>
+        )}
+      </Draggable>
     );
   };
 
