@@ -1,17 +1,21 @@
 // @flow
 import React from 'react';
 
+import { IntegerInput } from '.';
+
 import styles from './Controls.module.scss';
 
 
 type Props = {
   actions: Array<Object>,
   selected: ?number,
+  updateAction: (number, number, number) => void,
 };
 
 const Controls = ({
   actions = [],
   selected,
+  updateAction,
 }: Props) => {
   let x = 0;
   let y = 0;
@@ -26,24 +30,21 @@ const Controls = ({
   return (
     <div className={styles.controls}>
       <div className={styles.controls__inputs}>
-        <label>X
-          <input
-            type="text"
-            value={x}
-          />
-        </label>
-        <label>Y
-          <input
-            type="text"
-            value={y}
-          />
-        </label>
-        <label>Duration
-          <input
-            type="text"
-            value={duration}
-          />
-        </label>
+        <IntegerInput
+          label="X"
+          value={x}
+          update={ (_x) => updateAction(_x, y, duration) }
+        />
+        <IntegerInput
+          label="Y"
+          value={y}
+          update={ (_y) => updateAction(x, _y, duration) }
+        />
+        <IntegerInput
+          label="Duration"
+          value={duration}
+          update={ (_duration) => updateAction(x, y, _duration) }
+        />
       </div>
     </div>
   );
