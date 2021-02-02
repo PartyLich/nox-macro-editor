@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 
 import {
   pipe,
-  trace,
   reorder,
   download,
 } from '../util';
@@ -15,21 +14,14 @@ import type { Action } from '../actions';
 import styles from './Editor.module.scss';
 
 
-const handleText: (function) => (string) => void = (setStateFn) => pipe(
-    trace('handleText'),
-    deserialize,
-    (result) => {
-      setStateFn(result);
-      return result;
-    },
-);
-
 const onFileSelect = (setStateFn) => (evt) => {
   const fileList = evt.target.files;
+  const file = fileList.item(0);
+  if (!file) return;
 
-  fileList.item(0)
+  file
       .text()
-      .then(handleText(setStateFn));
+      .then(setStateFn);
 };
 
 type UpdateActionType = (?number, number, number, number) => Array<Action>;
@@ -73,10 +65,17 @@ const updateAction = (arr: Array<Action>): UpdateActionType =>
     return res;
   };
 
+// load a macro, replacing all Actions with the file's content
+const loadFile = (setStateFn: function) => (fileText: string) => () => pipe(
+    deserialize,
+    setStateFn,
+)(fileText);
+
 
 const Editor = () => {
   const [actions: Array<Action>, setActions] = useState([]);
   const [selected: ?number, setSelected] = useState(null);
+  const [fileText: string, setFileText] = useState('');
 
   const saveFile = () => {
     const resolution = { x: 900, y: 1600 };
@@ -88,11 +87,17 @@ const Editor = () => {
 
   return (
     <>
-      <input type="file" onChange={onFileSelect(setActions)} />
-      <button
-        onClick={ saveFile }
-      >Save
-      </button>
+      <div className={[styles.container, styles.controls].join(' ')}>
+        <input type="file" onChange={onFileSelect(setFileText)} />
+        <div className={styles.container}>
+          <button onClick={loadFile(setActions)(fileText)}
+          >Load
+          </button>
+          <button onClick={saveFile}
+          >Save
+          </button>
+        </div>
+      </div>
       <div className={styles.container}>
         <ActionList {...{
           actions,
