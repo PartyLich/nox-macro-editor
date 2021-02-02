@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 
 import {
+  insert,
   pipe,
   reorder,
   download,
@@ -65,6 +66,20 @@ const updateAction = (arr: Array<Action>): UpdateActionType =>
     return res;
   };
 
+// import a macro, inserting its Actions after the selected index
+const importFile = (setStateFn: function ) =>
+  (actions: Array<Action>, selected: ?number, fileText: string ) => () => {
+    const ind = (selected === null)
+      ? actions.length
+      : selected + 1;
+
+    pipe(
+        deserialize,
+        insert(actions, ind),
+        setStateFn,
+    )(fileText);
+  };
+
 // load a macro, replacing all Actions with the file's content
 const loadFile = (setStateFn: function) => (fileText: string) => () => pipe(
     deserialize,
@@ -92,6 +107,9 @@ const Editor = () => {
         <div className={styles.container}>
           <button onClick={loadFile(setActions)(fileText)}
           >Load
+          </button>
+          <button onClick={importFile(setActions)(actions, selected, fileText)}
+          >Import
           </button>
           <button onClick={saveFile}
           >Save
