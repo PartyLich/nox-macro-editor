@@ -96,8 +96,9 @@ const ActionItem = (
         break;
     }
     const rowModifier = (isSelected)
-          ? ` ${ styles.row__selected }`
+          ? styles.row__selected
           : '';
+    const className = [styles.row, rowModifier].join(' ');
     // TODO: generate unique id for every action...somewhere
     const id = `${ ind }`;
 
@@ -109,7 +110,7 @@ const ActionItem = (
       >
         {(provided) => (
           <li
-            className={ styles.row + rowModifier }
+            className={className}
             onClick={handleClick(setSelected, ind)}
             ref={provided.innerRef}
             {...provided.draggableProps}
