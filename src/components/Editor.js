@@ -15,6 +15,7 @@ import type { Action } from '../actions';
 import styles from './Editor.module.scss';
 
 
+// convert file to text on selection
 const onFileSelect = (setStateFn) => (evt) => {
   const fileList = evt.target.files;
   const file = fileList.item(0);
@@ -26,6 +27,7 @@ const onFileSelect = (setStateFn) => (evt) => {
 };
 
 type UpdateActionType = (?number, number, number, number) => Array<Action>;
+// Update an item in an Action array
 const updateAction = (arr: Array<Action>): UpdateActionType =>
   (index, x, y, duration) => {
     if (
@@ -92,6 +94,7 @@ const Editor = () => {
   const [selected: ?number, setSelected] = useState(null);
   const [fileText: string, setFileText] = useState('');
 
+  // initiate download of the current Action list
   const saveFile = () => {
     const resolution = { x: 900, y: 1600 };
     const macro = serialize(resolution, actions);
