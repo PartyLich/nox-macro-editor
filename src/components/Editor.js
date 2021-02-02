@@ -6,11 +6,11 @@ import {
   trace,
   reorder,
   download,
-} from '../src/util';
-import { deserialize, serialize } from '../src/serialize';
+} from '../util';
+import { deserialize, serialize } from '../serialize';
 import { ActionList, Controls } from '.';
-import { types } from '../src/actions.js';
-import type { Action } from '../src/actions.js';
+import { types } from '../actions';
+import type { Action } from '../actions';
 
 import styles from './Editor.module.scss';
 

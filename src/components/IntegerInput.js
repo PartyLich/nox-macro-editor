@@ -1,7 +1,7 @@
 // @flow
 import React, { useState, useEffect } from 'react';
 
-import { isInt } from '../src/util';
+import { isInt } from '../util';
 
 import styles from './IntegerInput.module.scss';
 

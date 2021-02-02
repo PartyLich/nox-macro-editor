@@ -6,7 +6,7 @@ import {
 } from 'react-beautiful-dnd';
 
 import { ActionItem } from '.';
-import type { Action } from '../src/actions.js';
+import type { Action } from '../actions';
 
 import styles from './ActionList.module.scss';
 

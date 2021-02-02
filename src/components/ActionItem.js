@@ -11,8 +11,8 @@ import type {
   DragAction,
   MReleaseAction,
   WaitAction,
-} from '../src/actions.js';
-import { types } from '../src/actions.js';
+} from '../actions';
+import { types } from '../actions';
 
 import styles from './ActionItem.module.scss';
 
