@@ -3,6 +3,7 @@ import test from 'tape';
 import {
   reorder,
   insert,
+  isInBounds,
   isInt,
   removeAt,
 } from '../src/util';
@@ -15,6 +16,35 @@ test('reorder()', (t) => {
     const data = [1, 2, 3];
     const actual = reorder(data)(1, 0);
     t.deepEqual(actual, expected, msg);
+  }
+
+  t.end();
+});
+
+test('isInBounds()', (t) => {
+  {
+    const msg = '';
+    const expected = true;
+    const data = [1, 2, 3];
+    const actual = isInBounds(1, data);
+    t.equal(actual, expected, msg);
+  }
+  {
+    const msg = '';
+    const expected = false;
+    const data = [1, 2, 3];
+    {
+      const actual = isInBounds(-1, data);
+      t.equal(actual, expected, msg);
+    }
+    {
+      const actual = isInBounds(41, data);
+      t.equal(actual, expected, msg);
+    }
+    {
+      const actual = isInBounds(NaN, data);
+      t.equal(actual, expected, msg);
+    }
   }
 
   t.end();

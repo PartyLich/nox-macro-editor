@@ -65,10 +65,14 @@ const removeAt = <T>(index: number, list: Array<T>): Array<T> => {
   return res;
 };
 
+const isInBounds = (index: number, list: Array<any>) =>
+  index > 0 && index < list.length;
+
 export {
   download,
   filter,
   insert,
+  isInBounds,
   isInt,
   map,
   pipe,
