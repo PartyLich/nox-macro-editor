@@ -1,0 +1,14 @@
+.container {
+  width: 50%;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  min-width: 100px;
+  padding: 5px;
+
+  & > * + * {
+    margin-top: .25em;
+  }
+}
