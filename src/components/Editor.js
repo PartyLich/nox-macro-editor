@@ -5,6 +5,7 @@ import {
   insert,
   pipe,
   reorder,
+  removeAt,
   download,
 } from '../util';
 import { deserialize, serialize } from '../serialize';
@@ -127,6 +128,11 @@ const Editor = () => {
           reorder: (from: number, to: number) => {
             setActions(reorder(actions)(from, to));
             setSelected(to);
+          },
+          remove: (ind: number) => {
+            setActions(removeAt(ind, actions));
+            const nextItem = Math.min(ind, actions.length - 2);
+            setSelected(nextItem);
           },
         }}
         />

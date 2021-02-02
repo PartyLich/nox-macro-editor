@@ -13,6 +13,7 @@ import type {
   WaitAction,
 } from '../actions';
 import { types } from '../actions';
+import { RemovableItem } from '.';
 
 import styles from './ActionItem.module.scss';
 
@@ -73,20 +74,31 @@ const handleClick = (setSelected: (number) => void, i: ?number) => () => {
 
 type Props = Action;
 
-const ActionItem = (selected: ?number, setSelected: (number) => void) =>
+const ActionItem = (
+    selected: ?number,
+    setSelected: (number) => void,
+    remove: (number) => void,
+) =>
   (action: Props, ind: number) => {
+    const isSelected = (selected === ind);
     let children = action.type;
+
     switch (action.type) {
       case types.CLICK:
       case types.MDRAG:
       case types.MRELEASE:
       case types.WAIT:
-        children = actionMap[action.type](action);
+        children = RemovableItem({
+          selected: isSelected,
+          remove: () => remove(ind),
+          children: actionMap[action.type](action),
+        });
         break;
     }
-    const rowModifier = (selected === ind)
-          ? ` ${ styles.row__selected }`
+    const rowModifier = (isSelected)
+          ? styles.row__selected
           : '';
+    const className = [styles.row, rowModifier].join(' ');
     // TODO: generate unique id for every action...somewhere
     const id = `${ ind }`;
 
@@ -98,7 +110,7 @@ const ActionItem = (selected: ?number, setSelected: (number) => void) =>
       >
         {(provided) => (
           <li
-            className={ styles.row + rowModifier }
+            className={className}
             onClick={handleClick(setSelected, ind)}
             ref={provided.innerRef}
             {...provided.draggableProps}

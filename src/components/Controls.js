@@ -2,6 +2,7 @@
 import React from 'react';
 
 import { IntegerInput } from '.';
+import { isInBounds } from '../util';
 
 import styles from './Controls.module.scss';
 
@@ -21,7 +22,8 @@ const Controls = ({
   let y = 0;
   let duration = 0;
 
-  if (typeof selected === 'number') {
+  // TODO: switch to optional chaining instead of bounds check?
+  if (typeof selected === 'number' && isInBounds(selected, actions)) {
     x = actions[selected].x || x;
     y = actions[selected].y || y;
     duration = actions[selected].duration || duration;

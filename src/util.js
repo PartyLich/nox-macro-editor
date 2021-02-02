@@ -52,18 +52,31 @@ const insert = <T>(dest: Array<T>, index: number): ((Array<T>) => Array<T>) =>
 
     const start = dest.slice(0, index);
     const end = dest.slice(index);
-
     return start.concat(list.slice())
         .concat(end);
   };
+
+// returns a new array with the item at index removed from list
+const removeAt = <T>(index: number, list: Array<T>): Array<T> => {
+  if (index == null || index < 0 || index >= list.length) return list.slice();
+
+  const res = list.slice();
+  res.splice(index, 1);
+  return res;
+};
+
+const isInBounds = (index: number, list: Array<any>) =>
+  index > 0 && index < list.length;
 
 export {
   download,
   filter,
   insert,
+  isInBounds,
   isInt,
   map,
   pipe,
   reorder,
+  removeAt,
   trace,
 };
