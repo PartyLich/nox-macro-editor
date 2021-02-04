@@ -183,6 +183,7 @@ const basicLine = (
 ): string =>
   `0${ NOX_SEPARATOR }${ [resolution.x, resolution.y, actionText].join('|') }${ NOX_SEPARATOR }${ time }`;
 
+// Serialize a Click to Nox macro format
 export const clickLine = (
     resolution: Coord,
     time: number,
@@ -192,6 +193,7 @@ export const clickLine = (
   return basicLine(resolution, time, actionText);
 };
 
+// Serialize a Drag to Nox macro format
 export const mdragLine = (
     resolution: Coord,
     time: number,
@@ -201,6 +203,7 @@ export const mdragLine = (
   return basicLine(resolution, time, actionText);
 };
 
+// Serialize a Mouse Release to Nox macro format
 export const mreleaseLine = (resolution: Coord, time: number): string => {
   const actionText = [MOUSE_RELEASE, 0, 0].join(':');
   return basicLine(resolution, time, actionText);
