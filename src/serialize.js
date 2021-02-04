@@ -124,7 +124,7 @@ const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
 };
 
 
-// Array<string> -> Array<Action>
+// Array<string> -> Array<[Action, Coord]>
 function* actionGenerator() {
   let time = 0;
   const result = [];
@@ -133,32 +133,34 @@ function* actionGenerator() {
     const tokens = yield result.slice();
     result.length = 0;
 
-    const [actionTime, action] = tokenToObj(tokens);
+    const [actionTime, action, resolution] = tokenToObj(tokens);
 
     if (actionTime > time) {
       const duration = actionTime - time;
-      result.push(waitAction(duration));
+      result.push([waitAction(duration), resolution]);
       time += duration;
     }
 
-    result.push(action);
+    result.push([action, resolution]);
   }
 }
 
+type ParsedActions = Array<[Action, Coord]>
+
 // convert line tokens to Actions
-const linesToActions = (lines: Array<Array<string>>): Array<Action> => {
+const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
   const gen = actionGenerator();
   console.log('gen created');
 
   return lines.reduce(
-      (acc: Array<Action>, tokens: Array<string>) =>
+      (acc: ParsedActions, tokens: Array<string>) =>
         acc.concat(gen.next(tokens).value || []),
       gen.next().value || [],
   );
 };
 
 const tokenizeLines: (Array<string>) => Array<Array<string>> = pipe(
-    util.trace('tokenize'),
+    util.trace('lines'),
     util.filter(notEmpty),
     util.map(tokenize),
     util.trace('tokenize'),
@@ -169,7 +171,8 @@ const deserialize: (lines: string) => Array<Action> = pipe(
     splitLines,
     tokenizeLines,
     linesToActions,
-    util.filter((a) => a.type !== actType.NONE),
+    util.trace('new linesToActions'),
+    util.filter(([a, _]) => a.type !== actType.NONE),
     util.trace('deserialize'),
 );
 

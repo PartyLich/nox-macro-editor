@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import {
   insert,
+  map,
   pipe,
   reorder,
   removeAt,
@@ -84,20 +85,27 @@ const importFile = (setStateFn: function ) =>
   };
 
 // load a macro, replacing all Actions with the file's content
-const loadFile = (setStateFn: function) => (fileText: string) => () => pipe(
-    deserialize,
-    setStateFn,
-)(fileText);
+const loadFile = (setActions: function, setResolution: function) =>
+  (fileText: string) => () => pipe(
+      deserialize,
+      (actions) => {
+        const [, resolution] = actions[0];
+        setResolution(resolution);
+        return actions;
+      },
+      map(([action, _]) => action),
+      setActions,
+  )(fileText);
 
 
 const Editor = () => {
   const [actions: Array<Action>, setActions] = useState([]);
   const [selected: ?number, setSelected] = useState(null);
   const [fileText: string, setFileText] = useState('');
+  const [resolution: Coord, setResolution] = useState({ x: 900, y: 1600 });
 
   // initiate download of the current Action list
   const saveFile = () => {
-    const resolution = { x: 900, y: 1600 };
     const macro = serialize(resolution, actions);
     const filename = 'nox_macro';
     // it's a text file, but we don't want to add a default .txt extension
@@ -109,7 +117,7 @@ const Editor = () => {
       <div className={[styles.container, styles.controls].join(' ')}>
         <input type="file" onChange={onFileSelect(setFileText)} />
         <div className={styles.container}>
-          <button onClick={loadFile(setActions)(fileText)}
+          <button onClick={loadFile(setActions, setResolution)(fileText)}
           >Load
           </button>
           <button onClick={importFile(setActions)(actions, selected, fileText)}
