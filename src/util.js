@@ -66,7 +66,7 @@ const removeAt = <T>(index: number, list: Array<T>): Array<T> => {
 };
 
 const isInBounds = (index: number, list: Array<any>) =>
-  index > 0 && index < list.length;
+  index >= 0 && index < list.length;
 
 export {
   download,

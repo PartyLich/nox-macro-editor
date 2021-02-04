@@ -23,27 +23,36 @@ test('reorder()', (t) => {
 
 test('isInBounds()', (t) => {
   {
-    const msg = '';
+    const msg = (ind, arr) =>
+      `returns true if index (${ ind }) is in array bounds (${ 0 }, ${ arr.length - 1 })`;
     const expected = true;
     const data = [1, 2, 3];
-    const actual = isInBounds(1, data);
-    t.equal(actual, expected, msg);
+    const ind = 1;
+    const actual = isInBounds(ind, data);
+    t.equal(actual, expected, msg(ind, data));
+    {
+      const ind = 0;
+      const actual = isInBounds(ind, data);
+      t.equal(actual, expected, msg(ind, data));
+    }
   }
   {
-    const msg = '';
+    const msg = (ind, arr) =>
+      `returns false if index (${ ind }) is out of bounds (${ 0 }, ${ arr.length - 1 })`;
     const expected = false;
     const data = [1, 2, 3];
+    const ind = 1;
     {
       const actual = isInBounds(-1, data);
-      t.equal(actual, expected, msg);
+      t.equal(actual, expected, msg(ind, data));
     }
     {
       const actual = isInBounds(41, data);
-      t.equal(actual, expected, msg);
+      t.equal(actual, expected, msg(ind, data));
     }
     {
       const actual = isInBounds(NaN, data);
-      t.equal(actual, expected, msg);
+      t.equal(actual, expected, msg(ind, data));
     }
   }
 
