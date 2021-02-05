@@ -124,8 +124,10 @@ const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
 };
 
 
+type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>
+
 // Array<string> -> Array<[Action, Coord]>
-function* actionGenerator() {
+function* actionGenerator(): ActionGenerator {
   let time = 0;
   const result = [];
 

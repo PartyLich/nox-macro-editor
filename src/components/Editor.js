@@ -18,7 +18,7 @@ import styles from './Editor.module.scss';
 
 
 // convert file to text on selection
-const onFileSelect = (setStateFn) => (evt) => {
+const onFileSelect = (setStateFn: function) => (evt) => {
   const fileList = evt.target.files;
   const file = fileList.item(0);
   if (!file) return;
