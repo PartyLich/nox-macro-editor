@@ -117,14 +117,14 @@ const importFile = (setStateFn: function ) => (
   pipe(
       deserialize,
       (_actions) => {
-        const actions = _actions.map(([action, _]) => action);
+        const importedActions = _actions.map(([action, _]) => action);
 
         const [, importedRes] = _actions[0];
         if (!shallowEqual(resolution, importedRes)) {
-          return actions.map(scaleAction(importedRes, resolution));
+          return importedActions.map(scaleAction(importedRes, resolution));
         }
 
-        return actions;
+        return importedActions;
       },
       insert(actions, ind),
       setStateFn,
