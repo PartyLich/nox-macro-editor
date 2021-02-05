@@ -167,12 +167,17 @@ const Editor = () => {
           <button onClick={loadFile(setActions, setResolution)(fileText)}
           >Load
           </button>
-          <button onClick={importFile(setActions)(
-              actions,
-              selected,
-              resolution,
-              fileText,
-          )}
+          <button onClick={
+            // load if Action list is currently empty
+            (!actions.length)
+              ? loadFile(setActions, setResolution)(fileText)
+              : importFile(setActions)(
+                  actions,
+                  selected,
+                  resolution,
+                  fileText,
+              )
+          }
           >Import
           </button>
           <button onClick={saveFile}
