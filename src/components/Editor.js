@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import {
   insert,
+  map,
   pipe,
   reorder,
   removeAt,
@@ -11,13 +12,13 @@ import {
 import { deserialize, serialize } from '../serialize';
 import { ActionList, Controls } from '.';
 import { types } from '../actions';
-import type { Action } from '../actions';
+import type { Action, Coord } from '../actions';
 
 import styles from './Editor.module.scss';
 
 
 // convert file to text on selection
-const onFileSelect = (setStateFn) => (evt) => {
+const onFileSelect = (setStateFn: function) => (evt) => {
   const fileList = evt.target.files;
   const file = fileList.item(0);
   if (!file) return;
@@ -69,35 +70,89 @@ const updateAction = (arr: Array<Action>): UpdateActionType =>
     return res;
   };
 
+// shallow object comparison. true if `b` contains all the keys of `a` with
+// matching values
+const shallowEqual = (a, b): boolean => Object.keys(a).reduce(
+    (acc, key) => a[key] === b[key], true,
+);
+
+const scale = (from: number, to: number, num: number): number => {
+  const factor = to / from;
+
+  return num * factor;
+};
+
+// scale an action from one resolution (`fromRes`) to another (`toRes`)
+const scaleAction = (fromRes: Coord, toRes: Coord) =>
+  (action: Action): Action => {
+    switch (action.type) {
+      case types.CLICK:
+        return {
+          ...action,
+          x: scale(fromRes.x, toRes.x, action.x),
+          y: scale(fromRes.y, toRes.y, action.y),
+        };
+      case types.MDRAG:
+        return {
+          ...action,
+          x: scale(fromRes.x, toRes.x, action.x),
+          y: scale(fromRes.y, toRes.y, action.y),
+        };
+    }
+
+    return action;
+  };
+
 // import a macro, inserting its Actions after the selected index
-const importFile = (setStateFn: function ) =>
-  (actions: Array<Action>, selected: ?number, fileText: string ) => () => {
-    const ind = (selected === null)
+const importFile = (setStateFn: function ) => (
+    actions: Array<Action>,
+    selected: ?number,
+    resolution: Coord,
+    fileText: string,
+) => () => {
+  const ind = (selected === null)
       ? actions.length
       : selected + 1;
 
-    pipe(
-        deserialize,
-        insert(actions, ind),
-        setStateFn,
-    )(fileText);
-  };
+  pipe(
+      deserialize,
+      (_actions) => {
+        const importedActions = _actions.map(([action, _]) => action);
+
+        const [, importedRes] = _actions[0];
+        if (!shallowEqual(resolution, importedRes)) {
+          return importedActions.map(scaleAction(importedRes, resolution));
+        }
+
+        return importedActions;
+      },
+      insert(actions, ind),
+      setStateFn,
+  )(fileText);
+};
 
 // load a macro, replacing all Actions with the file's content
-const loadFile = (setStateFn: function) => (fileText: string) => () => pipe(
-    deserialize,
-    setStateFn,
-)(fileText);
+const loadFile = (setActions: function, setResolution: function) =>
+  (fileText: string) => () => pipe(
+      deserialize,
+      (actions) => {
+        const [, resolution] = actions[0];
+        setResolution(resolution);
+        return actions;
+      },
+      map(([action, _]) => action),
+      setActions,
+  )(fileText);
 
 
 const Editor = () => {
   const [actions: Array<Action>, setActions] = useState([]);
   const [selected: ?number, setSelected] = useState(null);
   const [fileText: string, setFileText] = useState('');
+  const [resolution: Coord, setResolution] = useState({ x: 900, y: 1600 });
 
   // initiate download of the current Action list
   const saveFile = () => {
-    const resolution = { x: 900, y: 1600 };
     const macro = serialize(resolution, actions);
     const filename = 'nox_macro';
     // it's a text file, but we don't want to add a default .txt extension
@@ -109,10 +164,23 @@ const Editor = () => {
       <div className={[styles.container, styles.controls].join(' ')}>
         <input type="file" onChange={onFileSelect(setFileText)} />
         <div className={styles.container}>
-          <button onClick={loadFile(setActions)(fileText)}
+          <button onClick={pipe(
+              loadFile(setActions, setResolution)(fileText),
+              setSelected,
+          )}
           >Load
           </button>
-          <button onClick={importFile(setActions)(actions, selected, fileText)}
+          <button onClick={
+            // load if Action list is currently empty
+            (!actions.length)
+              ? loadFile(setActions, setResolution)(fileText)
+              : importFile(setActions)(
+                  actions,
+                  selected,
+                  resolution,
+                  fileText,
+              )
+          }
           >Import
           </button>
           <button onClick={saveFile}
@@ -136,14 +204,16 @@ const Editor = () => {
           },
         }}
         />
-        <Controls
-          actions={actions}
-          selected={selected}
-          updateAction={(x, y, duration) => {
+        <Controls {...{
+          actions,
+          resolution,
+          selected,
+          updateAction: (x, y, duration) => {
             setActions(
                 updateAction(actions)(selected, x, y, duration),
             );
-          }}
+          },
+        }}
         />
       </div>
     </>

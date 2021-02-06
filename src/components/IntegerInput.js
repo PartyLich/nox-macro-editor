@@ -7,12 +7,14 @@ import styles from './IntegerInput.module.scss';
 
 
 type Props = {
+  classNames: Array<string>,
   label: string,
   value: number,
   update: (number) => void,
 };
 
 const IntegerInput = ({
+  classNames = [],
   label = 'Integer Input',
   value = 0,
   update,
@@ -43,7 +45,7 @@ const IntegerInput = ({
       [value],
   );
 
-  const className = isValid
+  const baseName = isValid
     ? styles['int_input']
     : `${ styles['int_input'] } ${ styles['int_input--invalid'] }`
   ;
@@ -54,7 +56,7 @@ const IntegerInput = ({
         type="text"
         value={displayVal}
         onChange={handleChange}
-        className={className}
+        className={[baseName].concat(classNames).join(' ')}
       />
     </label>
   );
