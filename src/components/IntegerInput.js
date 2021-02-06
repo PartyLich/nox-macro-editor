@@ -22,6 +22,7 @@ const IntegerInput = ({
   const [displayVal: string, setDisplayVal] = useState(`${ value }`);
   const [isValid: boolean, setValid] = useState(true);
 
+  // validate input and update as appropriate
   const handleChange = (evt) => {
     const text = evt.target.value;
     setDisplayVal(text);
