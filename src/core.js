@@ -92,7 +92,7 @@ const scaleAction = (fromRes: Coord, toRes: Coord) =>
   };
 
 // import a macro, inserting its Actions after the selected index
-const importFile = (setStateFn: function ) => (
+const importFile = (setStateFn: function) => (
     actions: Array<Action>,
     selected: ?number,
     resolution: Coord,
