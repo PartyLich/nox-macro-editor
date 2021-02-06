@@ -1,4 +1,5 @@
 // @flow
+const curry = require('fn-curry');
 
 // helper fn to compose functions
 const pipe = (...fns: Array<Function>) =>
@@ -20,13 +21,12 @@ const trace = (msg: string = 'trace') => <T>(val: T) => {
 };
 
 // return a new array with element at `from` in initial array moved to `to`
-const reorder = <T>(arr: Array<T>): ((number, number) => Array<T>) =>
-  (from, to) => {
-    const res = arr.slice();
-    const item = res.splice(from, 1);
-    res.splice(to, 0, ...item);
-    return res;
-  };
+const reorder = (from: number, to: number) => <T>(arr: Array<T>): Array<T> => {
+  const res = arr.slice();
+  const item = res.splice(from, 1);
+  res.splice(to, 0, ...item);
+  return res;
+};
 
 // return true if string contains an integer (base 10)
 const isInt: PredicateFn<string> = (str) => /^[+-]?\d+$/.test(str.trim());
@@ -68,11 +68,15 @@ const removeAt = <T>(index: number, list: Array<T>): Array<T> => {
 const isInBounds = (index: number, list: Array<any>) =>
   index >= 0 && index < list.length;
 
+// curry functions
+const cDownload = curry(download);
+const cIsInBounds = curry(isInBounds);
+
 export {
-  download,
+  cDownload as download,
   filter,
   insert,
-  isInBounds,
+  cIsInBounds as isInBounds,
   isInt,
   map,
   pipe,

@@ -14,7 +14,7 @@ test('reorder()', (t) => {
     const msg = 'moves an element in an array';
     const expected = [2, 1, 3];
     const data = [1, 2, 3];
-    const actual = reorder(data)(1, 0);
+    const actual = reorder(1, 0)(data);
     t.deepEqual(actual, expected, msg);
   }
 
