@@ -80,7 +80,7 @@ const Editor = () => {
           selected,
           setSelected,
           reorder: (from: number, to: number) => {
-            setActions(reorder(actions)(from, to));
+            setActions(reorder(from, to)(actions));
             setSelected(to);
           },
           remove: (ind: number) => {
