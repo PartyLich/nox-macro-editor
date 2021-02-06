@@ -96,7 +96,7 @@ const Editor = () => {
           selected,
           updateAction: (x, y, duration) => {
             setActions(
-                updateAction(actions)(selected, x, y, duration),
+                updateAction(selected, x, y, duration)(actions),
             );
           },
         }}

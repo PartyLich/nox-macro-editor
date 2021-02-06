@@ -1,4 +1,6 @@
 // @flow
+const curry = require('fn-curry');
+
 import { types } from './actions';
 import type { Action, Coord } from './actions';
 import { deserialize } from './serialize';
@@ -9,47 +11,51 @@ import {
 } from './util';
 
 
-type UpdateActionType = (?number, number, number, number) => Array<Action>;
 // Update an item in an Action array
-const updateAction = (arr: Array<Action>): UpdateActionType =>
-  (index, x, y, duration) => {
-    if (
-      index == undefined ||
-      index < 0 ||
-      index >= arr.length
-    ) return arr;
+const updateAction = (
+    index: ?number,
+    x: number,
+    y: number,
+    duration: number,
+    arr: Array<Action>,
+): Array<Action> => {
+  if (
+    index == undefined ||
+    index < 0 ||
+    index >= arr.length
+  ) return arr;
 
-    const res = arr.slice();
-    switch (res[index].type) {
-      case types.CLICK:
-        res[index] = {
-          ...res[index],
-          x,
-          y,
-        };
-        break;
+  const res = arr.slice();
+  switch (res[index].type) {
+    case types.CLICK:
+      res[index] = {
+        ...res[index],
+        x,
+        y,
+      };
+      break;
 
-      case types.MDRAG:
-        res[index] = {
-          ...res[index],
-          x,
-          y,
-        };
-        break;
+    case types.MDRAG:
+      res[index] = {
+        ...res[index],
+        x,
+        y,
+      };
+      break;
 
-      case types.MRELEASE:
-        break;
+    case types.MRELEASE:
+      break;
 
-      case types.WAIT:
-        res[index] = {
-          ...res[index],
-          duration,
-        };
-        break;
-    }
+    case types.WAIT:
+      res[index] = {
+        ...res[index],
+        duration,
+      };
+      break;
+  }
 
-    return res;
-  };
+  return res;
+};
 
 // shallow object comparison. true if `b` contains all the keys of `a` with
 // matching values
@@ -126,8 +132,11 @@ const loadFile = (setActions: function, setResolution: function) =>
       setActions,
   )(fileText);
 
+// curry all the things
+const cUpdateAction = curry(updateAction);
+
 export {
   loadFile,
   importFile,
-  updateAction,
+  cUpdateAction as updateAction,
 };
