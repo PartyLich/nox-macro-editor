@@ -51,6 +51,16 @@ const Editor = () => {
       setSelected,
   );
 
+  // load if Action list is currently empty
+  const importHandler = (!actions.length)
+              ? loadFile(setActions, setResolution)(fileText)
+              : importFile(setActions)(
+                  actions,
+                  selected,
+                  resolution,
+                  fileText,
+              );
+
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
@@ -59,17 +69,7 @@ const Editor = () => {
           <button onClick={loadHandler}
           >Load
           </button>
-          <button onClick={
-            // load if Action list is currently empty
-            (!actions.length)
-              ? loadFile(setActions, setResolution)(fileText)
-              : importFile(setActions)(
-                  actions,
-                  selected,
-                  resolution,
-                  fileText,
-              )
-          }
+          <button onClick={importHandler}
           >Import
           </button>
           <button onClick={saveFile}
