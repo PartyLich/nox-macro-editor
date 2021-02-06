@@ -2,22 +2,25 @@
 import React, { useState } from 'react';
 
 import {
-  insert,
+  importFile,
+  loadFile,
+  updateAction,
+} from '../core';
+import {
   pipe,
   reorder,
   removeAt,
   download,
 } from '../util';
-import { deserialize, serialize } from '../serialize';
+import { serialize } from '../serialize';
 import { ActionList, Controls } from '.';
-import { types } from '../actions';
-import type { Action } from '../actions';
+import type { Action, Coord } from '../actions';
 
 import styles from './Editor.module.scss';
 
 
 // convert file to text on selection
-const onFileSelect = (setStateFn) => (evt) => {
+const onFileSelect = (setStateFn: function) => (evt) => {
   const fileList = evt.target.files;
   const file = fileList.item(0);
   if (!file) return;
@@ -27,92 +30,46 @@ const onFileSelect = (setStateFn) => (evt) => {
       .then(setStateFn);
 };
 
-type UpdateActionType = (?number, number, number, number) => Array<Action>;
-// Update an item in an Action array
-const updateAction = (arr: Array<Action>): UpdateActionType =>
-  (index, x, y, duration) => {
-    if (
-      index == undefined ||
-      index < 0 ||
-      index >= arr.length
-    ) return arr;
-
-    const res = arr.slice();
-    switch (res[index].type) {
-      case types.CLICK:
-        res[index] = {
-          ...res[index],
-          x,
-          y,
-        };
-        break;
-
-      case types.MDRAG:
-        res[index] = {
-          ...res[index],
-          x,
-          y,
-        };
-        break;
-
-      case types.MRELEASE:
-        break;
-
-      case types.WAIT:
-        res[index] = {
-          ...res[index],
-          duration,
-        };
-        break;
-    }
-
-    return res;
-  };
-
-// import a macro, inserting its Actions after the selected index
-const importFile = (setStateFn: function ) =>
-  (actions: Array<Action>, selected: ?number, fileText: string ) => () => {
-    const ind = (selected === null)
-      ? actions.length
-      : selected + 1;
-
-    pipe(
-        deserialize,
-        insert(actions, ind),
-        setStateFn,
-    )(fileText);
-  };
-
-// load a macro, replacing all Actions with the file's content
-const loadFile = (setStateFn: function) => (fileText: string) => () => pipe(
-    deserialize,
-    setStateFn,
-)(fileText);
-
 
 const Editor = () => {
   const [actions: Array<Action>, setActions] = useState([]);
   const [selected: ?number, setSelected] = useState(null);
   const [fileText: string, setFileText] = useState('');
+  const [resolution: Coord, setResolution] = useState({ x: 900, y: 1600 });
 
   // initiate download of the current Action list
   const saveFile = () => {
-    const resolution = { x: 900, y: 1600 };
     const macro = serialize(resolution, actions);
     const filename = 'nox_macro';
     // it's a text file, but we don't want to add a default .txt extension
     download('application/octet-stream', macro, filename);
   };
 
+  // load macro then reset selection
+  const loadHandler = pipe(
+      loadFile(setActions, setResolution)(fileText),
+      setSelected,
+  );
+
+  // load if Action list is currently empty
+  const importHandler = (!actions.length)
+              ? loadFile(setActions, setResolution)(fileText)
+              : importFile(setActions)(
+                  actions,
+                  selected,
+                  resolution,
+                  fileText,
+              );
+
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
         <input type="file" onChange={onFileSelect(setFileText)} />
         <div className={styles.container}>
-          <button onClick={loadFile(setActions)(fileText)}
+          <button onClick={loadHandler}
           >Load
           </button>
-          <button onClick={importFile(setActions)(actions, selected, fileText)}
+          <button onClick={importHandler}
           >Import
           </button>
           <button onClick={saveFile}
@@ -126,7 +83,7 @@ const Editor = () => {
           selected,
           setSelected,
           reorder: (from: number, to: number) => {
-            setActions(reorder(actions)(from, to));
+            setActions(reorder(from, to)(actions));
             setSelected(to);
           },
           remove: (ind: number) => {
@@ -136,14 +93,15 @@ const Editor = () => {
           },
         }}
         />
-        <Controls
-          actions={actions}
-          selected={selected}
-          updateAction={(x, y, duration) => {
-            setActions(
-                updateAction(actions)(selected, x, y, duration),
-            );
-          }}
+        <Controls {...{
+          actions,
+          resolution,
+          selected,
+          updateAction: (x, y, duration) => pipe(
+              updateAction(selected, x, y, duration),
+              setActions,
+          )(actions),
+        }}
         />
       </div>
     </>
