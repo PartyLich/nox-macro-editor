@@ -164,7 +164,10 @@ const Editor = () => {
       <div className={[styles.container, styles.controls].join(' ')}>
         <input type="file" onChange={onFileSelect(setFileText)} />
         <div className={styles.container}>
-          <button onClick={loadFile(setActions, setResolution)(fileText)}
+          <button onClick={pipe(
+              loadFile(setActions, setResolution)(fileText),
+              setSelected,
+          )}
           >Load
           </button>
           <button onClick={
