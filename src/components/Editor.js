@@ -97,11 +97,10 @@ const Editor = () => {
           actions,
           resolution,
           selected,
-          updateAction: (x, y, duration) => {
-            setActions(
-                updateAction(selected, x, y, duration)(actions),
-            );
-          },
+          updateAction: (x, y, duration) => pipe(
+              updateAction(selected, x, y, duration),
+              setActions,
+          )(actions),
         }}
         />
       </div>
