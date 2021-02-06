@@ -120,23 +120,28 @@ const importFile = (setStateFn: function ) => (
 };
 
 // load a macro, replacing all Actions with the file's content
-const loadFile = (setActions: function, setResolution: function) =>
-  (fileText: string) => () => pipe(
-      deserialize,
-      (actions) => {
-        const [, resolution] = actions[0];
-        setResolution(resolution);
-        return actions;
-      },
-      map(([action, _]) => action),
-      setActions,
-  )(fileText);
+const loadFile = (
+    setActions: function,
+    setResolution: function,
+    fileText: string,
+) => () => pipe(
+    deserialize,
+    (actions) => {
+      const [, resolution] = actions[0];
+      setResolution(resolution);
+      return actions;
+    },
+    map(([action, _]) => action),
+    setActions,
+)(fileText);
 
 // curry all the things
+const cLoadFile = curry(loadFile);
+const cImportFile = curry(importFile);
 const cUpdateAction = curry(updateAction);
 
 export {
-  loadFile,
-  importFile,
+  cLoadFile as loadFile,
+  cImportFile as importFile,
   cUpdateAction as updateAction,
 };
