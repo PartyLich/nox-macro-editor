@@ -98,6 +98,8 @@ const importFile = (setStateFn: function ) => (
     resolution: Coord,
     fileText: string,
 ) => () => {
+  if (!fileText.length) return;
+
   const ind = (selected === null)
       ? actions.length
       : selected + 1;
@@ -124,16 +126,20 @@ const loadFile = (
     setActions: function,
     setResolution: function,
     fileText: string,
-) => () => pipe(
-    deserialize,
-    (actions) => {
-      const [, resolution] = actions[0];
-      setResolution(resolution);
-      return actions;
-    },
-    map(([action, _]) => action),
-    setActions,
-)(fileText);
+) => () => {
+  if (!fileText.length) return;
+
+  pipe(
+      deserialize,
+      (actions) => {
+        const [, resolution] = actions[0];
+        setResolution(resolution);
+        return actions;
+      },
+      map(([action, _]) => action),
+      setActions,
+  )(fileText);
+};
 
 // curry all the things
 const cLoadFile = curry(loadFile);
