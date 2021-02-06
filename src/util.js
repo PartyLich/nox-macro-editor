@@ -1,4 +1,5 @@
 // @flow
+const curry = require('fn-curry');
 
 // helper fn to compose functions
 const pipe = (...fns: Array<Function>) =>
@@ -67,11 +68,15 @@ const removeAt = <T>(index: number, list: Array<T>): Array<T> => {
 const isInBounds = (index: number, list: Array<any>) =>
   index >= 0 && index < list.length;
 
+// curry functions
+const cDownload = curry(download);
+const cIsInBounds = curry(isInBounds);
+
 export {
-  download,
+  cDownload as download,
   filter,
   insert,
-  isInBounds,
+  cIsInBounds as isInBounds,
   isInt,
   map,
   pipe,
