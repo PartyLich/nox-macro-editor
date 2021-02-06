@@ -47,7 +47,7 @@ export type ActionType =
   ;
 
 // Wait action creator
-export const waitAction = (duration: number): WaitAction => ({
+export const waitAction = (duration: number = 1): WaitAction => ({
   type: WAIT,
   duration,
 });
