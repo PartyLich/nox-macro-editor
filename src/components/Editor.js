@@ -201,14 +201,16 @@ const Editor = () => {
           },
         }}
         />
-        <Controls
-          actions={actions}
-          selected={selected}
-          updateAction={(x, y, duration) => {
+        <Controls {...{
+          actions,
+          resolution,
+          selected,
+          updateAction: (x, y, duration) => {
             setActions(
                 updateAction(actions)(selected, x, y, duration),
             );
-          }}
+          },
+        }}
         />
       </div>
     </>
