@@ -45,15 +45,18 @@ const Editor = () => {
     download('application/octet-stream', macro, filename);
   };
 
+  // load macro then reset selection
+  const loadHandler = pipe(
+      loadFile(setActions, setResolution)(fileText),
+      setSelected,
+  );
+
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
         <input type="file" onChange={onFileSelect(setFileText)} />
         <div className={styles.container}>
-          <button onClick={pipe(
-              loadFile(setActions, setResolution)(fileText),
-              setSelected,
-          )}
+          <button onClick={loadHandler}
           >Load
           </button>
           <button onClick={
