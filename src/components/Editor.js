@@ -5,6 +5,7 @@ import {
   importFile,
   loadFile,
   updateAction,
+  addClick,
 } from '../core';
 import {
   pipe,
@@ -61,6 +62,16 @@ const Editor = () => {
                   fileText,
               );
 
+  const getIndex = () => (selected == null)
+      ? actions.length
+      : selected + 1;
+
+  const addClickHandler = (coord: Coord) => pipe(
+      getIndex,
+      addClick(coord, actions),
+      setActions,
+  );
+
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
@@ -101,6 +112,7 @@ const Editor = () => {
               updateAction(selected, x, y, duration),
               setActions,
           )(actions),
+          addClick: addClickHandler,
         }}
         />
       </div>

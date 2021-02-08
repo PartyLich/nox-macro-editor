@@ -13,6 +13,7 @@ type Props = {
   resolution: Coord,
   selected: ?number,
   updateAction: (number, number, number) => void,
+  addClick: (Coord) => void,
 };
 
 const Controls = ({
@@ -20,6 +21,7 @@ const Controls = ({
   resolution: { x: resX, y: resY } = { x: 0, y: 0 },
   selected,
   updateAction,
+  addClick,
 }: Props) => {
   let x = 0;
   let y = 0;
@@ -34,6 +36,9 @@ const Controls = ({
 
   return (
     <div className={styles.controls}>
+      <button onClick={addClick({ x: x, y: y })}
+      >Click
+      </button>
       <div className={styles.controls__inputs}>
         <div>
           <IntegerInput
