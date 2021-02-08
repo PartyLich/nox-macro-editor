@@ -1,7 +1,12 @@
 // @flow
 const curry = require('fn-curry');
 
-import { types } from './actions';
+import {
+  types,
+  clickAction,
+  releaseAction,
+  waitAction,
+} from './actions';
 import type { Action, Coord } from './actions';
 import { deserialize } from './serialize';
 import {
@@ -141,13 +146,29 @@ const loadFile = (
   )(fileText);
 };
 
+// add a new click (with mouse release)
+const addClick = (
+    coord: Coord,
+    actions: Array<Action>,
+    ind: number,
+) => {
+  const click = Array.of(
+      clickAction(coord),
+      waitAction(),
+      releaseAction(),
+  );
+  return insert(actions, ind)(click);
+};
+
 // curry all the things
 const cLoadFile = curry(loadFile);
 const cImportFile = curry(importFile);
 const cUpdateAction = curry(updateAction);
+const cAddClick = curry(addClick);
 
 export {
-  cLoadFile as loadFile,
+  cAddClick as addClick,
   cImportFile as importFile,
+  cLoadFile as loadFile,
   cUpdateAction as updateAction,
 };
