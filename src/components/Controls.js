@@ -15,6 +15,7 @@ type Props = {
   updateAction: (number, number, number) => void,
   addClick: (Coord) => void,
   addDrag: (Coord) => void,
+  addWait: (number) => void,
 };
 
 const Controls = ({
@@ -24,6 +25,7 @@ const Controls = ({
   updateAction,
   addClick,
   addDrag,
+  addWait,
 }: Props) => {
   let x = 0;
   let y = 0;
@@ -43,6 +45,9 @@ const Controls = ({
       </button>
       <button onClick={addDrag({ x: x, y: y })}
       >Drag
+      </button>
+      <button onClick={addWait(duration)}
+      >Wait
       </button>
       <div className={styles.controls__inputs}>
         <div>

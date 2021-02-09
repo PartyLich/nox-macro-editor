@@ -7,6 +7,7 @@ import {
   updateAction,
   addClick,
   addDrag,
+  addWait,
 } from '../core';
 import {
   pipe,
@@ -79,6 +80,12 @@ const Editor = () => {
       setActions,
   );
 
+  const addWaitHandler = (duration: number) => pipe(
+      getIndex,
+      addWait(duration, actions),
+      setActions,
+  );
+
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
@@ -120,6 +127,7 @@ const Editor = () => {
               setActions,
           )(actions),
           addClick: addClickHandler,
+          addWait: addWaitHandler,
           addDrag: addDragHandler,
         }}
         />
