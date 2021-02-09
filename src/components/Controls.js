@@ -13,6 +13,9 @@ type Props = {
   resolution: Coord,
   selected: ?number,
   updateAction: (number, number, number) => void,
+  addClick: (Coord) => void,
+  addDrag: (Coord) => void,
+  addWait: (number) => void,
 };
 
 const Controls = ({
@@ -20,6 +23,9 @@ const Controls = ({
   resolution: { x: resX, y: resY } = { x: 0, y: 0 },
   selected,
   updateAction,
+  addClick,
+  addDrag,
+  addWait,
 }: Props) => {
   let x = 0;
   let y = 0;
@@ -34,6 +40,15 @@ const Controls = ({
 
   return (
     <div className={styles.controls}>
+      <button onClick={addClick({ x: x, y: y })}
+      >Click
+      </button>
+      <button onClick={addDrag({ x: x, y: y })}
+      >Drag
+      </button>
+      <button onClick={addWait(duration)}
+      >Wait
+      </button>
       <div className={styles.controls__inputs}>
         <div>
           <IntegerInput

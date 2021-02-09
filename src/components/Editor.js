@@ -5,6 +5,9 @@ import {
   importFile,
   loadFile,
   updateAction,
+  addClick,
+  addDrag,
+  addWait,
 } from '../core';
 import {
   pipe,
@@ -61,6 +64,28 @@ const Editor = () => {
                   fileText,
               );
 
+  const getIndex = () => (selected == null)
+      ? actions.length
+      : selected + 1;
+
+  const addClickHandler = (coord: Coord) => pipe(
+      getIndex,
+      addClick(coord, actions),
+      setActions,
+  );
+
+  const addDragHandler = (coord: Coord) => pipe(
+      getIndex,
+      addDrag(coord, actions),
+      setActions,
+  );
+
+  const addWaitHandler = (duration: number) => pipe(
+      getIndex,
+      addWait(duration, actions),
+      setActions,
+  );
+
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
@@ -101,6 +126,9 @@ const Editor = () => {
               updateAction(selected, x, y, duration),
               setActions,
           )(actions),
+          addClick: addClickHandler,
+          addWait: addWaitHandler,
+          addDrag: addDragHandler,
         }}
         />
       </div>
