@@ -175,16 +175,26 @@ const addDrag = (
   return insert(actions, ind)(drag);
 };
 
+// add a new wait
+const addWait = (duration: number, actions: Array<Action>, ind: number) => {
+  const wait = [
+    waitAction(duration),
+  ];
+  return insert(actions, ind)(wait);
+};
+
 // curry all the things
 const cLoadFile = curry(loadFile);
 const cImportFile = curry(importFile);
 const cUpdateAction = curry(updateAction);
 const cAddClick = curry(addClick);
 const cAddDrag = curry(addDrag);
+const cAddWait = curry(addWait);
 
 export {
   cAddClick as addClick,
   cAddDrag as addDrag,
+  cAddWait as addWait,
   cImportFile as importFile,
   cLoadFile as loadFile,
   cUpdateAction as updateAction,

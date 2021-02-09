@@ -4,6 +4,7 @@ import { types } from '../src/actions';
 import {
   addClick,
   addDrag,
+  addWait,
 } from '../src/core';
 
 
@@ -87,6 +88,46 @@ test('addDrag()', (t) => {
 
     {
       const actual = addDrag(coord)(data)(0);
+      t.deepEqual(actual, expected, '(curried)' + msg);
+      t.notDeepEqual(actual, data, 'does not mutate input');
+    }
+  }
+
+  t.end();
+});
+
+test('addWait()', (t) => {
+  {
+    const msg = 'adds a wait to empty array';
+    const duration = 1;
+    const data = [];
+    const expected = [
+      { type: types.WAIT, duration },
+    ];
+    const actual = addWait(duration, data, 0);
+    t.deepEqual(actual, expected, msg);
+    t.notDeepEqual(actual, data, 'does not mutate input');
+
+    {
+      const actual = addWait(duration)(data)(0);
+      t.deepEqual(actual, expected, '(curried)' + msg);
+      t.notDeepEqual(actual, data, 'does not mutate input');
+    }
+  }
+
+  {
+    const msg = 'adds a wait action set with default duration';
+    const duration = undefined;
+    const data = [];
+    const expected = [
+      { type: types.WAIT, duration: 1 },
+    ];
+    const actual = addWait(duration, data, 0);
+    t.deepEqual(actual, expected, msg);
+    t.notDeepEqual(actual, data, 'does not mutate input');
+
+    {
+      const actual = addWait(duration)(data)(0);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
