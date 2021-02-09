@@ -4,6 +4,7 @@ const curry = require('fn-curry');
 import {
   types,
   clickAction,
+  dragAction,
   releaseAction,
   waitAction,
 } from './actions';
@@ -160,14 +161,30 @@ const addClick = (
   return insert(actions, ind)(click);
 };
 
+// add a new drag (with mouse release)
+const addDrag = (
+    coord: Coord,
+    actions: Array<Action>,
+    ind: number,
+) => {
+  const drag = [
+    dragAction(coord),
+    waitAction(16),
+    releaseAction(),
+  ];
+  return insert(actions, ind)(drag);
+};
+
 // curry all the things
 const cLoadFile = curry(loadFile);
 const cImportFile = curry(importFile);
 const cUpdateAction = curry(updateAction);
 const cAddClick = curry(addClick);
+const cAddDrag = curry(addDrag);
 
 export {
   cAddClick as addClick,
+  cAddDrag as addDrag,
   cImportFile as importFile,
   cLoadFile as loadFile,
   cUpdateAction as updateAction,

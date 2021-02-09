@@ -3,6 +3,7 @@ import test from 'tape';
 import { types } from '../src/actions';
 import {
   addClick,
+  addDrag,
 } from '../src/core';
 
 
@@ -42,6 +43,50 @@ test('addClick()', (t) => {
 
     {
       const actual = addClick(coord)(data)(0);
+      t.deepEqual(actual, expected, '(curried)' + msg);
+      t.notDeepEqual(actual, data, 'does not mutate input');
+    }
+  }
+
+  t.end();
+});
+
+test('addDrag()', (t) => {
+  {
+    const msg = 'adds a drag, wait, and release to empty array';
+    const coord = { x: 0, y: 0 };
+    const data = [];
+    const expected = [
+      { type: types.MDRAG, ...coord },
+      { type: types.WAIT, duration: 16 },
+      { type: types.MRELEASE },
+    ];
+    const actual = addDrag(coord, data, 0);
+    t.deepEqual(actual, expected, msg);
+    t.notDeepEqual(actual, data, 'does not mutate input');
+
+    {
+      const actual = addDrag(coord)(data)(0);
+      t.deepEqual(actual, expected, '(curried)' + msg);
+      t.notDeepEqual(actual, data, 'does not mutate input');
+    }
+  }
+
+  {
+    const msg = 'adds a drag action set with default coord';
+    const coord = undefined;
+    const data = [];
+    const expected = [
+      { type: types.MDRAG, ...{ x: 0, y: 0 } },
+      { type: types.WAIT, duration: 16 },
+      { type: types.MRELEASE },
+    ];
+    const actual = addDrag(coord, data, 0);
+    t.deepEqual(actual, expected, msg);
+    t.notDeepEqual(actual, data, 'does not mutate input');
+
+    {
+      const actual = addDrag(coord)(data)(0);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
