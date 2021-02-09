@@ -14,6 +14,7 @@ type Props = {
   selected: ?number,
   updateAction: (number, number, number) => void,
   addClick: (Coord) => void,
+  addDrag: (Coord) => void,
 };
 
 const Controls = ({
@@ -22,6 +23,7 @@ const Controls = ({
   selected,
   updateAction,
   addClick,
+  addDrag,
 }: Props) => {
   let x = 0;
   let y = 0;
@@ -38,6 +40,9 @@ const Controls = ({
     <div className={styles.controls}>
       <button onClick={addClick({ x: x, y: y })}
       >Click
+      </button>
+      <button onClick={addDrag({ x: x, y: y })}
+      >Drag
       </button>
       <div className={styles.controls__inputs}>
         <div>

@@ -6,6 +6,7 @@ import {
   loadFile,
   updateAction,
   addClick,
+  addDrag,
 } from '../core';
 import {
   pipe,
@@ -72,6 +73,12 @@ const Editor = () => {
       setActions,
   );
 
+  const addDragHandler = (coord: Coord) => pipe(
+      getIndex,
+      addDrag(coord, actions),
+      setActions,
+  );
+
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
@@ -113,6 +120,7 @@ const Editor = () => {
               setActions,
           )(actions),
           addClick: addClickHandler,
+          addDrag: addDragHandler,
         }}
         />
       </div>
