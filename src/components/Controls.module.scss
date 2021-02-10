@@ -1,8 +1,26 @@
+@use './base';
+
 .controls {
+  @include base.owl-col(base.gap(1.5));
+
+  padding: base.$space-default;
+
+  &__buttons {
+    @include base.owl-row;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: base.$space-sm;
+  }
+
   &__inputs {
+    @include base.owl-col;
+
     align-items: flex-end;
     display: flex;
     flex-direction: column;
+    padding: base.$space-sm;
   }
 }
 
