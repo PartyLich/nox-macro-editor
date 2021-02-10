@@ -4,6 +4,7 @@ import {
   DragDropContext,
   Droppable,
 } from 'react-beautiful-dnd';
+import Paper from '@material-ui/core/Paper';
 
 import { ActionItem } from '.';
 import type { Action } from '../actions';
@@ -35,7 +36,7 @@ const ActionList = ({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className={styles.container}>
+      <Paper elevation={3} className={styles.container}>
         <Droppable
           droppableId="list"
           type="ACTION"
@@ -49,7 +50,7 @@ const ActionList = ({
             </div>
           )}
         </Droppable >
-      </div>
+      </Paper>
     </DragDropContext>
   );
 };
