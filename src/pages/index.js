@@ -1,11 +1,14 @@
 // @flow
 import React from 'react';
 
-import { Editor } from '../components';
+import { Editor, Page } from '../components';
 
+const TITLE = 'Macro Editor';
 
 const Index = () => (
-  <Editor />
+  <Page title={TITLE}>
+    <Editor />
+  </Page>
 );
 
 export default Index;
