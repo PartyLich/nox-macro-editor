@@ -47,8 +47,8 @@ const IntegerInput = ({
   );
 
   const baseName = isValid
-    ? styles['int_input']
-    : `${ styles['int_input'] } ${ styles['int_input--invalid'] }`
+    ? styles['int-input']
+    : `${ styles['int-input'] } ${ styles['int-input--invalid'] }`
   ;
 
   return (

@@ -8,7 +8,7 @@
   min-width: 100px;
   padding: 5px;
 
-  & > * + * {
-    margin-top: .25em;
+  > * + * {
+    margin-top: 0.25em;
   }
 }

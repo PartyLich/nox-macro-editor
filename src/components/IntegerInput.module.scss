@@ -1,11 +1,10 @@
-.int_input {
-
+.int-input {
   &--invalid {
     background: rgba(255, 0, 0, 0.48);
-    border-color: red;
+    border-color: rgb(255, 0, 0);
 
     &:focus {
-      outline: red auto 2px;
+      outline: rgb(255, 0, 0) auto 2px;
     }
   }
 }
