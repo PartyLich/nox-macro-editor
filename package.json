@@ -24,7 +24,7 @@
     "watch:flow": "watch -t 'npx flow'",
     "watch:lint": "watch 'npm run lint'",
     "watch:source": "watch 'clear && npm run verify' src test",
-    "watch": "npm run watch:server & npm run watch:source",
+    "watch": "npm run watch:source",
     "lwatch": "watch -c -n 5 -t 'clear && npm run -s test && flow && npm run lint'"
   },
   "husky": {
