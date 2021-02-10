@@ -1,0 +1,71 @@
+$bg-dark: rgb(222, 184, 135);
+$text-dark: rgb(255, 255, 255);
+
+$bg-light: rgb(255, 255, 255);
+$text-light: rgb(0, 0, 0);
+
+$space-sm: 4px;
+$space-default: 8px;
+
+// Small tablets and large smartphones (landscape view)
+$screen-sm-min: 576px;
+
+// Small tablets (portrait view)
+$screen-md-min: 768px;
+
+// Tablets and small desktops
+$screen-lg-min: 992px;
+
+// Large tablets and desktops
+$screen-xl-min: 1200px;
+
+// mobile
+@mixin mobile {
+  @media (max-width: #{$screen-sm-min}) {
+    @content;
+  }
+}
+
+// Small devices
+@mixin sm {
+  @media (min-width: #{$screen-sm-min}) {
+    @content;
+  }
+}
+
+// Medium devices
+@mixin md {
+  @media (min-width: #{$screen-md-min}) {
+    @content;
+  }
+}
+
+// Large devices
+@mixin lg {
+  @media (min-width: #{$screen-lg-min}) {
+    @content;
+  }
+}
+
+// Extra large devices
+@mixin xl {
+  @media (min-width: #{$screen-xl-min}) {
+    @content;
+  }
+}
+
+@mixin owl-row($margin: $space-default) {
+  > * + * {
+    margin-left: $margin;
+  }
+}
+
+@mixin owl-col($margin: $space-default) {
+  > * + * {
+    margin-top: $margin;
+  }
+}
+
+@function gap($increment: 1) {
+  @return $increment * $space-default;
+}
