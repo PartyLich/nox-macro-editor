@@ -1,0 +1,13 @@
+@use './base';
+
+
+.body {
+  background: base.$bg-light;
+  color: base.$text-light;
+  scroll-behavior: smooth;
+
+  &--dark {
+    background: base.$bg-dark;
+    color: base.$text-dark;
+  }
+}
