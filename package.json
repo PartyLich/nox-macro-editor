@@ -35,6 +35,7 @@
     }
   },
   "dependencies": {
+    "@material-ui/icons": "^4.11.2",
     "fn-curry": "0.0.1",
     "next": "^10.0.5",
     "react": "^17.0.1",
