@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import SaveIcon from '@material-ui/icons/Save';
@@ -128,36 +129,46 @@ const Editor = () => {
           </Box>
         </div>
       </div>
-      <div className={styles.container}>
-        <ActionList {...{
-          actions,
-          selected,
-          setSelected,
-          reorder: (from: number, to: number) => {
-            setActions(reorder(from, to)(actions));
-            setSelected(to);
-          },
-          remove: (ind: number) => {
-            setActions(removeAt(ind, actions));
-            const nextItem = Math.min(ind, actions.length - 2);
-            setSelected(nextItem);
-          },
-        }}
-        />
-        <Controls {...{
-          actions,
-          resolution,
-          selected,
-          updateAction: (x, y, duration) => pipe(
-              updateAction(selected, x, y, duration),
-              setActions,
-          )(actions),
-          addClick: addClickHandler,
-          addWait: addWaitHandler,
-          addDrag: addDragHandler,
-        }}
-        />
-      </div>
+      <Grid
+        container
+        alignItems="flex-start"
+        direction="row"
+        spacing={2}
+        wrap="nowrap"
+      >
+        <Grid item xs={10}>
+          <ActionList {...{
+            actions,
+            selected,
+            setSelected,
+            reorder: (from: number, to: number) => {
+              setActions(reorder(from, to)(actions));
+              setSelected(to);
+            },
+            remove: (ind: number) => {
+              setActions(removeAt(ind, actions));
+              const nextItem = Math.min(ind, actions.length - 2);
+              setSelected(nextItem);
+            },
+          }}
+          />
+        </Grid>
+        <Grid item xs={10}>
+          <Controls {...{
+            actions,
+            resolution,
+            selected,
+            updateAction: (x, y, duration) => pipe(
+                updateAction(selected, x, y, duration),
+                setActions,
+            )(actions),
+            addClick: addClickHandler,
+            addWait: addWaitHandler,
+            addDrag: addDragHandler,
+          }}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 };
