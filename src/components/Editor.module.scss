@@ -1,12 +1,13 @@
+@use './base';
+
 .container {
+  @include base.owl-row;
+
   display: flex;
   flex-direction: row;
-
-  > * + * {
-    margin-left: 0.25em;
-  }
 }
 
 .controls {
   justify-content: space-between;
+  margin-bottom: base.gap(2);
 }

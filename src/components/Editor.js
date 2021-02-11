@@ -1,5 +1,10 @@
 // @flow
 import React, { useState } from 'react';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import SaveIcon from '@material-ui/icons/Save';
 
 import {
   importFile,
@@ -89,17 +94,38 @@ const Editor = () => {
   return (
     <>
       <div className={[styles.container, styles.controls].join(' ')}>
-        <input type="file" onChange={onFileSelect(setFileText)} />
+        <div>
+          <input type="file" onChange={onFileSelect(setFileText)} />
+        </div>
         <div className={styles.container}>
-          <button onClick={loadHandler}
+          <Button
+            color="primary"
+            onClick={loadHandler}
+            variant="contained"
+            size="small"
+            startIcon={<InsertDriveFileIcon />}
           >Load
-          </button>
-          <button onClick={importHandler}
-          >Import
-          </button>
-          <button onClick={saveFile}
-          >Save
-          </button>
+          </Button>
+          <Box >
+            <Button
+              color="primary"
+              onClick={importHandler}
+              variant="contained"
+              size="small"
+              startIcon={<AddToPhotosIcon />}
+            >Import
+            </Button>
+          </Box>
+          <Box >
+            <Button
+              color="primary"
+              onClick={saveFile}
+              variant="contained"
+              size="small"
+              startIcon={<SaveIcon />}
+            >Save
+            </Button>
+          </Box>
         </div>
       </div>
       <div className={styles.container}>
