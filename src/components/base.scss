@@ -1,8 +1,8 @@
-$bg-dark: rgb(222, 184, 135);
+$bg-dark: rgb(48, 48, 48);
 $text-dark: rgb(255, 255, 255);
 
-$bg-light: rgb(255, 255, 255);
-$text-light: rgb(0, 0, 0);
+$bg-light: rgb(250, 250, 250);
+$text-light: rgba(0, 0, 0, 0.87);
 
 $space-sm: 4px;
 $space-default: 8px;
@@ -50,6 +50,12 @@ $screen-xl-min: 1200px;
 // Extra large devices
 @mixin xl {
   @media (min-width: #{$screen-xl-min}) {
+    @content;
+  }
+}
+
+@mixin prefers-dark {
+  @media (prefers-color-scheme: dark) {
     @content;
   }
 }

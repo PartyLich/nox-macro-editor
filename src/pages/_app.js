@@ -1,12 +1,28 @@
 // import App from 'next/app'
+import React from 'react';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 // global stylesheet
 import '../components/styles.scss';
 
 
 const MyApp = ({ Component, pageProps }) => {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+      () => createMuiTheme({
+        palette: {
+          type: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+      [prefersDarkMode],
+  );
+
   return (
-    <Component {...pageProps} />
+    <ThemeProvider theme={theme}>
+      <Component {...pageProps} />
+    </ThemeProvider>
   );
 };
 
