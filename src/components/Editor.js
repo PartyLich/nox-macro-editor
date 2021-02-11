@@ -1,11 +1,6 @@
 // @flow
 import React, { useState } from 'react';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
-import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
-import SaveIcon from '@material-ui/icons/Save';
 
 import {
   importFile,
@@ -22,10 +17,8 @@ import {
   download,
 } from '../util';
 import { serialize } from '../serialize';
-import { ActionList, Controls } from '.';
+import { ActionList, Controls, FileControls } from '.';
 import type { Action, Coord } from '../actions';
-
-import styles from './Editor.module.scss';
 
 
 // convert file to text on selection
@@ -94,41 +87,13 @@ const Editor = () => {
 
   return (
     <>
-      <div className={[styles.container, styles.controls].join(' ')}>
-        <div>
-          <input type="file" onChange={onFileSelect(setFileText)} />
-        </div>
-        <div className={styles.container}>
-          <Button
-            color="primary"
-            onClick={loadHandler}
-            variant="contained"
-            size="small"
-            startIcon={<InsertDriveFileIcon />}
-          >Load
-          </Button>
-          <Box >
-            <Button
-              color="primary"
-              onClick={importHandler}
-              variant="contained"
-              size="small"
-              startIcon={<AddToPhotosIcon />}
-            >Import
-            </Button>
-          </Box>
-          <Box >
-            <Button
-              color="primary"
-              onClick={saveFile}
-              variant="contained"
-              size="small"
-              startIcon={<SaveIcon />}
-            >Save
-            </Button>
-          </Box>
-        </div>
-      </div>
+      <FileControls {...{
+        onFileSelect: onFileSelect(setFileText),
+        handleLoad: loadHandler,
+        handleImport: importHandler,
+        saveFile,
+      }}
+      />
       <Grid
         container
         alignItems="flex-start"
