@@ -1,6 +1,7 @@
 @use './base';
 
 .row {
+  align-items: center;
   border: solid 1px;
   border-radius: 5px;
   display: flex;
