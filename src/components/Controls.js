@@ -48,7 +48,7 @@ const Controls = ({
         <Typography variant="subtitle2">{'New Action'}</Typography>
         <Box>
           <Button
-            onClick={addClick({ x: x, y: y })}
+            onClick={addClick({ x, y })}
             variant="outlined"
             size="small"
           >Click
@@ -56,7 +56,7 @@ const Controls = ({
         </Box>
         <Box>
           <Button
-            onClick={addDrag({ x: x, y: y })}
+            onClick={addDrag({ x, y })}
             variant="outlined"
             size="small"
           >Drag
