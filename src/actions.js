@@ -47,13 +47,15 @@ export type ActionType =
   ;
 
 // Wait action creator
-export const waitAction = (duration: number): WaitAction => ({
+export const waitAction = (duration: number = 1): WaitAction => ({
   type: WAIT,
   duration,
 });
 
+const DEF_COORD: Coord = { x: 0, y: 0 };
+
 // Click action creator
-export const clickAction = (coord: Coord): ClickAction => ({
+export const clickAction = (coord: Coord = DEF_COORD): ClickAction => ({
   type: CLICK,
   ...coord,
 });
@@ -64,7 +66,7 @@ export const noneAction = (): NoneAction => ({
 });
 
 // Drag action creator
-export const dragAction = (coord: Coord): DragAction => ({
+export const dragAction = (coord: Coord = DEF_COORD): DragAction => ({
   type: MDRAG,
   ...coord,
 });

@@ -1,0 +1,10 @@
+@use './base';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  max-width: 1024px;
+  min-height: 95vh;
+  padding: base.gap(1.5);
+}

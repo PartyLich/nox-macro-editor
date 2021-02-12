@@ -1,0 +1,27 @@
+@use './base';
+
+.footer {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: auto;
+  max-height: 2.5em;
+
+  a,
+  span {
+    color: inherit;
+    padding: 1em 0.25em;
+  }
+
+  &__NavBar {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__address {
+    @include base.mobile {
+      display: none;
+    }
+  }
+}

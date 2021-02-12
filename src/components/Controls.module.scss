@@ -1,10 +1,30 @@
-.controls {
-}
+@use './base';
 
-.controls__inputs {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+.controls {
+  @include base.owl-col(base.gap(1.5));
+
+  &__buttons {
+    @include base.owl-row;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: base.$space-sm;
+  }
+
+  &__inputs {
+    @include base.owl-col;
+
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    padding: base.$space-sm;
+  }
+
+  &__title {
+    align-self: flex-start;
+    padding-inline-start: base.$space-sm;
+  }
 }
 
 .input {

@@ -1,0 +1,14 @@
+.navbar {
+  display: flex;
+  flex-direction: row;
+
+  &__link {
+    color: rgb(0, 0, 0);
+    padding: 1em 0.25em;
+    text-decoration: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
