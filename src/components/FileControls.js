@@ -2,17 +2,20 @@
 import React, { useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+
 import AddToPhotosIcon from '@material-ui/icons/AddToPhotos';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import SaveIcon from '@material-ui/icons/Save';
 
-import { ConfirmDialog } from '.';
+import { ConfirmDialog, FileInput } from '.';
 import { pipe } from '../util';
 
 import styles from './FileControls.module.scss';
 
 
 type Props = {
+  filename: string,
   onFileSelect: function,
   handleLoad: () => void,
   handleImport: () => void,
@@ -20,6 +23,7 @@ type Props = {
 };
 
 const FileControls = ({
+  filename,
   onFileSelect,
   handleLoad,
   handleImport,
@@ -40,9 +44,10 @@ const FileControls = ({
 
   return (
     <div className={[styles.container, styles.controls].join(' ')}>
-      <div>
-        <input type="file" onChange={onFileSelect} />
-      </div>
+      <FileInput onChange={onFileSelect} />
+      {Boolean(filename) &&
+        <Typography variant="subtitle1">{filename}</Typography>
+      }
       <div className={styles.container}>
         <Button
           color="primary"

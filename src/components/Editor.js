@@ -29,14 +29,17 @@ const onFileSelect = (setStateFn: function) => (evt) => {
 
   file
       .text()
-      .then(setStateFn);
+      .then((text) => setStateFn({
+        text,
+        name: file.name,
+      }));
 };
 
 
 const Editor = () => {
   const [actions: Array<Action>, setActions] = useState([]);
   const [selected: ?number, setSelected] = useState(null);
-  const [fileText: string, setFileText] = useState('');
+  const [file: {text: string, name: string}, setFile] = useState({ text: '', name: '' });
   const [resolution: Coord, setResolution] = useState({ x: 900, y: 1600 });
 
   // initiate download of the current Action list
@@ -49,18 +52,18 @@ const Editor = () => {
 
   // load macro then reset selection
   const loadHandler = pipe(
-      loadFile(setActions, setResolution)(fileText),
+      loadFile(setActions, setResolution)(file.text),
       setSelected,
   );
 
   // load if Action list is currently empty
   const importHandler = (!actions.length)
-              ? loadFile(setActions, setResolution)(fileText)
+              ? loadFile(setActions, setResolution)(file.text)
               : importFile(setActions)(
                   actions,
                   selected,
                   resolution,
-                  fileText,
+                  file.text,
               );
 
   const getIndex = () => (selected == null)
@@ -88,7 +91,8 @@ const Editor = () => {
   return (
     <>
       <FileControls {...{
-        onFileSelect: onFileSelect(setFileText),
+        filename: file.name,
+        onFileSelect: onFileSelect(setFile),
         handleLoad: loadHandler,
         handleImport: importHandler,
         saveFile,
