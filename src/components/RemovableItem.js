@@ -1,5 +1,7 @@
 // @flow
 import React, { type Node } from 'react';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 type RemovableItemProps = {
@@ -22,7 +24,15 @@ const RemovableItem = ({
     <>
       {children}
       {selected &&
-        <button onClick={handleClick}>X</button>
+          <IconButton
+            aria-label="delete"
+            color="secondary"
+            edge="end"
+            onClick={handleClick}
+            size="small"
+          >
+            <DeleteIcon />
+          </IconButton>
       }
     </>
   );

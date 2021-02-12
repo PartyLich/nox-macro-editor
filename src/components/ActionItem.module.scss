@@ -1,4 +1,7 @@
+@use './base';
+
 .row {
+  align-items: center;
   border: solid 1px;
   border-radius: 5px;
   display: flex;
@@ -7,6 +10,10 @@
   padding: 5px;
 
   &__selected {
-    background: #c4f7f79e;
+    background: rgba(109, 232, 232, 0.8);
+
+    @include base.prefers-dark {
+      background: rgba(0, 57, 60, 0.85);
+    }
   }
 }

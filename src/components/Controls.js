@@ -1,5 +1,9 @@
 // @flow
 import React from 'react';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 import { IntegerInput } from '.';
 import { isInBounds } from '../util';
@@ -39,31 +43,53 @@ const Controls = ({
   }
 
   return (
-    <div className={styles.controls}>
-      <button onClick={addClick({ x: x, y: y })}
-      >Click
-      </button>
-      <button onClick={addDrag({ x: x, y: y })}
-      >Drag
-      </button>
-      <button onClick={addWait(duration)}
-      >Wait
-      </button>
-      <div className={styles.controls__inputs}>
-        <div>
-          <IntegerInput
-            classNames={styles['input--short']}
-            label="Resolution X"
-            value={resX}
-            update={ (_x) => _x }
-          />
-          <IntegerInput
-            classNames={styles['input--short']}
-            label="Resolution Y"
-            value={resY}
-            update={ (_y) => _y }
-          />
-        </div>
+    <Box className={styles.controls}>
+      <Paper elevation={2} className={styles.controls__buttons}>
+        <Typography variant="subtitle2">{'New Action'}</Typography>
+        <Box>
+          <Button
+            onClick={addClick({ x, y })}
+            variant="outlined"
+            size="small"
+          >Click
+          </Button>
+        </Box>
+        <Box>
+          <Button
+            onClick={addDrag({ x, y })}
+            variant="outlined"
+            size="small"
+          >Drag
+          </Button>
+        </Box>
+        <Box>
+          <Button
+            onClick={addWait(duration)}
+            variant="outlined"
+            size="small"
+          >Wait
+          </Button>
+        </Box>
+      </Paper>
+      <Paper elevation={2} className={styles.controls__inputs}>
+        <Typography variant="subtitle2" className={styles.controls__title}>
+          {'Resolution'}
+        </Typography>
+        <IntegerInput
+          label="Resolution X"
+          value={resX}
+          update={ (_x) => _x }
+        />
+        <IntegerInput
+          label="Resolution Y"
+          value={resY}
+          update={ (_y) => _y }
+        />
+      </Paper>
+      <Paper elevation={2} className={styles.controls__inputs}>
+        <Typography variant="subtitle2" className={styles.controls__title}>
+          {'Selected Action'}
+        </Typography>
         <IntegerInput
           label="X"
           value={x}
@@ -79,8 +105,8 @@ const Controls = ({
           value={duration}
           update={ (_duration) => updateAction(x, y, _duration) }
         />
-      </div>
-    </div>
+      </Paper>
+    </Box>
   );
 };
 

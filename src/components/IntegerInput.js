@@ -1,5 +1,6 @@
 // @flow
 import React, { useState, useEffect } from 'react';
+import TextField from '@material-ui/core/TextField';
 
 import { isInt } from '../util';
 
@@ -46,20 +47,19 @@ const IntegerInput = ({
       [value],
   );
 
-  const baseName = isValid
-    ? styles['int-input']
-    : `${ styles['int-input'] } ${ styles['int-input--invalid'] }`
-  ;
+  const baseName = styles['int-input'];
 
   return (
-    <label>{label}
-      <input
-        type="text"
-        value={displayVal}
-        onChange={handleChange}
-        className={[baseName].concat(classNames).join(' ')}
-      />
-    </label>
+    <TextField
+      className={[baseName].concat(classNames).join(' ')}
+      error={!isValid}
+      label={label}
+      margin="dense"
+      onChange={handleChange}
+      size="small"
+      value={displayVal}
+      variant="outlined"
+    />
   );
 };
 
