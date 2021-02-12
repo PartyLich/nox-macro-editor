@@ -3,14 +3,12 @@
 .controls {
   @include base.owl-col(base.gap(1.5));
 
-  padding: base.$space-default;
-
   &__buttons {
     @include base.owl-row;
 
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     padding: base.$space-sm;
   }
 

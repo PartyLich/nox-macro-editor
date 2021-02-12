@@ -43,7 +43,7 @@ const Controls = ({
   }
 
   return (
-    <Paper elevation={3} className={styles.controls}>
+    <Box className={styles.controls}>
       <Paper elevation={2} className={styles.controls__buttons}>
         <Typography variant="subtitle2">{'New Action'}</Typography>
         <Box>
@@ -106,7 +106,7 @@ const Controls = ({
           update={ (_duration) => updateAction(x, y, _duration) }
         />
       </Paper>
-    </Paper>
+    </Box>
   );
 };
 
