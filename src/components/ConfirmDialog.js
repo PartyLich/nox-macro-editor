@@ -6,6 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { useId } from 'react-id-generator';
 
 
 type Props = {
@@ -23,21 +24,23 @@ const ConfirmDialog = ({
   open,
   title,
 }: Props) => {
+  const [titleId] = useId();
+  const [descriptionId] = useId();
+
   return (
     <Dialog
       open={open}
       onClose={handleNo}
-      // TODO: generate unique ids for accessibility
-      // aria-labelledby={uniqueTitleId}
-      // aria-describedby={uniqueDescId}
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
     >
       <DialogTitle
-        // id={uniqueTitleId}
+        id={titleId}
       >{title}
       </DialogTitle>
       <DialogContent>
         <DialogContentText
-          // id={uniqueDescId}
+          id={descriptionId}
         >{description}
         </DialogContentText>
       </DialogContent>
