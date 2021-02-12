@@ -2,6 +2,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 import { IntegerInput } from '.';
@@ -44,6 +45,7 @@ const Controls = ({
   return (
     <Paper elevation={3} className={styles.controls}>
       <Paper elevation={2} className={styles.controls__buttons}>
+        <Typography variant="subtitle2">{'New Action'}</Typography>
         <Box>
           <Button
             onClick={addClick({ x: x, y: y })}
@@ -70,6 +72,9 @@ const Controls = ({
         </Box>
       </Paper>
       <Paper elevation={2} className={styles.controls__inputs}>
+        <Typography variant="subtitle2" className={styles.controls__title}>
+          {'Resolution'}
+        </Typography>
         <IntegerInput
           label="Resolution X"
           value={resX}
@@ -82,6 +87,9 @@ const Controls = ({
         />
       </Paper>
       <Paper elevation={2} className={styles.controls__inputs}>
+        <Typography variant="subtitle2" className={styles.controls__title}>
+          {'Selected Action'}
+        </Typography>
         <IntegerInput
           label="X"
           value={x}
