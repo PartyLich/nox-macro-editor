@@ -3,6 +3,7 @@ export { default as ActionList } from './ActionList';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as Controls } from './Controls';
 export { default as FileControls } from './FileControls';
+export { default as FileInput } from './FileInput';
 export { default as IntegerInput } from './IntegerInput';
 export { default as Editor } from './Editor';
 
