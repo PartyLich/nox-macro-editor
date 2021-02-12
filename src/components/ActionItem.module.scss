@@ -10,7 +10,7 @@
   padding: 5px;
 
   &__selected {
-    background: rgba(196, 247, 247, 0.62);
+    background: rgba(109, 232, 232, 0.8);
 
     @include base.prefers-dark {
       background: rgba(0, 57, 60, 0.85);
