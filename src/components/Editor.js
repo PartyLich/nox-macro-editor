@@ -88,6 +88,22 @@ const Editor = () => {
       setActions,
   );
 
+  const handleRemove = (ind: number) => {
+    setActions(removeAt(ind, actions));
+    const nextItem = Math.min(ind, actions.length - 2);
+    setSelected(nextItem);
+  };
+
+  const handleReorder = (from: number, to: number) => {
+    setActions(reorder(from, to)(actions));
+    setSelected(to);
+  };
+
+  const handleUpdate = (x, y, duration) => pipe(
+      updateAction(selected, x, y, duration),
+      setActions,
+  )(actions);
+
   return (
     <>
       <FileControls {...{
@@ -110,15 +126,8 @@ const Editor = () => {
             actions,
             selected,
             setSelected,
-            reorder: (from: number, to: number) => {
-              setActions(reorder(from, to)(actions));
-              setSelected(to);
-            },
-            remove: (ind: number) => {
-              setActions(removeAt(ind, actions));
-              const nextItem = Math.min(ind, actions.length - 2);
-              setSelected(nextItem);
-            },
+            reorder: handleReorder,
+            remove: handleRemove,
           }}
           />
         </Grid>
@@ -127,10 +136,7 @@ const Editor = () => {
             actions,
             resolution,
             selected,
-            updateAction: (x, y, duration) => pipe(
-                updateAction(selected, x, y, duration),
-                setActions,
-            )(actions),
+            updateAction: handleUpdate,
             addClick: addClickHandler,
             addWait: addWaitHandler,
             addDrag: addDragHandler,
