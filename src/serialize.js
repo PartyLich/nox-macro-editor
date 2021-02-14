@@ -169,7 +169,7 @@ const tokenizeLines: (Array<string>) => Array<Array<string>> = pipe(
 );
 
 // deserialize a Nox macro
-const deserialize: (lines: string) => Array<Action> = pipe(
+const deserialize: (lines: string) => ParsedActions = pipe(
     splitLines,
     tokenizeLines,
     linesToActions,
