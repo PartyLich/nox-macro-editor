@@ -15,6 +15,7 @@ import type {
   ClickAction,
   DragAction,
 } from './actions';
+import type { Serializer } from './serializer';
 
 
 // Returns true if a string is empty, false otherwise
@@ -246,7 +247,15 @@ const serialize = (resolution: Coord, actions: Array<Action>): string => {
   return res;
 };
 
+const noxSerializer = (): Serializer =>{
+  return Object.assign({}, {
+    deserialize,
+    serialize,
+  });
+};
+
 export {
   deserialize,
   serialize,
+  noxSerializer,
 };
