@@ -42,6 +42,8 @@ const FileControls = ({
       closeAlert,
   );
 
+  const noop = () => null;
+
   return (
     <div className={[styles.container, styles.controls].join(' ')}>
       <FileInput onChange={onFileSelect} />
@@ -51,7 +53,7 @@ const FileControls = ({
       <div className={styles.container}>
         <Button
           color="primary"
-          onClick={openAlert}
+          onClick={(filename) ? openAlert : noop}
           variant="contained"
           size="small"
           startIcon={<InsertDriveFileIcon />}
@@ -60,7 +62,7 @@ const FileControls = ({
         <Box >
           <Button
             color="primary"
-            onClick={handleImport}
+            onClick={(filename) ? handleImport : noop}
             variant="contained"
             size="small"
             startIcon={<AddToPhotosIcon />}
