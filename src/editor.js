@@ -60,7 +60,7 @@ const makeEditor =
       ),
 
       addWait: (duration) => pipe(
-          addWait(duration, actions ),
+          addWait(duration, actions),
           setActions,
       ),
 

@@ -4,7 +4,7 @@ import React from 'react';
 import styles from './Header.module.scss';
 
 
-type Props = {}
+type Props = {};
 
 const Header = ({}: Props) => {
   return (
