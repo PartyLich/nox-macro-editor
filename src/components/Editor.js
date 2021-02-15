@@ -58,13 +58,13 @@ const Editor = () => {
   };
 
   // load macro then reset selection
-  const loadHandler = pipe(
+  const handleLoad = pipe(
       loadFile(setActions, setResolution)(file.text),
       setSelected,
   );
 
   // load if Action list is currently empty
-  const importHandler = (!actions.length)
+  const handleImport = (!actions.length)
               ? loadFile(setActions, setResolution)(file.text)
               : importFile(setActions)(
                   actions,
@@ -77,19 +77,19 @@ const Editor = () => {
       ? actions.length
       : selected + 1;
 
-  const addClickHandler = (coord: Coord) => pipe(
+  const handleAddClick = (coord: Coord) => pipe(
       getIndex,
       addClick(coord, actions),
       setActions,
   );
 
-  const addDragHandler = (coord: Coord) => pipe(
+  const handleAddDrag = (coord: Coord) => pipe(
       getIndex,
       addDrag(coord, actions),
       setActions,
   );
 
-  const addWaitHandler = (duration: number) => pipe(
+  const handleAddWait = (duration: number) => pipe(
       getIndex,
       addWait(duration, actions),
       setActions,
@@ -116,8 +116,8 @@ const Editor = () => {
       <FileControls {...{
         filename: file.name,
         onFileSelect: onFileSelect(setFile),
-        handleLoad: loadHandler,
-        handleImport: importHandler,
+        handleLoad,
+        handleImport,
         saveFile,
       }}
       />
@@ -144,9 +144,9 @@ const Editor = () => {
             resolution,
             selected,
             updateAction: handleUpdate,
-            addClick: addClickHandler,
-            addWait: addWaitHandler,
-            addDrag: addDragHandler,
+            addClick: handleAddClick,
+            addWait: handleAddWait,
+            addDrag: handleAddDrag,
           }}
           />
         </Grid>
