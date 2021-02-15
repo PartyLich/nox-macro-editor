@@ -25,7 +25,14 @@ import type { Action, Coord } from '../actions';
 const onFileSelect = (setStateFn: function) => (evt) => {
   const fileList = evt.target.files;
   const file = fileList.item(0);
-  if (!file) return;
+  if (!file) {
+    // reset file state
+    setStateFn({
+      text: '',
+      name: '',
+    });
+    return;
+  }
 
   file
       .text()
