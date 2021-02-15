@@ -3,22 +3,12 @@ import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 
 import {
-  importFile,
-  loadFile,
-  updateAction,
-  addClick,
-  addDrag,
-  addWait,
-} from '../core';
-import {
   pipe,
-  reorder,
-  removeAt,
   download,
 } from '../util';
-import { serialize } from '../serialize';
 import { ActionList, Controls, FileControls } from '.';
 import type { Action, Coord } from '../actions';
+import type { Editor as EditorType } from '../editor';
 
 
 // convert file to text on selection
@@ -43,15 +33,25 @@ const onFileSelect = (setStateFn: function) => (evt) => {
 };
 
 
-const Editor = () => {
-  const [actions: Array<Action>, setActions] = useState([]);
+type Props = {
+  editor: EditorType,
+  actions: Array<Action>,
+  resolution: Coord,
+  update: () => void,
+};
+
+const Editor = ({
+  editor,
+  actions,
+  resolution,
+  update,
+}: Props) => {
   const [selected: ?number, setSelected] = useState(null);
   const [file: {text: string, name: string}, setFile] = useState({ text: '', name: '' });
-  const [resolution: Coord, setResolution] = useState({ x: 900, y: 1600 });
 
   // initiate download of the current Action list
   const saveFile = () => {
-    const macro = serialize(resolution, actions);
+    const macro = editor.serialize();
     const filename = 'nox_macro';
     // it's a text file, but we don't want to add a default .txt extension
     download('application/octet-stream', macro, filename);
@@ -59,19 +59,15 @@ const Editor = () => {
 
   // load macro then reset selection
   const handleLoad = pipe(
-      loadFile(setActions, setResolution)(file.text),
+      () => editor.loadFile(file.text),
       setSelected,
+      update,
   );
 
-  // load if Action list is currently empty
-  const handleImport = (!actions.length)
-              ? loadFile(setActions, setResolution)(file.text)
-              : importFile(setActions)(
-                  actions,
-                  selected,
-                  resolution,
-                  file.text,
-              );
+  const handleImport = pipe(
+      () => editor.importFile(file.text, selected),
+      update,
+  );
 
   const getIndex = () => (selected == null)
       ? actions.length
@@ -79,37 +75,41 @@ const Editor = () => {
 
   const handleAddClick = (coord: Coord) => pipe(
       getIndex,
-      addClick(coord, actions),
-      setActions,
+      editor.addClick(coord),
+      update,
   );
 
   const handleAddDrag = (coord: Coord) => pipe(
       getIndex,
-      addDrag(coord, actions),
-      setActions,
+      editor.addDrag(coord),
+      update,
   );
 
   const handleAddWait = (duration: number) => pipe(
       getIndex,
-      addWait(duration, actions),
-      setActions,
+      editor.addWait(duration),
+      update,
   );
 
-  const handleRemove = (ind: number) => {
-    setActions(removeAt(ind, actions));
-    const nextItem = Math.min(ind, actions.length - 2);
-    setSelected(nextItem);
-  };
+  const getNextItem = (ind: number) => Math.min(ind, actions.length - 2);
+
+  type HandleRemove = (ind: number) => void;
+
+  const handleRemove: HandleRemove = pipe(
+      editor.removeAction,
+      getNextItem,
+      setSelected,
+      update,
+  );
 
   const handleReorder = (from: number, to: number) => {
-    setActions(reorder(from, to)(actions));
+    editor.reorder(from, to);
     setSelected(to);
+    update();
   };
 
-  const handleUpdate = (x, y, duration) => pipe(
-      updateAction(selected, x, y, duration),
-      setActions,
-  )(actions);
+  const handleUpdate = (x, y, duration) =>
+    editor.updateAction(x, y, duration, selected);
 
   return (
     <>
