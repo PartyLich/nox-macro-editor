@@ -8,7 +8,7 @@ import styles from './Layout.module.scss';
 
 type Props = {
   children: Node,
-}
+};
 
 const Layout = ({ children }: Props) => (
   <div className={styles.container}>

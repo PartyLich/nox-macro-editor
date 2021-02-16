@@ -15,6 +15,7 @@ import type {
   ClickAction,
   DragAction,
 } from './actions';
+import type { Serializer } from './serializer';
 
 
 // Returns true if a string is empty, false otherwise
@@ -124,7 +125,7 @@ const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
 };
 
 
-type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>
+type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>;
 
 // Array<string> -> Array<[Action, Coord]>
 function* actionGenerator(): ActionGenerator {
@@ -147,7 +148,7 @@ function* actionGenerator(): ActionGenerator {
   }
 }
 
-type ParsedActions = Array<[Action, Coord]>
+type ParsedActions = Array<[Action, Coord]>;
 
 // convert line tokens to Actions
 const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
@@ -169,7 +170,7 @@ const tokenizeLines: (Array<string>) => Array<Array<string>> = pipe(
 );
 
 // deserialize a Nox macro
-const deserialize: (lines: string) => Array<Action> = pipe(
+const deserialize: (lines: string) => ParsedActions = pipe(
     splitLines,
     tokenizeLines,
     linesToActions,
@@ -246,7 +247,15 @@ const serialize = (resolution: Coord, actions: Array<Action>): string => {
   return res;
 };
 
+const noxSerializer = (): Serializer => {
+  return Object.assign({}, {
+    deserialize,
+    serialize,
+  });
+};
+
 export {
   deserialize,
   serialize,
+  noxSerializer,
 };

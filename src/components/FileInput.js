@@ -8,7 +8,7 @@ import styles from './FileInput.module.scss';
 
 type Props = {
   onChange: function,
-}
+};
 
 const FileInput = ({
   onChange,

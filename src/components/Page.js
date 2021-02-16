@@ -9,7 +9,7 @@ import styles from './Page.module.scss';
 type Props = {
   children: Node,
   title?: string,
-}
+};
 
 const Page = ({ children, title = 'This is the default title' }: Props) => (
   <section className={styles.body}>
