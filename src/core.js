@@ -1,5 +1,5 @@
 // @flow
-const curry = require('fn-curry');
+import curry from 'crocks/helpers/curry';
 
 import {
   types,

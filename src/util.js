@@ -1,12 +1,9 @@
 // @flow
-const curry = require('fn-curry');
+import curry from 'crocks/helpers/curry';
+import map from 'crocks/pointfree/map';
+import pipe from 'crocks/helpers/pipe';
 
-// helper fn to compose functions
-const pipe = (...fns: Array<Function>) =>
-  (init: any) => fns.reduce((x, f) => f(x), init);
 
-// map an array within a pipe
-const map = (fn: Function) => <T, U>(arr: Array<T>): Array<U> => arr.map(fn);
 
 type PredicateFn<T> = (T) => boolean;
 
