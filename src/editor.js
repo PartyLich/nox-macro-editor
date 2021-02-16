@@ -15,6 +15,7 @@ import {
   reorder,
   removeAt,
 } from './util';
+import Pubsub from './pubsub';
 
 
 export interface Editor {
@@ -29,19 +30,23 @@ export interface Editor {
   updateAction(x: number, y: number, duration: number, index: ?number): void;
   removeAction(index: number): number;
   reorder(from: number, to: number): void;
+  subscribe: (() => void) => (()=>void)
 }
 
 const makeEditor =
   (serializer: Serializer) => (initialState: Array<Action> = []): Editor => {
     let actions: Array<Action> = initialState.slice();
     let resolution: Coord = { x: 900, y: 1600 };
+    const { publish, subscribe } = Pubsub();
 
     const setActions = (_actions: Array<Action>) => {
       actions = _actions.slice();
+      publish();
     };
 
     const setResolution = (_res: Coord) => {
       resolution = { ..._res };
+      publish();
     };
 
     return Object.assign({}, {
@@ -95,6 +100,8 @@ const makeEditor =
       },
 
       serialize: () => serializer.serialize(resolution, actions),
+
+      subscribe,
     });
   };
 

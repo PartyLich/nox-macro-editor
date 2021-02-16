@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Editor, Page } from '../components';
 import { makeEditor } from '../editor';
@@ -16,7 +16,13 @@ const Index = () => {
   const resolution = editor.resolution();
 
   // force a repaint
-  const update = () => setDirty([]);
+  const notify = () => setDirty([]);
+
+  useEffect(() => {
+    const unsub = editor.subscribe(notify);
+    // clean up subscription
+    return () => unsub();
+  });
 
   return (
     <Page title={TITLE}>
@@ -24,7 +30,6 @@ const Index = () => {
         editor={editor}
         actions={actions}
         resolution={resolution}
-        update={update}
       />
     </Page>
   );

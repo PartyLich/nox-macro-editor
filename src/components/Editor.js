@@ -37,14 +37,12 @@ type Props = {
   editor: EditorType,
   actions: Array<Action>,
   resolution: Coord,
-  update: () => void,
 };
 
 const Editor = ({
   editor,
   actions,
   resolution,
-  update,
 }: Props) => {
   const [selected: ?number, setSelected] = useState(null);
   const [file: {text: string, name: string}, setFile] = useState({ text: '', name: '' });
@@ -61,13 +59,9 @@ const Editor = ({
   const handleLoad = pipe(
       () => editor.loadFile(file.text),
       setSelected,
-      update,
   );
 
-  const handleImport = pipe(
-      () => editor.importFile(file.text, selected),
-      update,
-  );
+  const handleImport = () => editor.importFile(file.text, selected);
 
   const getIndex = () => (selected == null)
       ? actions.length
@@ -76,19 +70,16 @@ const Editor = ({
   const handleAddClick = (coord: Coord) => pipe(
       getIndex,
       editor.addClick(coord),
-      update,
   );
 
   const handleAddDrag = (coord: Coord) => pipe(
       getIndex,
       editor.addDrag(coord),
-      update,
   );
 
   const handleAddWait = (duration: number) => pipe(
       getIndex,
       editor.addWait(duration),
-      update,
   );
 
   const getNextItem = (ind: number) => Math.min(ind, actions.length - 2);
@@ -99,13 +90,11 @@ const Editor = ({
       editor.removeAction,
       getNextItem,
       setSelected,
-      update,
   );
 
   const handleReorder = (from: number, to: number) => {
     editor.reorder(from, to);
     setSelected(to);
-    update();
   };
 
   const handleUpdate = (x, y, duration) =>
