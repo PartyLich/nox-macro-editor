@@ -28,11 +28,11 @@ test('isInBounds()', (t) => {
     const expected = true;
     const data = [1, 2, 3];
     const ind = 1;
-    const actual = isInBounds(ind, data);
+    const actual = isInBounds(data, ind);
     t.equal(actual, expected, msg(ind, data));
     {
       const ind = 0;
-      const actual = isInBounds(ind, data);
+      const actual = isInBounds(data, ind);
       t.equal(actual, expected, msg(ind, data));
     }
   }
@@ -43,15 +43,15 @@ test('isInBounds()', (t) => {
     const data = [1, 2, 3];
     const ind = 1;
     {
-      const actual = isInBounds(-1, data);
+      const actual = isInBounds(data, -1);
       t.equal(actual, expected, msg(ind, data));
     }
     {
-      const actual = isInBounds(41, data);
+      const actual = isInBounds(data, 41);
       t.equal(actual, expected, msg(ind, data));
     }
     {
-      const actual = isInBounds(NaN, data);
+      const actual = isInBounds(data, NaN);
       t.equal(actual, expected, msg(ind, data));
     }
   }

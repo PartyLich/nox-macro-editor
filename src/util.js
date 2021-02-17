@@ -77,7 +77,7 @@ const lt = (a: number) => (b: number) => b < a;
 // return true if b is < a
 const lte = (a: number) => (b: number) => b <= a;
 
-const isInBounds = (index: number, list: Array<any>) =>
+const isInBounds = (list: Array<any>, index: number): boolean =>
   index >= 0 && index < list.length;
 
 // curry functions

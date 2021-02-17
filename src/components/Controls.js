@@ -36,7 +36,7 @@ const Controls = ({
   let duration = 0;
 
   // TODO: switch to optional chaining instead of bounds check?
-  if (typeof selected === 'number' && isInBounds(selected, actions)) {
+  if (typeof selected === 'number' && isInBounds(actions, selected)) {
     x = actions[selected].x || x;
     y = actions[selected].y || y;
     duration = actions[selected].duration || duration;
