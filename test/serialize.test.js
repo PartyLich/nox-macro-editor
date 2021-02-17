@@ -105,6 +105,7 @@ test('tokenToObj()', (t) => {
     const resX = 720;
     const resY = 720;
     const action = {
+      id: true,
       type: 'CLICK',
       x: 360,
       y: 640,
@@ -116,6 +117,11 @@ test('tokenToObj()', (t) => {
     ];
     const data = ['0', `${ resX }`, `${ resY }`, 'MULTI:1:0:360:640', `${ time }`];
     const actual = tokenToObj(data);
+    // existence only check for random id
+    actual[1] = {
+      ...actual[1],
+      id: !!actual[1].id,
+    };
 
     t.deepEqual(actual, expected, msg);
     t.ok(Array.isArray(actual), 'returns array');
@@ -171,11 +177,13 @@ test('parseAction()', (t) => {
     const msg = 'parses click Action from string';
     const data = 'MULTI:1:0:360:640';
     const expected = {
+      id: true,
       type: 'CLICK',
       x: 360,
       y: 640,
     };
     const actual = parseAction(data);
+    actual.id = Boolean(actual.id);
 
     t.deepEqual(actual, expected, msg);
     t.equal(typeof actual, 'object', 'returns an object');
@@ -185,11 +193,13 @@ test('parseAction()', (t) => {
     const msg = 'parses drag Action from string';
     const data = 'MULTI:1:2:342:666';
     const expected = {
+      id: true,
       type: 'MDRAG',
       x: 342,
       y: 666,
     };
     const actual = parseAction(data);
+    actual.id = Boolean(actual.id);
 
     t.deepEqual(actual, expected, msg);
     t.equal(typeof actual, 'object', 'returns an object');
@@ -199,9 +209,11 @@ test('parseAction()', (t) => {
     const msg = 'parses release Action from string';
     const data = 'MSBRL:0:0';
     const expected = {
+      id: true,
       type: 'MRELEASE',
     };
     const actual = parseAction(data);
+    actual.id = Boolean(actual.id);
 
     t.deepEqual(actual, expected, msg);
     t.equal(typeof actual, 'object', 'returns an object');

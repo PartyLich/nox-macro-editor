@@ -1,4 +1,9 @@
 // @flow
+import { nanoid } from 'nanoid';
+
+
+// specify shorter than default id length
+const nextId = () => nanoid(10);
 
 // actions
 const CLICK: 'CLICK' = 'CLICK';
@@ -13,6 +18,7 @@ export type Coord = {|
 |};
 
 type ActionA<Type, Payload> = {
+  id: string,
   type: Type,
   ...Payload,
 };
@@ -48,31 +54,37 @@ export type ActionType =
 
 // Wait action creator
 export const waitAction = (duration: number = 1): WaitAction => ({
+  id: nextId(),
   type: WAIT,
   duration,
 });
 
+// default coord
 const DEF_COORD: Coord = { x: 0, y: 0 };
 
 // Click action creator
 export const clickAction = (coord: Coord = DEF_COORD): ClickAction => ({
+  id: nextId(),
   type: CLICK,
   ...coord,
 });
 
 // None action creator
 export const noneAction = (): NoneAction => ({
+  id: nextId(),
   type: NONE,
 });
 
 // Drag action creator
 export const dragAction = (coord: Coord = DEF_COORD): DragAction => ({
+  id: nextId(),
   type: MDRAG,
   ...coord,
 });
 
 // MRelease action creator
 export const releaseAction = (): MReleaseAction => ({
+  id: nextId(),
   type: MRELEASE,
 });
 
