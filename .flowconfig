@@ -4,6 +4,9 @@
 .*/node_modules/react-beautiful-dnd
 
 [ignore]
+# there is a libdef, but flow still gives a 'Cannot resolve module' error
+# i dont care to continue fighting it
+.*/node_modules/nanoid
 
 [include]
 
