@@ -99,8 +99,7 @@ const ActionItem = (
           ? styles.row__selected
           : '';
     const className = [styles.row, rowModifier].join(' ');
-    // TODO: generate unique id for every action...somewhere
-    const id = `${ ind }`;
+    const id = action.id;
 
     return (
       <Draggable
