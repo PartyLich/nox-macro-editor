@@ -65,6 +65,18 @@ const removeAt = <T>(index: number, list: Array<T>): Array<T> => {
   return res;
 };
 
+// return true if b is >= a
+const gte = (a: number) => (b: number) => b >= a;
+
+// return true if b is > a
+const gt = (a: number) => (b: number) => b > a;
+
+// return true if b is < a
+const lt = (a: number) => (b: number) => b < a;
+
+// return true if b is < a
+const lte = (a: number) => (b: number) => b <= a;
+
 const isInBounds = (index: number, list: Array<any>) =>
   index >= 0 && index < list.length;
 
@@ -75,9 +87,13 @@ const cIsInBounds = curry(isInBounds);
 export {
   cDownload as download,
   filter,
+  gt,
+  gte,
   insert,
   cIsInBounds as isInBounds,
   isInt,
+  lt,
+  lte,
   map,
   pipe,
   reorder,
