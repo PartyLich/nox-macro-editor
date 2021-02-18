@@ -73,7 +73,7 @@ const makeEditor =
 
       importFile: (fileText, index) => {
         if (!actions.length) {
-          loadFile(fileText);
+          loadFile(setActions, setResolution, fileText)();
           return;
         }
 
