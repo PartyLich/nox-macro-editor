@@ -4,9 +4,12 @@ import {
   isEmpty,
   mreleaseLine,
   mdragLine,
+  parseAction,
+  parseCoord,
   splitLines,
   splitPipes,
   splitSeparators,
+  tokenToObj,
 } from '../src/serialize';
 
 
@@ -86,6 +89,41 @@ test('splitSeparators()', (t) => {
   t.end();
 });
 
+test('tokenToObj()', (t) => {
+  {
+    const msg = 'throws with < 5 tokens';
+    const expected = /unable to parse action: /;
+    const data = [];
+    const actual = () => tokenToObj(data);
+    t.throws(actual, expected, msg);
+  }
+
+  {
+    const msg = 'parses string tokens to objects';
+    const time = 0;
+    const resX = 720;
+    const resY = 720;
+    const action = {
+      type: 'CLICK',
+      x: 360,
+      y: 640,
+    };
+    const expected = [
+      parseInt(time, 10),
+      action,
+      { x: resX, y: resY },
+    ];
+    const data = ['0', `${ resX }`, `${ resY }`, 'MULTI:1:0:360:640', `${ time }`];
+    const actual = tokenToObj(data);
+
+    t.deepEqual(actual, expected, msg);
+    t.ok(Array.isArray(actual), 'returns array');
+    t.equal(actual.length, 3, 'returns tuple length 3');
+  }
+
+  t.end();
+});
+
 test('clickLine()', (t) => {
   {
     const msg = 'serialize click action to Nox macro format';
@@ -122,6 +160,63 @@ test('mreleaseLine()', (t) => {
     const time = 2;
     const actual = mreleaseLine(resolution, time);
     t.equal(actual, expected, msg);
+  }
+
+  t.end();
+});
+
+test('parseAction()', (t) => {
+  {
+    const msg = 'parses click Action from string';
+    const data = 'MULTI:1:0:360:640';
+    const expected = {
+      type: 'CLICK',
+      x: 360,
+      y: 640,
+    };
+    const actual = parseAction(data);
+
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  {
+    const msg = 'parses drag Action from string';
+    const data = 'MULTI:1:2:342:666';
+    const expected = {
+      type: 'MDRAG',
+      x: 342,
+      y: 666,
+    };
+    const actual = parseAction(data);
+
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  {
+    const msg = 'parses release Action from string';
+    const data = 'MSBRL:0:0';
+    const expected = {
+      type: 'MRELEASE',
+    };
+    const actual = parseAction(data);
+
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  t.end();
+});
+
+test('parseCoord()', (t) => {
+  {
+    const msg = 'parses Coord from array of strings';
+    const expected = { x: 10, y: 42 };
+    const data = ['10', '42'];
+    const actual = parseCoord(data);
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
   }
 
   t.end();

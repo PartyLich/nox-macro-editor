@@ -41,7 +41,7 @@ const tokenize: (string) => Array<string> = pipe(
 );
 
 // parse a coordinate from a string array
-const parseCoord = (arr: Array<string>): Coord => {
+export const parseCoord = (arr: Array<string>): Coord => {
   // TODO: robustness
   return {
     x: parseInt(arr[0], 10),
@@ -60,7 +60,7 @@ const MOD_DRAG = '2';
 const MOD_CLICK = '0';
 
 // parse the action segment of a Nox macro string
-const parseAction = (str: string): Action => {
+export const parseAction = (str: string): Action => {
   const parts = str.split(':');
   const word = parts.shift();
 
@@ -101,7 +101,7 @@ const parseAction = (str: string): Action => {
 };
 
 // convert token array to object
-const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
+export const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
   if (arr.length != 5) {
     console.log(arr);
     throw new Error(`unable to parse action: ${ JSON.stringify(arr) }`);
