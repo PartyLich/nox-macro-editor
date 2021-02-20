@@ -186,25 +186,21 @@ const basicLine = (
 ): string =>
   `0${ NOX_SEPARATOR }${ [resolution.x, resolution.y, actionText].join('|') }${ NOX_SEPARATOR }${ time }`;
 
-// Serialize a Click to Nox macro format
-const clickLine = (
+// Serialize mouse down actions to Nox macro format
+const mdownLine = (mod: string) => (
     resolution: Coord,
     time: number,
-    action: ClickAction,
+    action: ClickAction | DragAction,
 ): string => {
-  const actionText = [MOUSE_DOWN, MSTATE_DOWN, MOD_CLICK, action.x, action.y].join(':');
+  const actionText = [MOUSE_DOWN, MSTATE_DOWN, mod, action.x, action.y].join(':');
   return basicLine(resolution, time, actionText);
 };
 
+// Serialize a Click to Nox macro format
+const clickLine = mdownLine(MOD_CLICK);
+
 // Serialize a Drag to Nox macro format
-const mdragLine = (
-    resolution: Coord,
-    time: number,
-    action: DragAction,
-): string => {
-  const actionText = [MOUSE_DOWN, MSTATE_DOWN, MOD_DRAG, action.x, action.y].join(':');
-  return basicLine(resolution, time, actionText);
-};
+const mdragLine = mdownLine(MOD_DRAG);
 
 // Serialize a Mouse Release to Nox macro format
 const mreleaseLine = (resolution: Coord, time: number): string => {
