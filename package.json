@@ -15,7 +15,7 @@
     "prebuild": "npm run lint && npm run flow",
     "start": "next start",
     "client": "NODE_ENV=production webpack --progress",
-    "test": "babel-tape-runner src/**/*.test.js test/**/*.test.js | tap-summary",
+    "test": "NODE_ENV=dev babel-tape-runner src/**/*.test.js test/**/*.test.js | tap-summary",
     "cov": "nyc babel-tape-runner src/**/*.test.js test/**/*.test.js",
     "lint": "eslint ./src && echo Lint Complete",
     "lint:css": "stylelint ./src && echo style lint Complete",

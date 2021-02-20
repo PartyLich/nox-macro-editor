@@ -1,5 +1,6 @@
 import test from 'tape';
-import {
+import { test as toTest } from '../src/serialize';
+const {
   clickLine,
   isEmpty,
   mreleaseLine,
@@ -10,7 +11,7 @@ import {
   splitPipes,
   splitSeparators,
   tokenToObj,
-} from '../src/serialize';
+} = toTest;
 
 
 test('isEmpty()', (t) => {

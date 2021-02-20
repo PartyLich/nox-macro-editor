@@ -19,19 +19,19 @@ import type { Serializer } from './serializer';
 
 
 // Returns true if a string is empty, false otherwise
-export const isEmpty = (str: string | Array<any>): boolean => str.length === 0;
+const isEmpty = (str: string | Array<any>): boolean => str.length === 0;
 // Returns false if a string is empty, true otherwise
-export const notEmpty = (str: string | Array<any>): boolean => !isEmpty(str);
+const notEmpty = (str: string | Array<any>): boolean => !isEmpty(str);
 
 // Split a string at newline characters
-export const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
+const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
 
 // Split a string at '|' characters
-export const splitPipes = (str: string): Array<string> => str.split('|');
+const splitPipes = (str: string): Array<string> => str.split('|');
 
 const NOX_SEPARATOR = 'ScRiPtSePaRaToR';
 // Split strings in an array at Nox macro script separator tokens
-export const splitSeparators = (arr: Array<string>): Array<string> =>
+const splitSeparators = (arr: Array<string>): Array<string> =>
   arr.flatMap((x) => x.split(NOX_SEPARATOR));
 
 //
@@ -41,7 +41,7 @@ const tokenize: (string) => Array<string> = pipe(
 );
 
 // parse a coordinate from a string array
-export const parseCoord = (arr: Array<string>): Coord => {
+const parseCoord = (arr: Array<string>): Coord => {
   // TODO: robustness
   return {
     x: parseInt(arr[0], 10),
@@ -60,7 +60,7 @@ const MOD_DRAG = '2';
 const MOD_CLICK = '0';
 
 // parse the action segment of a Nox macro string
-export const parseAction = (str: string): Action => {
+const parseAction = (str: string): Action => {
   const parts = str.split(':');
   const word = parts.shift();
 
@@ -101,7 +101,7 @@ export const parseAction = (str: string): Action => {
 };
 
 // convert token array to object
-export const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
+const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
   if (arr.length != 5) {
     console.log(arr);
     throw new Error(`unable to parse action: ${ JSON.stringify(arr) }`);
@@ -187,7 +187,7 @@ const basicLine = (
   `0${ NOX_SEPARATOR }${ [resolution.x, resolution.y, actionText].join('|') }${ NOX_SEPARATOR }${ time }`;
 
 // Serialize a Click to Nox macro format
-export const clickLine = (
+const clickLine = (
     resolution: Coord,
     time: number,
     action: ClickAction,
@@ -197,7 +197,7 @@ export const clickLine = (
 };
 
 // Serialize a Drag to Nox macro format
-export const mdragLine = (
+const mdragLine = (
     resolution: Coord,
     time: number,
     action: DragAction,
@@ -207,7 +207,7 @@ export const mdragLine = (
 };
 
 // Serialize a Mouse Release to Nox macro format
-export const mreleaseLine = (resolution: Coord, time: number): string => {
+const mreleaseLine = (resolution: Coord, time: number): string => {
   const actionText = [MOUSE_RELEASE, 0, 0].join(':');
   return basicLine(resolution, time, actionText);
 };
@@ -254,8 +254,27 @@ const noxSerializer = (): Serializer => {
   });
 };
 
+// functions exported for testing
+let test;
+if (process.env.NODE_ENV === 'dev') {
+  test = {
+    clickLine,
+    isEmpty,
+    mreleaseLine,
+    mdragLine,
+    notEmpty,
+    parseAction,
+    parseCoord,
+    splitLines,
+    splitPipes,
+    splitSeparators,
+    tokenToObj,
+  };
+}
+
 export {
   deserialize,
   serialize,
   noxSerializer,
+  test,
 };
