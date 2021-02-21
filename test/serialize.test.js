@@ -11,6 +11,7 @@ const {
   splitPipes,
   splitSeparators,
   tokenToObj,
+  tryParseCoord,
   tryParseInt,
 } = toTest;
 
@@ -254,6 +255,45 @@ test('tryParseInt()', (t) => {
         .either(identity, () => 'no match');
     t.match(actual[0], expected, msg);
     t.ok(Array.isArray(actual), 'returns array of errors');
+  }
+
+  t.end();
+});
+
+test('tryParseCoord()', (t) => {
+  {
+    const msg = '';
+    const expected = { x: 10, y: 42 };
+    const data = ['10', '42'];
+    const actual = tryParseCoord(data).either(identity, identity);
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  {
+    const msg = 'returns an Err';
+    const expected = /error/i;
+    const data = ['10', 'foo'];
+    const actual = tryParseCoord(data)
+        .either(identity, () => 'no match');
+    t.match(actual[0], expected, msg);
+    t.ok(Array.isArray(actual), 'returns array of errors');
+
+    {
+      const data = ['bar', 'foo'];
+      const actual = tryParseCoord(data)
+          .either(identity, () => 'no match');
+      t.match(actual[0], expected, msg);
+      t.ok(Array.isArray(actual), 'returns array of errors');
+    }
+
+    {
+      const data = ['foo'];
+      const actual = tryParseCoord(data)
+          .either(identity, () => 'no match');
+      t.match(actual[0], expected, msg);
+      t.ok(Array.isArray(actual), 'returns array of errors');
+    }
   }
 
   t.end();

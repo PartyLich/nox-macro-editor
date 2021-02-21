@@ -1,8 +1,11 @@
 // @flow
 import Result, { Ok } from 'crocks/Result';
+import chain from 'crocks/pointfree/chain';
 import ifElse from 'crocks/logic/ifElse';
 import isNumber from 'crocks/predicates/isNumber';
 import flip from 'crocks/combinators/flip';
+import map from 'crocks/pointfree/map';
+import traverse from 'crocks/pointfree/traverse';
 
 import { pipe, wrappedErr } from './util';
 import * as util from './util';
@@ -65,6 +68,18 @@ const parseCoord = (arr: Array<string>): Coord => {
     y: parseInt(arr[1], 10),
   };
 };
+
+const parseCoordErr = wrappedErr('invalid input');
+
+// Array<string> -> Result<string, Coord>
+const tryParseCoord: (arr: Array<string>) => ResultType = pipe(
+    ifElse((a) => a.length > 1, Ok, parseCoordErr),
+    chain(traverse(Result, tryParseInt)),
+    map((arr) => ({
+      x: arr[0],
+      y: arr[1],
+    })),
+);
 
 // actions
 const MOUSE_DOWN = 'MULTI';
@@ -282,6 +297,7 @@ if (process.env.NODE_ENV === 'dev') {
     splitPipes,
     splitSeparators,
     tokenToObj,
+    tryParseCoord,
     tryParseInt,
   };
 }
