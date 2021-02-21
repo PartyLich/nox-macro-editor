@@ -3,6 +3,7 @@ import curry from 'crocks/helpers/curry';
 import map from 'crocks/pointfree/map';
 import pipe from 'crocks/helpers/pipe';
 
+import wrappedErr from './wrappedErr';
 
 
 type PredicateFn<T> = (T) => boolean;
@@ -96,4 +97,5 @@ export {
   reorder,
   removeAt,
   trace,
+  wrappedErr,
 };

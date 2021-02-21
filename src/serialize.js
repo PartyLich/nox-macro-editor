@@ -1,5 +1,10 @@
 // @flow
-import { pipe } from './util';
+import Result, { Ok } from 'crocks/Result';
+import ifElse from 'crocks/logic/ifElse';
+import isNumber from 'crocks/predicates/isNumber';
+import flip from 'crocks/combinators/flip';
+
+import { pipe, wrappedErr } from './util';
 import * as util from './util';
 import {
   clickAction,
@@ -17,6 +22,8 @@ import type {
 } from './actions';
 import type { Serializer } from './serializer';
 
+
+type ResultType = typeof Result;
 
 // Returns true if a string is empty, false otherwise
 const isEmpty = (str: string | Array<any>): boolean => str.length === 0;
@@ -38,6 +45,16 @@ const splitSeparators = (arr: Array<string>): Array<string> =>
 const tokenize: (string) => Array<string> = pipe(
     splitPipes,
     splitSeparators,
+);
+
+
+// any -> Err<Array<string>>
+const parseErr = wrappedErr('unable to parse');
+
+// string -> Result<Array<string>, number>
+const tryParseInt: (string => ResultType) = pipe(
+    flip(parseInt)(10),
+    ifElse(isNumber, Ok, parseErr),
 );
 
 // parse a coordinate from a string array
@@ -265,6 +282,7 @@ if (process.env.NODE_ENV === 'dev') {
     splitPipes,
     splitSeparators,
     tokenToObj,
+    tryParseInt,
   };
 }
 

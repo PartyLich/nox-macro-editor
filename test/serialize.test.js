@@ -11,8 +11,11 @@ const {
   splitPipes,
   splitSeparators,
   tokenToObj,
+  tryParseInt,
 } = toTest;
 
+
+const identity = (x) => x;
 
 test('isEmpty()', (t) => {
   {
@@ -230,6 +233,27 @@ test('parseCoord()', (t) => {
     const actual = parseCoord(data);
     t.deepEqual(actual, expected, msg);
     t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  t.end();
+});
+
+test('tryParseInt()', (t) => {
+  {
+    const msg = '';
+    const expected = 10;
+    const actual = tryParseInt('10').either(identity, identity);
+    t.equal(actual, expected, msg);
+    t.equal(typeof actual, 'number', 'returns a number');
+  }
+
+  {
+    const msg = 'returns an Err';
+    const expected = /error/i;
+    const actual = tryParseInt('foo')
+        .either(identity, () => 'no match');
+    t.match(actual[0], expected, msg);
+    t.ok(Array.isArray(actual), 'returns array of errors');
   }
 
   t.end();
