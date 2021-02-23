@@ -11,6 +11,7 @@ const {
   splitPipes,
   splitSeparators,
   tokenToObj,
+  tryParseAction,
   tryParseCoord,
   tryParseInt,
 } = toTest;
@@ -234,6 +235,91 @@ test('parseCoord()', (t) => {
     const actual = parseCoord(data);
     t.deepEqual(actual, expected, msg);
     t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  t.end();
+});
+
+test('tryParseAction()', (t) => {
+  {
+    const msg = 'parses click Action from string';
+    const data = 'MULTI:1:0:360:640';
+    const expected = {
+      id: true,
+      type: 'CLICK',
+      x: 360,
+      y: 640,
+    };
+    const actual = tryParseAction(data).either(identity, identity);
+    actual.id = Boolean(actual.id);
+
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  {
+    const msg = 'parses drag Action from string';
+    const data = 'MULTI:1:2:342:666';
+    const expected = {
+      id: true,
+      type: 'MDRAG',
+      x: 342,
+      y: 666,
+    };
+    const actual = tryParseAction(data).either(identity, identity);
+    actual.id = Boolean(actual.id);
+
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  {
+    const msg = 'parses release Action from string';
+    const data = 'MSBRL:0:0';
+    const expected = {
+      id: true,
+      type: 'MRELEASE',
+    };
+    const actual = tryParseAction(data).either(identity, identity);
+    actual.id = Boolean(actual.id);
+
+    t.deepEqual(actual, expected, msg);
+    t.equal(typeof actual, 'object', 'returns an object');
+  }
+
+  {
+    const msg = 'returns an Err';
+    const expected = /Err /i;
+
+    {
+      const data = 'foobar:0:0:321:435';
+      const actual = tryParseAction(data);
+      t.match(actual.toString(), expected, msg);
+      t.ok(
+          Array.isArray(actual.either(identity, identity)),
+          'returns array of errors',
+      );
+    }
+
+    {
+      const data = null;
+      const actual = tryParseAction(data);
+      t.match(actual.toString(), expected, msg);
+      t.ok(
+          Array.isArray(actual.either(identity, identity)),
+          'returns array of errors',
+      );
+    }
+
+    {
+      const data = 0;
+      const actual = tryParseAction(data);
+      t.match(actual.toString(), expected, msg);
+      t.ok(
+          Array.isArray(actual.either(identity, identity)),
+          'returns array of errors',
+      );
+    }
   }
 
   t.end();

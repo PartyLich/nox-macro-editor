@@ -1,13 +1,15 @@
 // @flow
 import Result, { Ok } from 'crocks/Result';
+import bichain from 'crocks/pointfree/bichain';
 import chain from 'crocks/pointfree/chain';
 import ifElse from 'crocks/logic/ifElse';
 import isNumber from 'crocks/predicates/isNumber';
+import isString from 'crocks/predicates/isString';
 import flip from 'crocks/combinators/flip';
 import map from 'crocks/pointfree/map';
 import traverse from 'crocks/pointfree/traverse';
 
-import { pipe, wrappedErr } from './util';
+import { ensure, pipe, wrappedErr } from './util';
 import * as util from './util';
 import {
   clickAction,
@@ -156,6 +158,46 @@ const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
   ];
 };
 
+// attempt to parse an Action from the provided string. returns Ok if
+// successful, err otherwise
+const tryParseAction: (str: string) => Action = pipe(
+    ensure(isString),
+    bichain(wrappedErr('tryParseAction expected a string, got: '), Ok),
+    map((str) => str.split(':')),
+    chain((parts) => {
+      const word = parts.shift();
+      switch (word) {
+        case MOUSE_DOWN:
+          const mouseState = parts.shift();
+          if (mouseState === MSTATE_DOWN) {
+            // mouse down
+            const modifier = parts.shift();
+            const coord = parseCoord(parts);
+
+            if (modifier === MOD_CLICK) {
+              // mouse down
+              return Ok(clickAction(coord));
+            }
+            if (modifier === MOD_DRAG) {
+              // mouse drag
+              return Ok(dragAction(coord));
+            }
+          }
+          return Ok(noneAction());
+
+        case MOUSE_RELEASE:
+          // mouse release
+          return Ok(releaseAction());
+
+        case KB_PRESS:
+        case KB_RELEASE:
+          return Ok(noneAction());
+
+        default:
+          return wrappedErr(`unrecognized action:`)(word);
+      }
+    }),
+);
 
 type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>;
 
@@ -297,6 +339,7 @@ if (process.env.NODE_ENV === 'dev') {
     splitPipes,
     splitSeparators,
     tokenToObj,
+    tryParseAction,
     tryParseCoord,
     tryParseInt,
   };
