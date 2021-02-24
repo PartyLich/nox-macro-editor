@@ -7,10 +7,12 @@ import isNumber from 'crocks/predicates/isNumber';
 import isString from 'crocks/predicates/isString';
 import flip from 'crocks/combinators/flip';
 import map from 'crocks/pointfree/map';
+import sequence from 'crocks/pointfree/sequence';
 import traverse from 'crocks/pointfree/traverse';
 
 import { ensure, pipe, wrappedErr } from './util';
 import * as util from './util';
+import type { PredicateFn } from './util';
 import {
   clickAction,
   dragAction,
@@ -140,7 +142,6 @@ const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
     console.log(arr);
     throw new Error(`unable to parse action: ${ JSON.stringify(arr) }`);
   }
-
   arr = arr.slice();
   // const isKeyboard = arr.shift() === 1;
   arr.shift();
@@ -197,6 +198,28 @@ const tryParseAction: (str: string) => Action = pipe(
           return wrappedErr(`unrecognized action:`)(word);
       }
     }),
+);
+
+const validTokens: PredicateFn<Array<string>> = (arr) => arr.length === 5;
+
+const tokenErr = wrappedErr('unable to parse action:');
+
+// convert token array to object
+const tryTokenToObj: (arr: Array<string>) => ResultType = pipe(
+    ifElse(validTokens, Ok, tokenErr),
+    map((arr) => arr.slice(1)),
+    map((arr) => {
+      const resolution = tryParseCoord(arr.splice(0, 2));
+      const action = tryParseAction(arr.shift());
+      const time = tryParseInt(arr.shift());
+
+      return [
+        time,
+        action,
+        resolution,
+      ];
+    }),
+    chain(sequence(Result)),
 );
 
 type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>;
@@ -339,6 +362,7 @@ if (process.env.NODE_ENV === 'dev') {
     splitPipes,
     splitSeparators,
     tokenToObj,
+    tryTokenToObj,
     tryParseAction,
     tryParseCoord,
     tryParseInt,

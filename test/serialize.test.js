@@ -11,6 +11,7 @@ const {
   splitPipes,
   splitSeparators,
   tokenToObj,
+  tryTokenToObj,
   tryParseAction,
   tryParseCoord,
   tryParseInt,
@@ -320,6 +321,47 @@ test('tryParseAction()', (t) => {
           'returns array of errors',
       );
     }
+  }
+
+  t.end();
+});
+
+test('tryTokenToObj()', (t) => {
+  {
+    const msg = 'returns Err with < 5 tokens';
+    const expected = /unable to parse action: /;
+    const data = [];
+    const actual = tryTokenToObj(data).either(identity, () => 'non match');
+    t.match(actual[0], expected, msg);
+  }
+
+  {
+    const msg = 'parses string tokens to objects';
+    const time = 0;
+    const resX = 720;
+    const resY = 720;
+    const action = {
+      id: true,
+      type: 'CLICK',
+      x: 360,
+      y: 640,
+    };
+    const expected = [
+      time,
+      action,
+      { x: resX, y: resY },
+    ];
+    const data = ['0', `${ resX }`, `${ resY }`, 'MULTI:1:0:360:640', `${ time }`];
+    const actual = tryTokenToObj(data).either(identity, identity);
+    // existence only check for random id
+    actual[1] = {
+      ...actual[1],
+      id: !!actual[1].id,
+    };
+
+    t.deepEqual(actual, expected, msg);
+    t.ok(Array.isArray(actual), 'returns array');
+    t.equal(actual.length, 3, 'returns tuple length 3');
   }
 
   t.end();
