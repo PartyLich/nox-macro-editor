@@ -17,6 +17,7 @@
     "client": "NODE_ENV=production webpack --progress",
     "test": "NODE_ENV=dev babel-tape-runner src/**/*.test.js test/**/*.test.js | tap-summary",
     "cov": "nyc babel-tape-runner src/**/*.test.js test/**/*.test.js",
+    "cov:flow": "flow batch-coverage src/",
     "lint": "eslint ./src && echo Lint Complete",
     "lint:css": "stylelint ./src && echo style lint Complete",
     "lint:fix": "eslint ./src --fix && echo Lint Fix Complete",
