@@ -117,7 +117,7 @@ test('tokenToObj()', (t) => {
       y: 640,
     };
     const expected = [
-      parseInt(time, 10),
+      time,
       action,
       { x: resX, y: resY },
     ];
