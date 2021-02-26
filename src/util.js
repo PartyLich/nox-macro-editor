@@ -4,9 +4,10 @@ import map from 'crocks/pointfree/map';
 import pipe from 'crocks/helpers/pipe';
 
 import wrappedErr from './wrappedErr';
+import ensure from './ensure';
 
 
-type PredicateFn<T> = (T) => boolean;
+export type PredicateFn<T> = (T) => boolean;
 
 // filter an array within a pipe
 const filter = <T>(predicate: PredicateFn<T>) =>
@@ -84,6 +85,7 @@ const cIsInBounds = curry(isInBounds);
 
 export {
   cDownload as download,
+  ensure,
   filter,
   gt,
   gte,
