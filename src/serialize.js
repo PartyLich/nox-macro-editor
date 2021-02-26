@@ -255,7 +255,7 @@ const actionGenerator = function* (): ActionGenerator {
   }
 };
 
-type ParsedActions = Array<[Action, Coord]>;
+export type ParsedActions = Array<[Action, Coord]>;
 
 // convert line tokens to Actions
 const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
