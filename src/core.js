@@ -130,8 +130,8 @@ const importFile = (setStateFn: function) => (
 
 // load a macro, replacing all Actions with the file's content
 const loadFile = (
-    setActions: function,
-    setResolution: function,
+    setActions: (Array<Action>) => void,
+    setResolution: (Coord) => void,
     fileText: string,
 ) => () => {
   if (!fileText.length) return;
