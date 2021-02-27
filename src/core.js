@@ -65,8 +65,8 @@ const updateAction = (
 
 // shallow object comparison. true if `b` contains all the keys of `a` with
 // matching values
-const shallowEqual = (a, b): boolean => Object.keys(a).reduce(
-    (acc, key) => a[key] === b[key],
+const shallowEqual = (a: Object, b: Object): boolean => Object.keys(a).reduce(
+    (acc: boolean, key: string) => acc && (a[key] === b[key]),
     true,
 );
 

@@ -8,7 +8,7 @@ import {
   test as toTest,
 } from '../src/core';
 
-const { shallowEqual } = toTest;
+const { shallowEqual } = toTest || {};
 
 
 test('addClick()', (t) => {
