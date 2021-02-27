@@ -192,6 +192,14 @@ const cAddClick = curry(addClick);
 const cAddDrag = curry(addDrag);
 const cAddWait = curry(addWait);
 
+// functions exported for testing
+let test;
+if (process.env.NODE_ENV === 'dev') {
+  test = {
+    shallowEqual,
+  };
+}
+
 export {
   cAddClick as addClick,
   cAddDrag as addDrag,
@@ -199,4 +207,5 @@ export {
   cImportFile as importFile,
   cLoadFile as loadFile,
   cUpdateAction as updateAction,
+  test,
 };
