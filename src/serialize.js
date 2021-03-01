@@ -2,6 +2,7 @@
 import Result, { Ok } from 'crocks/Result';
 import bichain from 'crocks/pointfree/bichain';
 import chain from 'crocks/pointfree/chain';
+import constant from 'crocks/combinators/constant';
 import ifElse from 'crocks/logic/ifElse';
 import isNumber from 'crocks/predicates/isNumber';
 import isString from 'crocks/predicates/isString';
@@ -225,7 +226,7 @@ const tryTokenToObj: (arr: Array<string>) => ResultType = pipe(
 type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>;
 
 // Array<string> -> Array<[Action, Coord]>
-function* actionGenerator(): ActionGenerator {
+const actionGenerator = function* (): ActionGenerator {
   let time = 0;
   const result = [];
 
@@ -233,17 +234,22 @@ function* actionGenerator(): ActionGenerator {
     const tokens = yield result.slice();
     result.length = 0;
 
-    const [actionTime, action, resolution] = tokenToObj(tokens);
+    pipe(
+        constant(tokens),
+        tryTokenToObj,
+        map(([actionTime, action, resolution]: [number, Action, Coord]) => {
+          if (actionTime > time) {
+            const duration = actionTime - time;
+            result.push([waitAction(duration), resolution]);
+            time += duration;
+          }
 
-    if (actionTime > time) {
-      const duration = actionTime - time;
-      result.push([waitAction(duration), resolution]);
-      time += duration;
-    }
-
-    result.push([action, resolution]);
+          return [action, resolution];
+        }),
+        map((a: [Action, Coord]) => result.push(a)),
+    )();
   }
-}
+};
 
 type ParsedActions = Array<[Action, Coord]>;
 
