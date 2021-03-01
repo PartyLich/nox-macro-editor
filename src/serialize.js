@@ -59,7 +59,7 @@ const tokenize: (string) => Array<string> = pipe(
 );
 
 
-// any -> Err<Array<string>>
+// mixed -> Err<Array<string>>
 const parseErr = wrappedErr('unable to parse');
 
 // string -> Result<Array<string>, number>
@@ -109,7 +109,7 @@ const parseAction = (str: string): Action => {
       const mouseState = parts.shift();
       if (mouseState === MSTATE_DOWN) {
         // mouse down
-        const modifier = parts.shift();
+        const modifier: string = parts.shift();
         const coord = parseCoord(parts);
 
         if (modifier === MOD_CLICK) {
@@ -209,6 +209,7 @@ const validTokens: PredicateFn<Array<string>> = (arr) => arr.length === 5;
 const tokenErr = wrappedErr('unable to parse action:');
 
 // convert token array to object
+// (arr: Array<string>): Result<[number, Action, Coord]>
 const tryTokenToObj: (arr: Array<string>) => ResultType = pipe(
     ifElse(validTokens, Ok, tokenErr),
     map((arr) => arr.slice(1)),
@@ -281,7 +282,7 @@ const deserialize: (lines: string) => ParsedActions = pipe(
     tokenizeLines,
     linesToActions,
     util.trace('new linesToActions'),
-    util.filter(([a, _]) => a.type !== actType.NONE),
+    util.filter(([a, _]: [Action, Coord]) => a.type !== actType.NONE),
     util.trace('deserialize'),
 );
 

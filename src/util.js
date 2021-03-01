@@ -14,7 +14,7 @@ const filter = <T>(predicate: PredicateFn<T>) =>
   (arr: Array<T>): Array<T> => arr.filter(predicate);
 
 // log within a pipe
-const trace = (msg: string = 'trace') => <T>(val: T) => {
+const trace = (msg: string = 'trace') => <T>(val: T): T => {
   console.log(`${ msg }: ${ JSON.stringify(val) || 'undef' }`);
   return val;
 };
