@@ -1,6 +1,8 @@
 // @flow
+import and from 'crocks/logic/and';
 import curry from 'crocks/helpers/curry';
-
+import isNumber from 'crocks/predicates/isNumber';
+import option from 'crocks/pointfree/option';
 import safe from 'crocks/Maybe/safe';
 import isEmpty from 'crocks/predicates/isEmpty';
 
@@ -21,6 +23,7 @@ import {
   map,
   pipe,
 } from './util';
+import type { PredicateFn } from './util';
 
 
 // Update an item in an Action array
@@ -76,11 +79,14 @@ const shallowEqual = (a: Object, b: Object): boolean => Object.keys(a).reduce(
     true,
 );
 
-const scale = (from: number, to: number, num: number): number => {
-  const factor = to / from;
+const notZero: PredicateFn<number> = (x) => x !== 0;
 
-  return num * factor;
-};
+const scale = (from: number, to: number, num: number): number => pipe(
+    safe(and(isNumber, notZero)),
+    map((from: number) => to / from),
+    map((factor: number) => factor * num),
+    option(0),
+)(from);
 
 // scale an action from one resolution (`fromRes`) to another (`toRes`)
 const scaleAction = (fromRes: Coord, toRes: Coord) =>
@@ -196,9 +202,13 @@ const cAddDrag: any = curry(addDrag);
 const cAddWait: any = curry(addWait);
 
 // functions exported for testing
-let test: {|shallowEqual: (a: any, b: any) => boolean|};
+let test: {|
+  scale: (from: number, to: number, num: number) => number,
+  shallowEqual: (a: any, b: any) => boolean,
+|};
 if (process.env.NODE_ENV === 'dev') {
   test = {
+    scale,
     shallowEqual,
   };
 }
