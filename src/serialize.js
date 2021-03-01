@@ -33,8 +33,10 @@ import type { Serializer } from './serializer';
 
 type ResultType = typeof Result;
 
+
 // Returns true if a string is empty, false otherwise
 const isEmpty = (str: string | Array<any>): boolean => str.length === 0;
+
 // Returns false if a string is empty, true otherwise
 const notEmpty = (str: string | Array<any>): boolean => !isEmpty(str);
 
@@ -45,6 +47,7 @@ const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
 const splitPipes = (str: string): Array<string> => str.split('|');
 
 const NOX_SEPARATOR = 'ScRiPtSePaRaToR';
+
 // Split strings in an array at Nox macro script separator tokens
 const splitSeparators = (arr: Array<string>): Array<string> =>
   arr.flatMap((x) => x.split(NOX_SEPARATOR));
