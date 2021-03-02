@@ -1,11 +1,18 @@
 // @flow
 import and from 'crocks/logic/and';
+import chain from 'crocks/pointfree/chain';
+import constant from 'crocks/combinators/constant';
 import curry from 'crocks/helpers/curry';
+import getProp from 'crocks/Maybe/getProp';
 import isNumber from 'crocks/predicates/isNumber';
+import maybeToArray from 'crocks/Maybe/maybeToArray';
+import merge from 'crocks/pointfree/merge';
 import option from 'crocks/pointfree/option';
+import pipeK from 'crocks/helpers/pipeK';
 import safe from 'crocks/Maybe/safe';
+import safeLift from 'crocks/Maybe/safeLift';
+import fanout from 'crocks/Pair/fanout';
 import isEmpty from 'crocks/predicates/isEmpty';
-
 import not from 'crocks/logic/not';
 
 import {
@@ -19,6 +26,7 @@ import type { Action, Coord } from './actions';
 import { deserialize } from './serialize';
 import type { ParsedActions } from './serialize';
 import {
+  inc,
   insert,
   isInBounds,
   map,
@@ -113,8 +121,24 @@ const scaleAction = (fromRes: Coord, toRes: Coord) =>
     }
   };
 
+// ParsedActions -> Maybe<Coord>
+const firstResolution = pipeK(
+    getProp(0),
+    getProp(1),
+);
+
+const getResolution: ParsedActions => Coord = pipe(
+    firstResolution,
+    option({ x: 0, y: 0 }),
+);
+
+const getActions: ParsedActions => Array<Action> = pipe(
+    map(getProp(0)),
+    chain(maybeToArray),
+);
+
 // import a macro, inserting its Actions after the selected index
-const importFile = (setStateFn: function) => (
+const importFile = (setStateFn: (Array<Action>) => void) => (
     actions: Array<Action>,
     selected: ?number,
     resolution: Coord,
@@ -122,25 +146,26 @@ const importFile = (setStateFn: function) => (
 ) => () => {
   if (!fileText.length) return;
 
-  const ind = (selected == null)
-      ? actions.length
-      : selected + 1;
+  const ind: number = pipe(
+      constant(selected),
+      safeLift(isNumber, inc),
+      option(actions.length),
+  )();
 
   pipe(
+      constant(fileText),
       deserialize,
-      (_actions) => {
-        const importedActions = _actions.map(([action, _]) => action);
-
-        const [, importedRes] = _actions[0];
+      fanout(getResolution, getActions),
+      merge((importedRes: Coord, importedActions: Array<Action>) => {
         if (!shallowEqual(resolution, importedRes)) {
           return importedActions.map(scaleAction(importedRes, resolution));
         }
 
         return importedActions;
-      },
+      }),
       insert(actions, ind),
       setStateFn,
-  )(fileText);
+  )();
 };
 
 // load a macro, replacing all Actions with the file's content
