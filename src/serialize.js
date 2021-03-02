@@ -6,6 +6,7 @@ import constant from 'crocks/combinators/constant';
 import ifElse from 'crocks/logic/ifElse';
 import isNumber from 'crocks/predicates/isNumber';
 import isString from 'crocks/predicates/isString';
+import filter from 'crocks/pointfree/filter';
 import flip from 'crocks/combinators/flip';
 import map from 'crocks/pointfree/map';
 import sequence from 'crocks/pointfree/sequence';
@@ -271,7 +272,7 @@ const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
 
 const tokenizeLines: (Array<string>) => Array<Array<string>> = pipe(
     util.trace('lines'),
-    util.filter(notEmpty),
+    filter(notEmpty),
     util.map(tokenize),
     util.trace('tokenize'),
 );
@@ -282,7 +283,7 @@ const deserialize: (lines: string) => ParsedActions = pipe(
     tokenizeLines,
     linesToActions,
     util.trace('new linesToActions'),
-    util.filter(([a, _]: [Action, Coord]) => a.type !== actType.NONE),
+    filter(([a, _]: [Action, Coord]) => a.type !== actType.NONE),
     util.trace('deserialize'),
 );
 
