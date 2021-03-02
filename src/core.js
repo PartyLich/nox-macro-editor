@@ -175,18 +175,14 @@ const addClick = (
 };
 
 // add a new drag (with mouse release)
-const addDrag = (
-    coord: Coord,
-    actions: Array<Action>,
-    ind: number,
-) => {
-  const drag = [
-    dragAction(coord),
-    waitAction(16),
-    releaseAction(),
-  ];
-  return insert(actions, ind)(drag);
-};
+const addDrag = (coord: Coord, actions: Array<Action>, ind: number) => pipe(
+    () => [
+      dragAction(coord),
+      waitAction(16),
+      releaseAction(),
+    ],
+    insert(actions, ind),
+)();
 
 // add a new wait
 const addWait = (duration: number, actions: Array<Action>, ind: number) => pipe(
