@@ -1,21 +1,20 @@
 // @flow
-const curry = require('fn-curry');
+import curry from 'crocks/helpers/curry';
+import map from 'crocks/pointfree/map';
+import pipe from 'crocks/helpers/pipe';
 
-// helper fn to compose functions
-const pipe = (...fns: Array<Function>) =>
-  (init: any) => fns.reduce((x, f) => f(x), init);
+import wrappedErr from './wrappedErr';
+import ensure from './ensure';
 
-// map an array within a pipe
-const map = (fn: Function) => <T, U>(arr: Array<T>): Array<U> => arr.map(fn);
 
-type PredicateFn<T> = (T) => boolean;
+export type PredicateFn<T> = (T) => boolean;
 
 // filter an array within a pipe
 const filter = <T>(predicate: PredicateFn<T>) =>
   (arr: Array<T>): Array<T> => arr.filter(predicate);
 
 // log within a pipe
-const trace = (msg: string = 'trace') => <T>(val: T) => {
+const trace = (msg: string = 'trace') => <T>(val: T): T => {
   console.log(`${ msg }: ${ JSON.stringify(val) || 'undef' }`);
   return val;
 };
@@ -86,6 +85,7 @@ const cIsInBounds = curry(isInBounds);
 
 export {
   cDownload as download,
+  ensure,
   filter,
   gt,
   gte,
@@ -99,4 +99,5 @@ export {
   reorder,
   removeAt,
   trace,
+  wrappedErr,
 };

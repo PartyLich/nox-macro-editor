@@ -142,12 +142,12 @@ test('removeAt()', (t) => {
       t.deepEqual(actual, expected, msg);
     }
     {
-      // $FlowFixMe flow failed to catch a call like this
+      // $FlowExpectedError[incompatible-call]
       const actual = removeAt(undefined, [1, 2, 3]);
       t.deepEqual(actual, expected, msg);
     }
     {
-      // $FlowFixMe flow failed to catch a call like this
+      // $FlowExpectedError[incompatible-call]
       const actual = removeAt(null, [1, 2, 3]);
       t.deepEqual(actual, expected, msg);
     }

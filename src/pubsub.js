@@ -11,7 +11,7 @@ export interface PubSub<T> {
 }
 
 const Pubsub = <T>(): PubSub<T> => {
-  let subscribers = [];
+  let subscribers: Array<(T) => void> = [];
 
   const subscribe = (fn) => {
     if (typeof fn !== 'function') return noop;
@@ -24,9 +24,9 @@ const Pubsub = <T>(): PubSub<T> => {
     };
   };
 
-  const notify = (msg) => (callback) => callback(msg);
+  const notify = (msg: T) => (callback: (T) => void) => callback(msg);
 
-  const publish = (msg) => subscribers.forEach(notify(msg));
+  const publish = (msg: T) => subscribers.forEach(notify(msg));
 
   return {
     subscribe,

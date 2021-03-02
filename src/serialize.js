@@ -1,6 +1,19 @@
 // @flow
-import { pipe } from './util';
-import * as util from './util';
+import Result, { Ok } from 'crocks/Result';
+import bichain from 'crocks/pointfree/bichain';
+import chain from 'crocks/pointfree/chain';
+import constant from 'crocks/combinators/constant';
+import ifElse from 'crocks/logic/ifElse';
+import isNumber from 'crocks/predicates/isNumber';
+import isString from 'crocks/predicates/isString';
+import filter from 'crocks/pointfree/filter';
+import flip from 'crocks/combinators/flip';
+import map from 'crocks/pointfree/map';
+import sequence from 'crocks/pointfree/sequence';
+import traverse from 'crocks/pointfree/traverse';
+
+import { ensure, pipe, wrappedErr } from './util';
+import type { PredicateFn } from './util';
 import {
   clickAction,
   dragAction,
@@ -18,8 +31,12 @@ import type {
 import type { Serializer } from './serializer';
 
 
+type ResultType = typeof Result;
+
+
 // Returns true if a string is empty, false otherwise
 const isEmpty = (str: string | Array<any>): boolean => str.length === 0;
+
 // Returns false if a string is empty, true otherwise
 const notEmpty = (str: string | Array<any>): boolean => !isEmpty(str);
 
@@ -30,6 +47,7 @@ const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
 const splitPipes = (str: string): Array<string> => str.split('|');
 
 const NOX_SEPARATOR = 'ScRiPtSePaRaToR';
+
 // Split strings in an array at Nox macro script separator tokens
 const splitSeparators = (arr: Array<string>): Array<string> =>
   arr.flatMap((x) => x.split(NOX_SEPARATOR));
@@ -40,6 +58,16 @@ const tokenize: (string) => Array<string> = pipe(
     splitSeparators,
 );
 
+
+// mixed -> Err<Array<string>>
+const parseErr = wrappedErr('unable to parse');
+
+// string -> Result<Array<string>, number>
+const tryParseInt: (string => ResultType) = pipe(
+    flip(parseInt)(10),
+    ifElse(isNumber, Ok, parseErr),
+);
+
 // parse a coordinate from a string array
 const parseCoord = (arr: Array<string>): Coord => {
   // TODO: robustness
@@ -48,6 +76,18 @@ const parseCoord = (arr: Array<string>): Coord => {
     y: parseInt(arr[1], 10),
   };
 };
+
+const parseCoordErr = wrappedErr('invalid input');
+
+// Array<string> -> Result<string, Coord>
+const tryParseCoord: (arr: Array<string>) => ResultType = pipe(
+    ifElse((a) => a.length > 1, Ok, parseCoordErr),
+    chain(traverse(Result, tryParseInt)),
+    map((arr) => ({
+      x: arr[0],
+      y: arr[1],
+    })),
+);
 
 // actions
 const MOUSE_DOWN = 'MULTI';
@@ -69,7 +109,7 @@ const parseAction = (str: string): Action => {
       const mouseState = parts.shift();
       if (mouseState === MSTATE_DOWN) {
         // mouse down
-        const modifier = parts.shift();
+        const modifier: string = parts.shift();
         const coord = parseCoord(parts);
 
         if (modifier === MOD_CLICK) {
@@ -106,7 +146,6 @@ const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
     console.log(arr);
     throw new Error(`unable to parse action: ${ JSON.stringify(arr) }`);
   }
-
   arr = arr.slice();
   // const isKeyboard = arr.shift() === 1;
   arr.shift();
@@ -124,11 +163,74 @@ const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
   ];
 };
 
+// attempt to parse an Action from the provided string. returns Ok if
+// successful, err otherwise
+const tryParseAction: (str: string) => Action = pipe(
+    ensure(isString),
+    bichain(wrappedErr('tryParseAction expected a string, got: '), Ok),
+    map((str) => str.split(':')),
+    chain((parts) => {
+      const word = parts.shift();
+      switch (word) {
+        case MOUSE_DOWN:
+          const mouseState = parts.shift();
+          if (mouseState === MSTATE_DOWN) {
+            // mouse down
+            const modifier = parts.shift();
+            const coord = parseCoord(parts);
+
+            if (modifier === MOD_CLICK) {
+              // mouse down
+              return Ok(clickAction(coord));
+            }
+            if (modifier === MOD_DRAG) {
+              // mouse drag
+              return Ok(dragAction(coord));
+            }
+          }
+          return Ok(noneAction());
+
+        case MOUSE_RELEASE:
+          // mouse release
+          return Ok(releaseAction());
+
+        case KB_PRESS:
+        case KB_RELEASE:
+          return Ok(noneAction());
+
+        default:
+          return wrappedErr(`unrecognized action:`)(word);
+      }
+    }),
+);
+
+const validTokens: PredicateFn<Array<string>> = (arr) => arr.length === 5;
+
+const tokenErr = wrappedErr('unable to parse action:');
+
+// convert token array to object
+// (arr: Array<string>): Result<[number, Action, Coord]>
+const tryTokenToObj: (arr: Array<string>) => ResultType = pipe(
+    ifElse(validTokens, Ok, tokenErr),
+    map((arr) => arr.slice(1)),
+    map((arr) => {
+      const resolution = tryParseCoord(arr.splice(0, 2));
+      const action = tryParseAction(arr.shift());
+      const time = tryParseInt(arr.shift());
+
+      return [
+        time,
+        action,
+        resolution,
+      ];
+    }),
+    chain(sequence(Result)),
+);
 
 type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>;
 
 // Array<string> -> Array<[Action, Coord]>
-function* actionGenerator(): ActionGenerator {
+const actionGenerator = function* (): ActionGenerator {
   let time = 0;
   const result = [];
 
@@ -136,24 +238,28 @@ function* actionGenerator(): ActionGenerator {
     const tokens = yield result.slice();
     result.length = 0;
 
-    const [actionTime, action, resolution] = tokenToObj(tokens);
+    pipe(
+        constant(tokens),
+        tryTokenToObj,
+        map(([actionTime, action, resolution]: [number, Action, Coord]) => {
+          if (actionTime > time) {
+            const duration = actionTime - time;
+            result.push([waitAction(duration), resolution]);
+            time += duration;
+          }
 
-    if (actionTime > time) {
-      const duration = actionTime - time;
-      result.push([waitAction(duration), resolution]);
-      time += duration;
-    }
-
-    result.push([action, resolution]);
+          return [action, resolution];
+        }),
+        map((a: [Action, Coord]) => result.push(a)),
+    )();
   }
-}
+};
 
 type ParsedActions = Array<[Action, Coord]>;
 
 // convert line tokens to Actions
 const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
   const gen = actionGenerator();
-  console.log('gen created');
 
   return lines.reduce(
       (acc: ParsedActions, tokens: Array<string>) =>
@@ -163,10 +269,8 @@ const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
 };
 
 const tokenizeLines: (Array<string>) => Array<Array<string>> = pipe(
-    util.trace('lines'),
-    util.filter(notEmpty),
-    util.map(tokenize),
-    util.trace('tokenize'),
+    filter(notEmpty),
+    map(tokenize),
 );
 
 // deserialize a Nox macro
@@ -174,9 +278,7 @@ const deserialize: (lines: string) => ParsedActions = pipe(
     splitLines,
     tokenizeLines,
     linesToActions,
-    util.trace('new linesToActions'),
-    util.filter(([a, _]) => a.type !== actType.NONE),
-    util.trace('deserialize'),
+    filter(([a, _]: [Action, Coord]) => a.type !== actType.NONE),
 );
 
 const basicLine = (
@@ -265,6 +367,10 @@ if (process.env.NODE_ENV === 'dev') {
     splitPipes,
     splitSeparators,
     tokenToObj,
+    tryTokenToObj,
+    tryParseAction,
+    tryParseCoord,
+    tryParseInt,
   };
 }
 

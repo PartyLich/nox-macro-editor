@@ -1,5 +1,5 @@
 // @flow
-const curry = require('fn-curry');
+import curry from 'crocks/helpers/curry';
 
 import {
   types,
@@ -107,7 +107,7 @@ const importFile = (setStateFn: function) => (
 ) => () => {
   if (!fileText.length) return;
 
-  const ind = (selected === null)
+  const ind = (selected == null)
       ? actions.length
       : selected + 1;
 
