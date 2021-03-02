@@ -13,7 +13,6 @@ import sequence from 'crocks/pointfree/sequence';
 import traverse from 'crocks/pointfree/traverse';
 
 import { ensure, pipe, wrappedErr } from './util';
-import * as util from './util';
 import type { PredicateFn } from './util';
 import {
   clickAction,
@@ -261,7 +260,6 @@ type ParsedActions = Array<[Action, Coord]>;
 // convert line tokens to Actions
 const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
   const gen = actionGenerator();
-  console.log('gen created');
 
   return lines.reduce(
       (acc: ParsedActions, tokens: Array<string>) =>
@@ -271,10 +269,8 @@ const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
 };
 
 const tokenizeLines: (Array<string>) => Array<Array<string>> = pipe(
-    util.trace('lines'),
     filter(notEmpty),
-    util.map(tokenize),
-    util.trace('tokenize'),
+    map(tokenize),
 );
 
 // deserialize a Nox macro
@@ -282,9 +278,7 @@ const deserialize: (lines: string) => ParsedActions = pipe(
     splitLines,
     tokenizeLines,
     linesToActions,
-    util.trace('new linesToActions'),
     filter(([a, _]: [Action, Coord]) => a.type !== actType.NONE),
-    util.trace('deserialize'),
 );
 
 const basicLine = (
