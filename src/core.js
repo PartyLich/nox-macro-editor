@@ -189,12 +189,12 @@ const addDrag = (
 };
 
 // add a new wait
-const addWait = (duration: number, actions: Array<Action>, ind: number) => {
-  const wait = [
-    waitAction(duration),
-  ];
-  return insert(actions, ind)(wait);
-};
+const addWait = (duration: number, actions: Array<Action>, ind: number) => pipe(
+    () => [
+      waitAction(duration),
+    ],
+    insert(actions, ind),
+)();
 
 // curry all the things
 const cLoadFile: any = curry(loadFile);
