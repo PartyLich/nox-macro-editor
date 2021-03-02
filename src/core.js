@@ -161,18 +161,14 @@ const loadFile = (
 )(fileText);
 
 // add a new click (with mouse release)
-const addClick = (
-    coord: Coord,
-    actions: Array<Action>,
-    ind: number,
-) => {
-  const click = Array.of(
+const addClick = (coord: Coord, actions: Array<Action>, ind: number) => pipe(
+    () => [
       clickAction(coord),
       waitAction(),
       releaseAction(),
-  );
-  return insert(actions, ind)(click);
-};
+    ],
+    insert(actions, ind),
+)();
 
 // add a new drag (with mouse release)
 const addDrag = (coord: Coord, actions: Array<Action>, ind: number) => pipe(
