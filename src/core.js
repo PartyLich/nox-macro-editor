@@ -20,11 +20,14 @@ import { deserialize } from './serialize';
 import type { ParsedActions } from './serialize';
 import {
   insert,
+  isInBounds,
   map,
   pipe,
 } from './util';
 import type { PredicateFn } from './util';
 
+
+const validIndex: PredicateFn<?number> = and(isNumber, isInBounds);
 
 // Update an item in an Action array
 const updateAction = (
@@ -33,44 +36,42 @@ const updateAction = (
     y: number,
     duration: number,
     arr: Array<Action>,
-): Array<Action> => {
-  if (
-    index == undefined ||
-    index < 0 ||
-    index >= arr.length
-  ) return arr;
+): Array<Action> => pipe(
+    safe(validIndex),
+    map((index: number) => {
+      const res = arr.slice();
+      switch (res[index].type) {
+        case types.CLICK:
+          res[index] = {
+            ...res[index],
+            x,
+            y,
+          };
+          break;
 
-  const res = arr.slice();
-  switch (res[index].type) {
-    case types.CLICK:
-      res[index] = {
-        ...res[index],
-        x,
-        y,
-      };
-      break;
+        case types.MDRAG:
+          res[index] = {
+            ...res[index],
+            x,
+            y,
+          };
+          break;
 
-    case types.MDRAG:
-      res[index] = {
-        ...res[index],
-        x,
-        y,
-      };
-      break;
+        case types.MRELEASE:
+          break;
 
-    case types.MRELEASE:
-      break;
+        case types.WAIT:
+          res[index] = {
+            ...res[index],
+            duration,
+          };
+          break;
+      }
 
-    case types.WAIT:
-      res[index] = {
-        ...res[index],
-        duration,
-      };
-      break;
-  }
-
-  return res;
-};
+      return res;
+    }),
+    option(arr),
+)(index);
 
 // shallow object comparison. true if `b` contains all the keys of `a` with
 // matching values
