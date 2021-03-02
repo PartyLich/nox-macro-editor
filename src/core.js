@@ -100,15 +100,17 @@ const scaleAction = (fromRes: Coord, toRes: Coord) =>
           x: scale(fromRes.x, toRes.x, action.x),
           y: scale(fromRes.y, toRes.y, action.y),
         };
+
       case types.MDRAG:
         return {
           ...action,
           x: scale(fromRes.x, toRes.x, action.x),
           y: scale(fromRes.y, toRes.y, action.y),
         };
-    }
 
-    return action;
+      default:
+        return action;
+    }
   };
 
 // import a macro, inserting its Actions after the selected index
