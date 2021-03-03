@@ -85,6 +85,12 @@ const lte: numericCompare = (a) => (b) => b <= a;
 const isInBounds = (list: Array<any>, index: number): boolean =>
   index >= 0 && index < list.length;
 
+// add two number `a` and `b`
+const sum: ((number) => ((number) => number)) = (a) => (b) => a + b;
+
+// increment a number by 1
+const inc: ((number) => number) = sum(1);
+
 // curry functions
 const cDownload: any = curry(download);
 const cIsInBounds: any = curry(isInBounds);
@@ -95,6 +101,7 @@ export {
   filter,
   gt,
   gte,
+  inc,
   insert,
   cIsInBounds as isInBounds,
   isInt,
@@ -104,6 +111,7 @@ export {
   pipe,
   reorder,
   removeAt,
+  sum,
   trace,
   wrappedErr,
 };
