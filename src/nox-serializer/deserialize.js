@@ -70,7 +70,7 @@ const tryParseInt: (string => ResultType) = pipe(
 
 // parse a coordinate from a string array
 const parseCoord = (arr: Array<string>): Coord => {
-  // TODO: robustness
+  // TODO: remove all uses and delete
   return {
     x: parseInt(arr[0], 10),
     y: parseInt(arr[1], 10),
@@ -103,6 +103,7 @@ const tryParseAction: (str: string) => Action = pipe(
           if (mouseState === MSTATE_DOWN) {
             // mouse down
             const modifier = parts.shift();
+            // TODO: use the safe version
             const coord = parseCoord(parts);
 
             if (modifier === MOD_CLICK) {
