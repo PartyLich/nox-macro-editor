@@ -35,10 +35,10 @@ type ResultType = typeof Result;
 
 
 // Returns true if a string is empty, false otherwise
-const isEmpty = (str: string | Array<any>): boolean => str.length === 0;
+const isEmpty = (str: string | Array<mixed>): boolean => str.length === 0;
 
 // Returns false if a string is empty, true otherwise
-const notEmpty = (str: string | Array<any>): boolean => !isEmpty(str);
+const notEmpty = (str: string | Array<mixed>): boolean => !isEmpty(str);
 
 // Split a string at newline characters
 const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
