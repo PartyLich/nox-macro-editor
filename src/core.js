@@ -24,7 +24,7 @@ import {
 } from './actions';
 import type { Action, Coord } from './actions';
 import { deserialize, type ParsedActions } from './nox-serializer/deserialize';
-import { shallowEqual } from './core/';
+import { scale, shallowEqual } from './core/';
 import { inc, insert, isInBounds, map, pipe } from './util/';
 import type { PredicateFn } from './util/';
 
@@ -74,15 +74,6 @@ const updateAction = (
     }),
     option(arr),
 )(index);
-
-const notZero: PredicateFn<number> = (x) => x !== 0;
-
-const scale = (from: number, to: number, num: number): number => pipe(
-    safe(and(isNumber, notZero)),
-    map((from: number) => to / from),
-    map((factor: number) => factor * num),
-    option(0),
-)(from);
 
 // scale an action from one resolution (`fromRes`) to another (`toRes`)
 const scaleAction = (fromRes: Coord, toRes: Coord) =>
@@ -208,16 +199,6 @@ const cAddClick: any = curry(addClick);
 const cAddDrag: any = curry(addDrag);
 const cAddWait: any = curry(addWait);
 
-// functions exported for testing
-let test: {|
-  scale: (from: number, to: number, num: number) => number,
-|};
-if (process.env.NODE_ENV === 'dev') {
-  test = {
-    scale,
-  };
-}
-
 export {
   cAddClick as addClick,
   cAddDrag as addDrag,
@@ -225,5 +206,4 @@ export {
   cImportFile as importFile,
   cLoadFile as loadFile,
   cUpdateAction as updateAction,
-  test,
 };
