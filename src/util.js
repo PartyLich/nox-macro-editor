@@ -10,10 +10,6 @@ import {
 } from './util/';
 
 
-// filter an array within a pipe
-const filter = <T>(predicate: PredicateFn<T>): ((arr: Array<T>) => Array<T>) =>
-  (arr: Array<T>): Array<T> => arr.filter(predicate);
-
 type traceSig = (string) => (<T>(val: T) => T);
 
 // log within a pipe
@@ -99,7 +95,6 @@ const cIsInBounds: any = curry(isInBounds);
 export {
   cDownload as download,
   ensure,
-  filter,
   gt,
   gte,
   inc,
