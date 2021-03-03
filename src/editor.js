@@ -74,7 +74,7 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
 
     importFile: (fileText, index) => {
       if (!actions.length) {
-        loadFile(setActions, setResolution, fileText)();
+        loadFile(setActions, setResolution, fileText);
         return;
       }
 
