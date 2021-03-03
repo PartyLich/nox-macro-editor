@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react';
+import React, { type Node, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 
 import {
@@ -39,11 +39,13 @@ type Props = {
   resolution: Coord,
 };
 
-const Editor = ({
+type signature = (Props) => Node;
+
+const Editor: signature = ({
   editor,
   actions,
   resolution,
-}: Props) => {
+}) => {
   const [selected: ?number, setSelected] = useState(null);
   const [file: {text: string, name: string}, setFile] = useState({ text: '', name: '' });
 
