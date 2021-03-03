@@ -4,17 +4,19 @@ import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 
-type RemovableItemProps = {
+type Props = {
   selected: boolean,
   remove: () => void,
   children: ?Node,
 };
 
-const RemovableItem = ({
+type signature = (Props) => Node;
+
+const RemovableItem: signature = ({
   selected = false,
   remove,
   children,
-}: RemovableItemProps) => {
+}) => {
   const handleClick = (e) => {
     e.stopPropagation();
     remove();
