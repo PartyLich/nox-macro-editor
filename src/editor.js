@@ -12,9 +12,9 @@ import {
 } from './core';
 import {
   pipe,
-  reorder,
   removeAt,
 } from './util';
+import { reorder } from './util/';
 import Pubsub from './pubsub';
 
 

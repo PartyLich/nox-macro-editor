@@ -10,16 +10,6 @@ import {
 } from './util/';
 
 
-type reorderSig = (number, number) => (<T>(Array<T>) => Array<T>);
-
-// return a new array with element at `from` in initial array moved to `to`
-const reorder: reorderSig = (from, to) => <T>(arr: Array<T>): Array<T> => {
-  const res = arr.slice();
-  const item = res.splice(from, 1);
-  res.splice(to, 0, ...item);
-  return res;
-};
-
 // return true if string contains an integer (base 10)
 const isInt: PredicateFn<string> = (str) => /^[+-]?\d+$/.test(str.trim());
 
@@ -97,7 +87,6 @@ export {
   lte,
   map,
   pipe,
-  reorder,
   removeAt,
   sum,
   wrappedErr,
