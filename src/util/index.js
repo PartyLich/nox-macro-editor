@@ -13,6 +13,7 @@ export * from './compare';
 // Pointfree
 export { default as filter } from './filter';
 export { default as insert } from './insert';
+export { default as map } from 'crocks/pointfree/map';
 export { default as trace } from './trace';
 
 // Predicates

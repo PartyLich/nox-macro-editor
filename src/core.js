@@ -27,11 +27,10 @@ import { deserialize, type ParsedActions } from './nox-serializer/deserialize';
 import { shallowEqual } from './core/';
 import {
   inc,
-  map,
   pipe,
 } from './util';
 import type { PredicateFn } from './util/';
-import { insert, isInBounds } from './util/';
+import { insert, isInBounds, map } from './util/';
 
 
 const validIndex: PredicateFn<?number> = and(isNumber, isInBounds);

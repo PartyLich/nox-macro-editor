@@ -1,5 +1,4 @@
 // @flow
-import map from 'crocks/pointfree/map';
 import pipe from 'crocks/helpers/pipe';
 
 
@@ -11,7 +10,6 @@ const inc: ((number) => number) = sum(1);
 
 export {
   inc,
-  map,
   pipe,
   sum,
 };
