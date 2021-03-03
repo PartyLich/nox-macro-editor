@@ -5,13 +5,7 @@ import pipe from 'crocks/helpers/pipe';
 
 import wrappedErr from './wrappedErr';
 import ensure from './ensure';
-import {
-  type PredicateFn,
-} from './util/';
 
-
-// return true if string contains an integer (base 10)
-const isInt: PredicateFn<string> = (str) => /^[+-]?\d+$/.test(str.trim());
 
 // initiate a file download with the specified `contentType` and `content`
 // all over the net. versions on blogs, SO, etc. No idea who the originator was
@@ -60,7 +54,6 @@ export {
   gte,
   inc,
   cIsInBounds as isInBounds,
-  isInt,
   lt,
   lte,
   map,
