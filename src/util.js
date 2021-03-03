@@ -4,7 +4,6 @@ import map from 'crocks/pointfree/map';
 import pipe from 'crocks/helpers/pipe';
 
 import wrappedErr from './wrappedErr';
-import ensure from './ensure';
 
 
 // initiate a file download with the specified `contentType` and `content`
@@ -31,7 +30,6 @@ const cDownload: any = curry(download);
 
 export {
   cDownload as download,
-  ensure,
   inc,
   map,
   pipe,
