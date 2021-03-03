@@ -29,7 +29,7 @@ const basicLine = (
 type mousedown = (
     Coord,
     number,
-    action: ClickAction | DragAction,
+    ClickAction | DragAction,
   ) => string;
 
 type signature = (string) => mousedown;
