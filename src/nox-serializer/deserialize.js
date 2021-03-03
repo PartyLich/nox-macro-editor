@@ -13,6 +13,7 @@ import sequence from 'crocks/pointfree/sequence';
 import traverse from 'crocks/pointfree/traverse';
 
 import { ensure, pipe, wrappedErr } from '../util';
+import { isEmpty } from '../util/';
 import {
   clickAction,
   dragAction,
@@ -37,9 +38,6 @@ import type { Action, Coord } from '../actions';
 
 
 type ResultType = typeof Result;
-
-// Returns true if a string is empty, false otherwise
-const isEmpty = (str: string | Array<mixed>): boolean => str.length === 0;
 
 // Returns false if a string is empty, true otherwise
 const notEmpty = (str: string | Array<mixed>): boolean => !isEmpty(str);
@@ -210,7 +208,6 @@ const deserialize: (lines: string) => ParsedActions = pipe(
 );
 
 export {
-  isEmpty,
   notEmpty,
   parseCoord,
   splitLines,
