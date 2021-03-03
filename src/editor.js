@@ -33,8 +33,9 @@ export interface Editor {
   subscribe: (() => void) => (()=>void)
 }
 
-const makeEditor =
-  (serializer: Serializer) => (initialState: Array<Action> = []): Editor => {
+type signature = (Serializer) => ((initialState?: Array<Action>) => Editor);
+
+const makeEditor: signature = (serializer) => (initialState = []) => {
     let actions: Array<Action> = initialState.slice();
     let resolution: Coord = { x: 900, y: 1600 };
     const { publish, subscribe } = Pubsub();
