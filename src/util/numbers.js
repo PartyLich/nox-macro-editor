@@ -1,5 +1,5 @@
 // @flow
-// add two number `a` and `b`
+// add two numbers `a` and `b`
 const sum: ((number) => ((number) => number)) = (a) => (b) => a + b;
 
 // increment a number by 1

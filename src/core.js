@@ -25,8 +25,7 @@ import {
 import type { Action, Coord } from './actions';
 import { deserialize, type ParsedActions } from './nox-serializer/deserialize';
 import { shallowEqual } from './core/';
-import { inc } from './util';
-import { insert, isInBounds, map, pipe } from './util/';
+import { inc, insert, isInBounds, map, pipe } from './util/';
 import type { PredicateFn } from './util/';
 
 

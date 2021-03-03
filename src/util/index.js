@@ -10,6 +10,9 @@ export { default as removeAt } from './removeAt';
 // Logic
 export * from './compare';
 
+// Number
+export * from './numbers';
+
 // Pointfree
 export { default as filter } from './filter';
 export { default as insert } from './insert';
