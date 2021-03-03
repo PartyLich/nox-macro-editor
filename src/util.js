@@ -10,14 +10,6 @@ import {
 } from './util/';
 
 
-type traceSig = (string) => (<T>(val: T) => T);
-
-// log within a pipe
-const trace: traceSig = (msg = 'trace') => <T>(val: T): T => {
-  console.log(`${ msg }: ${ JSON.stringify(val) || 'undef' }`);
-  return val;
-};
-
 type reorderSig = (number, number) => (<T>(Array<T>) => Array<T>);
 
 // return a new array with element at `from` in initial array moved to `to`
@@ -108,6 +100,5 @@ export {
   reorder,
   removeAt,
   sum,
-  trace,
   wrappedErr,
 };
