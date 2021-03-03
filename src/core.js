@@ -25,6 +25,7 @@ import {
 import type { Action, Coord } from './actions';
 import { deserialize } from './serialize';
 import type { ParsedActions } from './serialize';
+import { shallowEqual } from './core/';
 import {
   inc,
   insert,
@@ -80,13 +81,6 @@ const updateAction = (
     }),
     option(arr),
 )(index);
-
-// shallow object comparison. true if `b` contains all the keys of `a` with
-// matching values
-const shallowEqual = (a: Object, b: Object): boolean => Object.keys(a).reduce(
-    (acc: boolean, key: string) => acc && (a[key] === b[key]),
-    true,
-);
 
 const notZero: PredicateFn<number> = (x) => x !== 0;
 
@@ -224,12 +218,10 @@ const cAddWait: any = curry(addWait);
 // functions exported for testing
 let test: {|
   scale: (from: number, to: number, num: number) => number,
-  shallowEqual: (a: any, b: any) => boolean,
 |};
 if (process.env.NODE_ENV === 'dev') {
   test = {
     scale,
-    shallowEqual,
   };
 }
 
