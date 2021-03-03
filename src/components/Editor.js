@@ -2,8 +2,7 @@
 import React, { type Node, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 
-import { pipe } from '../util';
-import { download } from '../util/';
+import { download, pipe } from '../util/';
 import { ActionList, Controls, FileControls } from '.';
 import type { Action, Coord } from '../actions';
 import type { Editor as EditorType } from '../editor';

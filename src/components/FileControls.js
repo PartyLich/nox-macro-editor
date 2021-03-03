@@ -9,7 +9,7 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import SaveIcon from '@material-ui/icons/Save';
 
 import { ConfirmDialog, FileInput } from '.';
-import { pipe } from '../util';
+import { pipe } from '../util/';
 
 import styles from './FileControls.module.scss';
 
