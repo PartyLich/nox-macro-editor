@@ -20,21 +20,6 @@ const download = (contentType: string, content: any, filename: string) => {
   URL.revokeObjectURL(a.href);
 };
 
-type numericCompare = (number) => ((number) => boolean);
-
-// return true if b is >= a
-const gte: numericCompare = (a) => (b) => b >= a;
-
-// return true if b is > a
-const gt: numericCompare = (a) => (b) => b > a;
-
-// return true if b is < a
-const lt: numericCompare = (a) => (b) => b < a;
-
-// return true if b is < a
-const lte: numericCompare = (a) => (b) => b <= a;
-
-
 // add two number `a` and `b`
 const sum: ((number) => ((number) => number)) = (a) => (b) => a + b;
 
@@ -47,11 +32,7 @@ const cDownload: any = curry(download);
 export {
   cDownload as download,
   ensure,
-  gt,
-  gte,
   inc,
-  lt,
-  lte,
   map,
   pipe,
   sum,
