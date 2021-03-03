@@ -353,7 +353,31 @@ const noxSerializer = (): Serializer => {
 };
 
 // functions exported for testing
-let test;
+let test: {|
+  clickLine: (
+    resolution: Coord,
+    time: number,
+    action: ClickAction | DragAction
+  ) => string,
+  isEmpty: (str: string | Array<any>) => boolean,
+  mdragLine: (
+    resolution: Coord,
+    time: number,
+    action: ClickAction | DragAction
+  ) => string,
+  mreleaseLine: (resolution: Coord, time: number) => string,
+  notEmpty: (str: string | Array<any>) => boolean,
+  parseAction: (str: string) => Action,
+  parseCoord: (arr: Array<string>) => Coord,
+  splitLines: (str: string) => Array<string>,
+  splitPipes: (str: string) => Array<string>,
+  splitSeparators: (arr: Array<string>) => Array<string>,
+  tokenToObj: (arr: Array<string>) => [number, Action, Coord],
+  tryParseAction: (str: string) => Action,
+  tryParseCoord: (arr: Array<string>) => ResultType,
+  tryParseInt: (string) => ResultType,
+  tryTokenToObj: (arr: Array<string>) => ResultType,
+|};
 if (process.env.NODE_ENV === 'dev') {
   test = {
     clickLine,

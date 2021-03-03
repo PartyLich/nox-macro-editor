@@ -193,7 +193,7 @@ const cAddDrag: any = curry(addDrag);
 const cAddWait: any = curry(addWait);
 
 // functions exported for testing
-let test;
+let test: {|shallowEqual: (a: any, b: any) => boolean|};
 if (process.env.NODE_ENV === 'dev') {
   test = {
     shallowEqual,
