@@ -61,8 +61,7 @@ const serialize = (resolution: Coord, actions: Array<Action>): string => {
   const LINEBREAK = '\r\n';
   let time = 0;
 
-  const res =
-  actions.reduce(
+  return actions.reduce(
       (acc: string, action: Action, ind: number) => {
         const linebreak = acc.length > 0
           ? LINEBREAK
@@ -87,8 +86,6 @@ const serialize = (resolution: Coord, actions: Array<Action>): string => {
       },
       '',
   );
-
-  return res;
 };
 
 export {
