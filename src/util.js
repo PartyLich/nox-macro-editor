@@ -26,18 +26,6 @@ const download = (contentType: string, content: any, filename: string) => {
   URL.revokeObjectURL(a.href);
 };
 
-// insert an array into `dest` array at `index`
-const insert = <T>(dest: Array<T>, index: number): ((Array<T>) => Array<T>) =>
-  (list) => {
-    if (index >= dest.length) index = dest.length;
-    if (index < 0) index = 0;
-
-    const start = dest.slice(0, index);
-    const end = dest.slice(index);
-    return start.concat(list.slice())
-        .concat(end);
-  };
-
 type numericCompare = (number) => ((number) => boolean);
 
 // return true if b is >= a
@@ -71,7 +59,6 @@ export {
   gt,
   gte,
   inc,
-  insert,
   cIsInBounds as isInBounds,
   isInt,
   lt,
