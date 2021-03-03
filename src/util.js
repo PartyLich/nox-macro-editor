@@ -10,7 +10,7 @@ import ensure from './ensure';
 export type PredicateFn<T> = (T) => boolean;
 
 // filter an array within a pipe
-const filter = <T>(predicate: PredicateFn<T>) =>
+const filter = <T>(predicate: PredicateFn<T>): ((arr: Array<T>) => Array<T>) =>
   (arr: Array<T>): Array<T> => arr.filter(predicate);
 
 // log within a pipe
@@ -64,17 +64,19 @@ const removeAt = <T>(index: number, list: Array<T>): Array<T> => {
   return res;
 };
 
+type numericCompare = (number) => ((number) => boolean);
+
 // return true if b is >= a
-const gte = (a: number) => (b: number) => b >= a;
+const gte: numericCompare = (a) => (b) => b >= a;
 
 // return true if b is > a
-const gt = (a: number) => (b: number) => b > a;
+const gt: numericCompare = (a) => (b) => b > a;
 
 // return true if b is < a
-const lt = (a: number) => (b: number) => b < a;
+const lt: numericCompare = (a) => (b) => b < a;
 
 // return true if b is < a
-const lte = (a: number) => (b: number) => b <= a;
+const lte: numericCompare = (a) => (b) => b <= a;
 
 const isInBounds = (list: Array<any>, index: number): boolean =>
   index >= 0 && index < list.length;
