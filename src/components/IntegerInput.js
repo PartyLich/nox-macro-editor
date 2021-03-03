@@ -1,5 +1,5 @@
 // @flow
-import React, { useState, useEffect } from 'react';
+import React, { type Node, useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 
 import { isInt } from '../util';
@@ -14,12 +14,14 @@ type Props = {
   update: (number) => void,
 };
 
-const IntegerInput = ({
+type signature = (Props) => Node;
+
+const IntegerInput: signature = ({
   classNames = [],
   label = 'Integer Input',
   value = 0,
   update,
-}: Props) => {
+}) => {
   const [displayVal: string, setDisplayVal] = useState(`${ value }`);
   const [isValid: boolean, setValid] = useState(true);
 
