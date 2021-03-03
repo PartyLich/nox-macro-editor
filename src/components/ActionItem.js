@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { type Node } from 'react';
 import {
   Draggable,
 } from 'react-beautiful-dnd';
@@ -73,13 +73,14 @@ const handleClick = (setSelected: (number) => void, i: ?number) => () => {
 
 
 type Props = Action;
-
-const ActionItem = (
+type signature = (
     selected: ?number,
     setSelected: (number) => void,
     remove: (number) => void,
-) =>
-  (action: Props, ind: number) => {
+) => ((action: Props, ind: number) => Node);
+
+const ActionItem: signature = (selected, setSelected, remove) =>
+  (action, ind) => {
     const isSelected = (selected === ind);
     let children = action.type;
 

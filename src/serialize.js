@@ -35,10 +35,10 @@ type ResultType = typeof Result;
 
 
 // Returns true if a string is empty, false otherwise
-const isEmpty = (str: string | Array<any>): boolean => str.length === 0;
+const isEmpty = (str: string | Array<mixed>): boolean => str.length === 0;
 
 // Returns false if a string is empty, true otherwise
-const notEmpty = (str: string | Array<any>): boolean => !isEmpty(str);
+const notEmpty = (str: string | Array<mixed>): boolean => !isEmpty(str);
 
 // Split a string at newline characters
 const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
@@ -353,7 +353,31 @@ const noxSerializer = (): Serializer => {
 };
 
 // functions exported for testing
-let test;
+let test: {|
+  clickLine: (
+    resolution: Coord,
+    time: number,
+    action: ClickAction | DragAction
+  ) => string,
+  isEmpty: (str: string | Array<any>) => boolean,
+  mdragLine: (
+    resolution: Coord,
+    time: number,
+    action: ClickAction | DragAction
+  ) => string,
+  mreleaseLine: (resolution: Coord, time: number) => string,
+  notEmpty: (str: string | Array<any>) => boolean,
+  parseAction: (str: string) => Action,
+  parseCoord: (arr: Array<string>) => Coord,
+  splitLines: (str: string) => Array<string>,
+  splitPipes: (str: string) => Array<string>,
+  splitSeparators: (arr: Array<string>) => Array<string>,
+  tokenToObj: (arr: Array<string>) => [number, Action, Coord],
+  tryParseAction: (str: string) => Action,
+  tryParseCoord: (arr: Array<string>) => ResultType,
+  tryParseInt: (string) => ResultType,
+  tryTokenToObj: (arr: Array<string>) => ResultType,
+|};
 if (process.env.NODE_ENV === 'dev') {
   test = {
     clickLine,

@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { type Node } from 'react';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -22,7 +22,9 @@ type Props = {
   addWait: (number) => void,
 };
 
-const Controls = ({
+type signature = (Props) => Node;
+
+const Controls: signature = ({
   actions = [],
   resolution: { x: resX, y: resY } = { x: 0, y: 0 },
   selected,
@@ -30,7 +32,7 @@ const Controls = ({
   addClick,
   addDrag,
   addWait,
-}: Props) => {
+}) => {
   let x = 0;
   let y = 0;
   let duration = 0;

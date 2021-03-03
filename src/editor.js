@@ -33,77 +33,78 @@ export interface Editor {
   subscribe: (() => void) => (()=>void)
 }
 
-const makeEditor =
-  (serializer: Serializer) => (initialState: Array<Action> = []): Editor => {
-    let actions: Array<Action> = initialState.slice();
-    let resolution: Coord = { x: 900, y: 1600 };
-    const { publish, subscribe } = Pubsub();
+type signature = (Serializer) => ((initialState?: Array<Action>) => Editor);
 
-    const setActions = (_actions: Array<Action>) => {
-      actions = _actions.slice();
-      publish();
-    };
+const makeEditor: signature = (serializer) => (initialState = []) => {
+  let actions: Array<Action> = initialState.slice();
+  let resolution: Coord = { x: 900, y: 1600 };
+  const { publish, subscribe } = Pubsub();
 
-    const setResolution = (_res: Coord) => {
-      resolution = { ..._res };
-      publish();
-    };
-
-    return Object.assign({}, {
-      actions: () => actions.slice(),
-
-      resolution: () => ({ ...resolution }),
-
-      addDrag: (coord) => pipe(
-          addDrag(coord, actions),
-          setActions,
-      ),
-
-      addClick: (coord) => pipe(
-          addClick(coord, actions),
-          setActions,
-      ),
-
-      addWait: (duration) => pipe(
-          addWait(duration, actions),
-          setActions,
-      ),
-
-      loadFile: loadFile(setActions, setResolution),
-
-      importFile: (fileText, index) => {
-        if (!actions.length) {
-          loadFile(setActions, setResolution, fileText)();
-          return;
-        }
-
-        importFile(setActions)(
-            actions,
-            index,
-            resolution,
-            fileText,
-        )();
-      },
-
-      removeAction: (ind) => {
-        setActions(removeAt(ind, actions));
-        return ind;
-      },
-
-      updateAction: (x, y, duration, index) => pipe(
-          updateAction(index, x, y, duration),
-          setActions,
-      )(actions),
-
-      reorder: (from, to) => {
-        setActions(reorder(from, to)(actions));
-      },
-
-      serialize: () => serializer.serialize(resolution, actions),
-
-      subscribe,
-    });
+  const setActions = (_actions: Array<Action>) => {
+    actions = _actions.slice();
+    publish();
   };
+
+  const setResolution = (_res: Coord) => {
+    resolution = { ..._res };
+    publish();
+  };
+
+  return Object.assign({}, {
+    actions: () => actions.slice(),
+
+    resolution: () => ({ ...resolution }),
+
+    addDrag: (coord) => pipe(
+        addDrag(coord, actions),
+        setActions,
+    ),
+
+    addClick: (coord) => pipe(
+        addClick(coord, actions),
+        setActions,
+    ),
+
+    addWait: (duration) => pipe(
+        addWait(duration, actions),
+        setActions,
+    ),
+
+    loadFile: loadFile(setActions, setResolution),
+
+    importFile: (fileText, index) => {
+      if (!actions.length) {
+        loadFile(setActions, setResolution, fileText)();
+        return;
+      }
+
+      importFile(setActions)(
+          actions,
+          index,
+          resolution,
+          fileText,
+      )();
+    },
+
+    removeAction: (ind) => {
+      setActions(removeAt(ind, actions));
+      return ind;
+    },
+
+    updateAction: (x, y, duration, index) => pipe(
+        updateAction(index, x, y, duration),
+        setActions,
+    )(actions),
+
+    reorder: (from, to) => {
+      setActions(reorder(from, to)(actions));
+    },
+
+    serialize: () => serializer.serialize(resolution, actions),
+
+    subscribe,
+  });
+};
 
 export default makeEditor;
 

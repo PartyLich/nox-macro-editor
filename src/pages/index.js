@@ -1,5 +1,5 @@
 // @flow
-import React, { useEffect, useState } from 'react';
+import React, { type Node, useEffect, useState } from 'react';
 
 import { Editor, Page } from '../components';
 import { makeEditor } from '../editor';
@@ -10,7 +10,9 @@ const TITLE = 'Macro Editor';
 const INITIAL_STATE = [];
 const editor = makeEditor(noxSerializer())(INITIAL_STATE);
 
-const Index = () => {
+type signature = () => Node;
+
+const Index: signature = () => {
   const [, setDirty] = useState();
   const actions = editor.actions();
   const resolution = editor.resolution();
