@@ -5,9 +5,10 @@ import pipe from 'crocks/helpers/pipe';
 
 import wrappedErr from './wrappedErr';
 import ensure from './ensure';
+import {
+  type PredicateFn,
+} from './util/';
 
-
-export type PredicateFn<T> = (T) => boolean;
 
 // filter an array within a pipe
 const filter = <T>(predicate: PredicateFn<T>): ((arr: Array<T>) => Array<T>) =>

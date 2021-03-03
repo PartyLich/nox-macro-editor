@@ -32,7 +32,7 @@ import {
   NOX_SEPARATOR,
 } from './constants';
 
-import type { PredicateFn } from '../util';
+import type { PredicateFn } from '../util/';
 import type { Action, Coord } from '../actions';
 
 

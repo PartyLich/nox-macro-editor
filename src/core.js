@@ -32,7 +32,7 @@ import {
   map,
   pipe,
 } from './util';
-import type { PredicateFn } from './util';
+import type { PredicateFn } from './util/';
 
 
 const validIndex: PredicateFn<?number> = and(isNumber, isInBounds);
