@@ -34,8 +34,6 @@ const lt: numericCompare = (a) => (b) => b < a;
 // return true if b is < a
 const lte: numericCompare = (a) => (b) => b <= a;
 
-const isInBounds = (list: Array<any>, index: number): boolean =>
-  index >= 0 && index < list.length;
 
 // add two number `a` and `b`
 const sum: ((number) => ((number) => number)) = (a) => (b) => a + b;
@@ -45,7 +43,6 @@ const inc: ((number) => number) = sum(1);
 
 // curry functions
 const cDownload: any = curry(download);
-const cIsInBounds: any = curry(isInBounds);
 
 export {
   cDownload as download,
@@ -53,7 +50,6 @@ export {
   gt,
   gte,
   inc,
-  cIsInBounds as isInBounds,
   lt,
   lte,
   map,

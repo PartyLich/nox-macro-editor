@@ -1,8 +1,7 @@
 // @flow
 import test from 'tape';
-import {
-  isInBounds,
-} from '../src/util';
+
+import { isInBounds } from '../src/util/';
 
 
 test('isInBounds()', (t) => {
