@@ -185,12 +185,12 @@ const addWait = (duration: number, actions: Array<Action>, ind: number) => {
 };
 
 // curry all the things
-const cLoadFile = curry(loadFile);
-const cImportFile = curry(importFile);
-const cUpdateAction = curry(updateAction);
-const cAddClick = curry(addClick);
-const cAddDrag = curry(addDrag);
-const cAddWait = curry(addWait);
+const cLoadFile: any = curry(loadFile);
+const cImportFile: any = curry(importFile);
+const cUpdateAction: any = curry(updateAction);
+const cAddClick: any = curry(addClick);
+const cAddDrag: any = curry(addDrag);
+const cAddWait: any = curry(addWait);
 
 // functions exported for testing
 let test;
