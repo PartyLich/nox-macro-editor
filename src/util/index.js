@@ -10,4 +10,5 @@ export { default as isInt } from './isInt';
 export { default as reorder } from './reorder';
 export { default as removeAt } from './removeAt';
 export { default as trace } from './trace';
+export { default as wrappedErr } from './wrappedErr';
 export * from './compare';

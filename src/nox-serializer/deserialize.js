@@ -12,8 +12,8 @@ import map from 'crocks/pointfree/map';
 import sequence from 'crocks/pointfree/sequence';
 import traverse from 'crocks/pointfree/traverse';
 
-import { pipe, wrappedErr } from '../util';
-import { ensure, isEmpty } from '../util/';
+import { pipe } from '../util';
+import { ensure, isEmpty, wrappedErr } from '../util/';
 import {
   clickAction,
   dragAction,

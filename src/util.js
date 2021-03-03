@@ -3,8 +3,6 @@ import curry from 'crocks/helpers/curry';
 import map from 'crocks/pointfree/map';
 import pipe from 'crocks/helpers/pipe';
 
-import wrappedErr from './wrappedErr';
-
 
 // initiate a file download with the specified `contentType` and `content`
 // all over the net. versions on blogs, SO, etc. No idea who the originator was
@@ -34,5 +32,4 @@ export {
   map,
   pipe,
   sum,
-  wrappedErr,
 };
