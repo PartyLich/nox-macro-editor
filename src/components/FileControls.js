@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react';
+import React, { type Element, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -22,13 +22,15 @@ type Props = {
   saveFile: () => void,
 };
 
-const FileControls = ({
+type signature = (Props) => Element<"div">;
+
+const FileControls: signature = ({
   filename,
   onFileSelect,
   handleLoad,
   handleImport,
   saveFile,
-}: Props) => {
+}) => {
   const DESCRIPTION = `Loading the selected file will overwrite any macro currently in the editor.`;
   const TITLE = 'Replace the current macro?';
   const [isAlertOpen, setAlertOpen] = useState(false);
