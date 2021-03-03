@@ -23,8 +23,7 @@ import {
   waitAction,
 } from './actions';
 import type { Action, Coord } from './actions';
-import { deserialize } from './serialize';
-import type { ParsedActions } from './serialize';
+import { deserialize, type ParsedActions } from './nox-serializer/deserialize';
 import { shallowEqual } from './core/';
 import {
   inc,

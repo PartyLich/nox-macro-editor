@@ -12,8 +12,7 @@ import map from 'crocks/pointfree/map';
 import sequence from 'crocks/pointfree/sequence';
 import traverse from 'crocks/pointfree/traverse';
 
-import { ensure, pipe, wrappedErr } from './util';
-import type { PredicateFn } from './util';
+import { ensure, pipe, wrappedErr } from '../util';
 import {
   clickAction,
   dragAction,
@@ -21,18 +20,23 @@ import {
   releaseAction,
   waitAction,
   types as actType,
-} from './actions';
-import type {
-  Action,
-  Coord,
-  ClickAction,
-  DragAction,
-} from './actions';
-import type { Serializer } from './serializer';
+} from '../actions';
+import {
+  KB_PRESS,
+  KB_RELEASE,
+  MOD_DRAG,
+  MOD_CLICK,
+  MOUSE_DOWN,
+  MOUSE_RELEASE,
+  MSTATE_DOWN,
+  NOX_SEPARATOR,
+} from './constants';
+
+import type { PredicateFn } from '../util';
+import type { Action, Coord } from '../actions';
 
 
 type ResultType = typeof Result;
-
 
 // Returns true if a string is empty, false otherwise
 const isEmpty = (str: string | Array<mixed>): boolean => str.length === 0;
@@ -45,8 +49,6 @@ const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
 
 // Split a string at '|' characters
 const splitPipes = (str: string): Array<string> => str.split('|');
-
-const NOX_SEPARATOR = 'ScRiPtSePaRaToR';
 
 // Split strings in an array at Nox macro script separator tokens
 const splitSeparators = (arr: Array<string>): Array<string> =>
@@ -88,80 +90,6 @@ const tryParseCoord: (arr: Array<string>) => ResultType = pipe(
       y: arr[1],
     })),
 );
-
-// actions
-const MOUSE_DOWN = 'MULTI';
-const MOUSE_RELEASE = 'MSBRL';
-const KB_PRESS = 'KBDPR';
-const KB_RELEASE = 'KBDFL';
-
-const MSTATE_DOWN = '1';
-const MOD_DRAG = '2';
-const MOD_CLICK = '0';
-
-// parse the action segment of a Nox macro string
-const parseAction = (str: string): Action => {
-  const parts = str.split(':');
-  const word = parts.shift();
-
-  switch (word) {
-    case MOUSE_DOWN:
-      const mouseState = parts.shift();
-      if (mouseState === MSTATE_DOWN) {
-        // mouse down
-        const modifier: string = parts.shift();
-        const coord = parseCoord(parts);
-
-        if (modifier === MOD_CLICK) {
-          // mouse down
-          return clickAction(coord);
-        }
-        if (modifier === MOD_DRAG) {
-          // mouse drag
-          return dragAction(coord);
-        }
-      }
-
-      return noneAction();
-
-    case MOUSE_RELEASE:
-      // mouse release
-      return releaseAction();
-
-    case KB_PRESS:
-    case KB_RELEASE:
-      break;
-
-    default:
-      console.log(`unrecognized action ${ word }`);
-      throw new Error(`unrecognized action: ${ word }`);
-  }
-
-  return noneAction();
-};
-
-// convert token array to object
-const tokenToObj = (arr: Array<string>): [number, Action, Coord] => {
-  if (arr.length != 5) {
-    console.log(arr);
-    throw new Error(`unable to parse action: ${ JSON.stringify(arr) }`);
-  }
-  arr = arr.slice();
-  // const isKeyboard = arr.shift() === 1;
-  arr.shift();
-  const resolution = {
-    x: parseInt(arr.shift(), 10),
-    y: parseInt(arr.shift(), 10),
-  };
-  const action = parseAction(arr.shift());
-  const time = parseInt(arr.shift(), 10);
-
-  return [
-    time,
-    action,
-    resolution,
-  ];
-};
 
 // attempt to parse an Action from the provided string. returns Ok if
 // successful, err otherwise
@@ -281,126 +209,16 @@ const deserialize: (lines: string) => ParsedActions = pipe(
     filter(([a, _]: [Action, Coord]) => a.type !== actType.NONE),
 );
 
-const basicLine = (
-    resolution: Coord,
-    time: number,
-    actionText: string,
-): string =>
-  `0${ NOX_SEPARATOR }${ [resolution.x, resolution.y, actionText].join('|') }${ NOX_SEPARATOR }${ time }`;
-
-// Serialize mouse down actions to Nox macro format
-const mdownLine = (mod: string) => (
-    resolution: Coord,
-    time: number,
-    action: ClickAction | DragAction,
-): string => {
-  const actionText = [MOUSE_DOWN, MSTATE_DOWN, mod, action.x, action.y].join(':');
-  return basicLine(resolution, time, actionText);
-};
-
-// Serialize a Click to Nox macro format
-const clickLine = mdownLine(MOD_CLICK);
-
-// Serialize a Drag to Nox macro format
-const mdragLine = mdownLine(MOD_DRAG);
-
-// Serialize a Mouse Release to Nox macro format
-const mreleaseLine = (resolution: Coord, time: number): string => {
-  const actionText = [MOUSE_RELEASE, 0, 0].join(':');
-  return basicLine(resolution, time, actionText);
-};
-
-// serialize Action array to Nox macro format
-const serialize = (resolution: Coord, actions: Array<Action>): string => {
-  const LINEBREAK = '\r\n';
-  let time = 0;
-
-  const res =
-  actions.reduce(
-      (acc: string, action: Action, ind: number) => {
-        const linebreak = acc.length > 0
-          ? LINEBREAK
-          : '';
-
-        switch (action.type) {
-          case actType.CLICK:
-            return [acc, clickLine(resolution, time, action)].join(linebreak);
-
-          case actType.MDRAG:
-            return [acc, mdragLine(resolution, time, action)].join(linebreak);
-
-          case actType.MRELEASE:
-            return [acc, mreleaseLine(resolution, time)].join(linebreak);
-
-          case actType.WAIT:
-            time += action.duration;
-            break;
-        }
-
-        return acc;
-      },
-      '',
-  );
-
-  return res;
-};
-
-const noxSerializer = (): Serializer => {
-  return Object.assign({}, {
-    deserialize,
-    serialize,
-  });
-};
-
-// functions exported for testing
-let test: {|
-  clickLine: (
-    resolution: Coord,
-    time: number,
-    action: ClickAction | DragAction
-  ) => string,
-  isEmpty: (str: string | Array<any>) => boolean,
-  mdragLine: (
-    resolution: Coord,
-    time: number,
-    action: ClickAction | DragAction
-  ) => string,
-  mreleaseLine: (resolution: Coord, time: number) => string,
-  notEmpty: (str: string | Array<any>) => boolean,
-  parseAction: (str: string) => Action,
-  parseCoord: (arr: Array<string>) => Coord,
-  splitLines: (str: string) => Array<string>,
-  splitPipes: (str: string) => Array<string>,
-  splitSeparators: (arr: Array<string>) => Array<string>,
-  tokenToObj: (arr: Array<string>) => [number, Action, Coord],
-  tryParseAction: (str: string) => Action,
-  tryParseCoord: (arr: Array<string>) => ResultType,
-  tryParseInt: (string) => ResultType,
-  tryTokenToObj: (arr: Array<string>) => ResultType,
-|};
-if (process.env.NODE_ENV === 'dev') {
-  test = {
-    clickLine,
-    isEmpty,
-    mreleaseLine,
-    mdragLine,
-    notEmpty,
-    parseAction,
-    parseCoord,
-    splitLines,
-    splitPipes,
-    splitSeparators,
-    tokenToObj,
-    tryTokenToObj,
-    tryParseAction,
-    tryParseCoord,
-    tryParseInt,
-  };
-}
-
 export {
+  isEmpty,
+  notEmpty,
+  parseCoord,
+  splitLines,
+  splitPipes,
+  splitSeparators,
+  tryTokenToObj,
+  tryParseAction,
+  tryParseCoord,
+  tryParseInt,
   deserialize,
-  serialize,
-  noxSerializer,
-  test,
 };
