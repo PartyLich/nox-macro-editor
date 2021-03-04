@@ -6,9 +6,10 @@ import {
   dragAction,
   releaseAction,
   waitAction,
-} from './actions';
-import type { Action, Coord } from './actions';
-import { insert, pipe } from './util/';
+} from '../actions';
+import { insert, pipe } from '../util/';
+
+import type { Action, Coord } from '../actions';
 
 
 // add a new click (with mouse release)
