@@ -1,5 +1,5 @@
 // @flow
-type signature = (Object, Object) => boolean;
+type signature = ({}, {}) => boolean;
 
 // shallow object comparison. true if `b` contains all the keys of `a` with
 // matching values

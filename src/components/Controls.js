@@ -7,13 +7,13 @@ import Box from '@material-ui/core/Box';
 
 import { IntegerInput } from '.';
 import { isInBounds } from '../util/';
-import type { Coord } from '../actions';
+import type { Action, Coord } from '../actions';
 
 import styles from './Controls.module.scss';
 
 
 type Props = {
-  actions: Array<Object>,
+  actions: Array<Action>,
   resolution: Coord,
   selected: ?number,
   updateAction: (number, number, number) => void,
@@ -39,8 +39,11 @@ const Controls: signature = ({
 
   // TODO: switch to optional chaining instead of bounds check?
   if (typeof selected === 'number' && isInBounds(actions, selected)) {
+    // $FlowExpectedErrort[incompatible-type] we know `.x` may be undefined
     x = actions[selected].x || x;
+    // $FlowExpectedErrort[incompatible-type] we know `.y` may be undefined
     y = actions[selected].y || y;
+    // $FlowExpectedErrort[incompatible-type] ...we know
     duration = actions[selected].duration || duration;
   }
 

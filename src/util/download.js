@@ -4,7 +4,7 @@ import curry from 'crocks/helpers/curry';
 
 // initiate a file download with the specified `contentType` and `content`
 // all over the net. versions on blogs, SO, etc. No idea who the originator was
-const download = (contentType: string, content: any, filename: string) => {
+const download = (contentType: string, content: mixed, filename: string) => {
   const file = new Blob([content], { type: contentType });
   const a = document.createElement('a');
 
