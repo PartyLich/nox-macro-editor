@@ -7,7 +7,7 @@ import styles from './FileInput.module.scss';
 
 
 type Props = {
-  onChange: function,
+  onChange: (SyntheticEvent<HTMLInputElement>) => void
 };
 
 type signature = (Props) => Element<"div">;

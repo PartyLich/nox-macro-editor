@@ -16,7 +16,7 @@ import styles from './FileControls.module.scss';
 
 type Props = {
   filename: string,
-  onFileSelect: function,
+  onFileSelect: (SyntheticEvent<HTMLInputElement>) => void,
   handleLoad: () => void,
   handleImport: () => void,
   saveFile: () => void,
@@ -39,7 +39,7 @@ const FileControls: signature = ({
 
   const openAlert = () => setAlertOpen(true);
 
-  const loadFile = pipe(
+  const loadFile: () => void = pipe(
       handleLoad,
       closeAlert,
   );

@@ -8,26 +8,32 @@ import type { Action, Coord } from '../actions';
 import type { Editor as EditorType } from '../editor';
 
 
-// convert file to text on selection
-const onFileSelect = (setStateFn: function) => (evt) => {
-  const fileList = evt.target.files;
-  const file = fileList.item(0);
-  if (!file) {
-    // reset file state
-    setStateFn({
-      text: '',
-      name: '',
-    });
-    return;
-  }
-
-  file
-      .text()
-      .then((text) => setStateFn({
-        text,
-        name: file.name,
-      }));
+type FileState = {
+  text: string,
+  name: string,
 };
+
+// convert file to text on selection
+const onFileSelect = (setStateFn: (FileState) => void) =>
+  (evt: SyntheticEvent<HTMLInputElement>) => {
+    const fileList = evt.currentTarget.files;
+    const file = fileList.item(0);
+    if (!file) {
+    // reset file state
+      setStateFn({
+        text: '',
+        name: '',
+      });
+      return;
+    }
+
+    file
+        .text()
+        .then((text) => setStateFn({
+          text,
+          name: file.name,
+        }));
+  };
 
 
 type Props = {
@@ -44,7 +50,7 @@ const Editor: signature = ({
   resolution,
 }) => {
   const [selected: ?number, setSelected] = useState(null);
-  const [file: {text: string, name: string}, setFile] = useState({ text: '', name: '' });
+  const [file: FileState, setFile] = useState({ text: '', name: '' });
 
   // initiate download of the current Action list
   const saveFile = () => {
@@ -55,7 +61,7 @@ const Editor: signature = ({
   };
 
   // load macro then reset selection
-  const handleLoad = pipe(
+  const handleLoad: () => void = pipe(
       () => editor.loadFile(file.text),
       setSelected,
   );

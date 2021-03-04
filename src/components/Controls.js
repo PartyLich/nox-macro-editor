@@ -33,9 +33,9 @@ const Controls: signature = ({
   addDrag,
   addWait,
 }) => {
-  let x = 0;
-  let y = 0;
-  let duration = 0;
+  let x: number = 0;
+  let y: number = 0;
+  let duration: number = 0;
 
   // TODO: switch to optional chaining instead of bounds check?
   if (typeof selected === 'number' && isInBounds(actions, selected)) {
