@@ -1,7 +1,7 @@
 // @flow
 import test from 'tape';
 
-import wrappedErr from '../src/wrappedErr';
+import wrappedErr from '../src/util/wrappedErr';
 
 
 const identity = (x) => x;

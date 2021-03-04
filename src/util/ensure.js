@@ -5,7 +5,7 @@ import ifElse from 'crocks/logic/ifElse';
 import isFunction from 'crocks/predicates/isFunction';
 
 // import type { PredicateFn, ResultType } from './types';
-import type { PredicateFn } from './util';
+import type { PredicateFn } from './';
 
 
 type ResultType = typeof Result;

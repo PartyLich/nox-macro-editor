@@ -9,12 +9,8 @@ import {
   importFile,
   loadFile,
   updateAction,
-} from './core';
-import {
-  pipe,
-  reorder,
-  removeAt,
-} from './util';
+} from './core/';
+import { pipe, reorder, removeAt } from './util/';
 import Pubsub from './pubsub';
 
 

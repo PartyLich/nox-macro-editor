@@ -3,7 +3,7 @@ import React, { type Node, useEffect, useState } from 'react';
 
 import { Editor, Page } from '../components';
 import { makeEditor } from '../editor';
-import { noxSerializer } from '../serialize';
+import noxSerializer from '../nox-serializer/';
 
 
 const TITLE = 'Macro Editor';

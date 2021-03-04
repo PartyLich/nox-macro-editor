@@ -2,7 +2,7 @@
 import React, { type Node, useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 
-import { isInt } from '../util';
+import { isInt } from '../util/';
 
 import styles from './IntegerInput.module.scss';
 

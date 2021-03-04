@@ -82,7 +82,7 @@ type signature = (
 const ActionItem: signature = (selected, setSelected, remove) =>
   (action, ind) => {
     const isSelected = (selected === ind);
-    let children = action.type;
+    let children: string | Node = action.type;
 
     switch (action.type) {
       case types.CLICK:
@@ -96,7 +96,7 @@ const ActionItem: signature = (selected, setSelected, remove) =>
         });
         break;
     }
-    const rowModifier = (isSelected)
+    const rowModifier: string = (isSelected)
           ? styles.row__selected
           : '';
     const className = [styles.row, rowModifier].join(' ');
