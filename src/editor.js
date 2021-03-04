@@ -7,9 +7,9 @@ import {
   addDrag,
   addWait,
   importFile,
-  loadFile,
   updateAction,
 } from './core';
+import { loadFile } from './core/';
 import { pipe, reorder, removeAt } from './util/';
 import Pubsub from './pubsub';
 
