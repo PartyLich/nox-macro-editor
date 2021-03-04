@@ -2,13 +2,8 @@
 import type { Action, Coord } from './actions';
 import type { Serializer } from './serializer';
 
-import {
-  addClick,
-  addDrag,
-  addWait,
-  updateAction,
-} from './core';
-import { importFile, loadFile } from './core/';
+import { addClick, addDrag, addWait } from './core';
+import { importFile, loadFile, updateAction } from './core/';
 import { pipe, reorder, removeAt } from './util/';
 import Pubsub from './pubsub';
 
