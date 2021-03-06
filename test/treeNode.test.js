@@ -11,6 +11,8 @@ const identity = (a) => a;
 const double = (a) => a * 2;
 const inc = (a) => a + 1;
 
+const sum = (a, b) => a + b;
+
 const makeTree = (a: number = 1) => TreeNode({
   data: a,
   children: [
@@ -74,6 +76,24 @@ test(subtest('is a functor'), (t) => {
     const actual = () => makeTree().map(null);
 
     t.throws(actual, expected, msg);
+  }
+
+  t.end();
+});
+
+test(subtest('is a foldable'), (t) => {
+  {
+    const msg = `reduce is a function`;
+    const expected = 'function';
+    const actual = typeof TreeNode().reduce;
+    t.equal(actual, expected, msg);
+  }
+
+  {
+    const msg = `sum reduces to 4`;
+    const expected = 4;
+    const actual = makeTree().reduce(sum, 0);
+    t.equal(actual, expected, msg);
   }
 
   t.end();
