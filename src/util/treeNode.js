@@ -1,9 +1,27 @@
 // @flow
-const treeNode = ({
+export type options<T> = {
+  data?: any,
+  // data?: ?T,
+  parent?: ?TreeNode<T>,
+  children?: Array<TreeNode<T>>,
+  ...
+};
+
+export interface TreeNode<T: mixed> {
+  data: T,
+  children: Array<TreeNode<T>>,
+  constructor: (options<T>) => TreeNode<T>,
+  map: <B>((T) => B) => TreeNode<B>,
+  reduce: <B>((B, T) => B, B) => B,
+  toString: () => string,
+  toArray: () => Array<T>,
+}
+
+const treeNode = <T>({
   data = null,
   parent = null,
   children = [],
-} = {}) => {
+}: options<T> = {}): TreeNode<T> => {
   const map = (node) => (fn) => {
   };
 
