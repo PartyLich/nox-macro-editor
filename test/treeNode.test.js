@@ -26,11 +26,20 @@ const makeTree = (a: number = 1) => TreeNode({
   ],
 });
 
-test(subtest('toString is a function'), (t) => {
-  const msg = `toString is a function`;
-  const expected = 'function';
-  const actual = typeof TreeNode().toString;
-  t.equal(actual, expected, msg);
+test(subtest('toString'), (t) => {
+  {
+    const msg = `toString is a function`;
+    const expected = 'function';
+    const actual = typeof TreeNode().toString;
+    t.equal(actual, expected, msg);
+  }
+
+  {
+    const msg = `toString returns a string`;
+    const expected = 'string';
+    const actual = typeof makeTree().toString();
+    t.equal(actual, expected, msg);
+  }
 
   t.end();
 });
