@@ -103,6 +103,25 @@ test(subtest('is a foldable'), (t) => {
     const expected = 4;
     const actual = makeTree().reduce(sum, 0);
     t.equal(actual, expected, msg);
+
+    {
+      const msg = `sum reduces to 10`;
+      const tree = TreeNode({
+        data: 1,
+        children: [
+          TreeNode({
+            data: 3,
+            children: [
+              TreeNode({ data: 4 }),
+            ],
+          }),
+          TreeNode({ data: 2 }),
+        ],
+      });
+      const expected = 10;
+      const actual = tree.reduce(sum, 0);
+      t.equal(actual, expected, msg);
+    }
   }
 
   t.end();
