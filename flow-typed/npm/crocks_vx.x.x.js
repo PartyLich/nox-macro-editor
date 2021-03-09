@@ -387,7 +387,18 @@ declare module 'crocks/core/Pair' {
 }
 
 declare module 'crocks/core/Pred' {
-  declare module.exports: any;
+  import type { UnaryFunction } from 'crocks/internal';
+
+  declare class Pred {
+    constructor(fn: UnaryFunction<boolean>): Pred;
+    concat(val: Pred): Pred;
+    contramap(fn: UnaryFunction<>): Pred;
+    valueOf(): UnaryFunction<boolean>;
+    runWith(val: mixed): boolean;
+    static empty(): Pred;
+  }
+
+  declare module.exports: typeof Pred;
 }
 
 declare module 'crocks/core/predOrFunc' {
