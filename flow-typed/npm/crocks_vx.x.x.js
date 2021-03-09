@@ -373,7 +373,38 @@ declare module 'crocks/core/List' {
 }
 
 declare module 'crocks/core/Maybe' {
-  declare module.exports: any;
+  import type { NullaryFunction, UnaryFunction } from 'crocks/internal';
+
+  declare type Nothing = {
+    (): Nothing,
+    ...
+  } & Maybe;
+
+  declare type Just = {
+    (mixed): Just,
+    ...
+  } & Maybe;
+
+  declare class Maybe {
+    constructor(mixed): Maybe;
+    concat(Maybe): Maybe;
+    map(UnaryFunction<>): Maybe;
+    alt(Maybe): Maybe;
+    ap(Maybe): Maybe;
+    sequence(mixed): mixed;
+    traverse(mixed): mixed;
+    chain(UnaryFunction<Maybe>): Maybe;
+    coalesce(NullaryFunction<>, UnaryFunction<>): Maybe;
+    bichain(NullaryFunction<Maybe>, UnaryFunction<Maybe>): Maybe;
+    option(mixed): mixed;
+    either(NullaryFunction<>, UnaryFunction<>): mixed;
+    static of(mixed): Just;
+    static zero(): Nothing;
+    static Nothing: (mixed) => Nothing;
+    static Just: (mixed) => Just;
+  }
+
+  declare module.exports: typeof Maybe;
 }
 
 declare module 'crocks/core/mconcatMap' {
