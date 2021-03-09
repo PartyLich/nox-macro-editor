@@ -727,7 +727,13 @@ declare module 'crocks/logic/not' {
 }
 
 declare module 'crocks/logic/or' {
-  declare module.exports: any;
+  import type { Predicate, PredLike } from 'crocks/internal';
+
+  // or :: ((a -> Boolean) | Pred) -> ((a -> Boolean) | Pred) -> a -> Boolean
+  declare function or(PredLike): (PredLike) => Predicate;
+  declare function or(PredLike, PredLike): Predicate;
+
+  declare module.exports: typeof or;
 }
 
 declare module 'crocks/logic/unless' {
