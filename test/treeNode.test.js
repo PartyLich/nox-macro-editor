@@ -68,6 +68,8 @@ test(subtest('is a functor'), (t) => {
         .map(double)
         .map(inc);
     t.deepEqual(actual.toArray(), expected.toArray(), msg);
+    console.log('composition a:', actual.toString());
+    console.log('composition e:', expected.toString());
   }
 
   {
@@ -103,6 +105,8 @@ test(subtest('is a foldable'), (t) => {
     const expected = 4;
     const actual = makeTree().reduce(sum, 0);
     t.equal(actual, expected, msg);
+    console.log('sum a:', actual.toString());
+    console.log('sum e:', expected.toString());
 
     {
       const msg = `sum reduces to 10`;
@@ -121,6 +125,8 @@ test(subtest('is a foldable'), (t) => {
       const expected = 10;
       const actual = tree.reduce(sum, 0);
       t.equal(actual, expected, msg);
+      console.log('sum a:', actual.toString());
+      console.log('sum e:', expected.toString());
     }
   }
 
