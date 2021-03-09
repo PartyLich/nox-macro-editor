@@ -846,7 +846,14 @@ declare module 'crocks/Maybe/resultToMaybe' {
 }
 
 declare module 'crocks/Maybe/safe' {
-  declare module.exports: any;
+  import type { PredLike } from 'crocks/internal';
+  import type Maybe from 'crocks/core/Maybe';
+
+  // safe :: ((b -> Boolean) | Pred) -> b -> Maybe a
+  declare function safe(PredLike): (mixed) => Maybe;
+  declare function safe(PredLike, mixed): Maybe;
+
+  declare module.exports: typeof safe;
 }
 
 declare module 'crocks/Maybe/safeAfter' {
