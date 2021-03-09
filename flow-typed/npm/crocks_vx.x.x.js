@@ -750,7 +750,13 @@ declare module 'crocks/logic/unless' {
 }
 
 declare module 'crocks/logic/when' {
-  declare module.exports: any;
+  import type { PredLike } from 'crocks/internal';
+
+  // when :: ((a -> Boolean) | Pred) -> (a -> a) -> a -> a
+  declare function when<A, B>(PredLike): ((A) => B) => (A) => A | B;
+  declare function when<A, B>(PredLike, (A) => B): (A) => A | B;
+
+  declare module.exports: typeof when;
 }
 
 declare module 'crocks/Max' {
