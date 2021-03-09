@@ -6,6 +6,8 @@ declare module 'crocks/internal' {
   declare export type Predicate = (any) => boolean;
 
   declare export type NullaryFunction<T: mixed> = () => T;
+
+  declare export type UnaryFunction<T: mixed> = (mixed) => T;
 }
 
 declare module 'crocks' {
