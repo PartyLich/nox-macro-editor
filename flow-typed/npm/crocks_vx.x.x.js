@@ -707,7 +707,16 @@ declare module 'crocks/logic/and' {
 }
 
 declare module 'crocks/logic/ifElse' {
-  declare module.exports: any;
+  import type { PredLike } from 'crocks/internal';
+
+  // ifElse :: ((a -> Boolean) | Pred a) -> (a -> b) -> (a -> b) -> a -> b
+  declare function ifElse<A, B, C>(PredLike): ((A) => B) => ((A) => C) =>
+      (A) => A | C;
+  declare function ifElse<A, B, C>(PredLike, (A) => B): ((A) => C) =>
+      (A) => A | C;
+  declare function ifElse<A, B, C>(PredLike, (A) => B, (A) => C): (A) => A | C;
+
+  declare module.exports: typeof ifElse;
 }
 
 declare module 'crocks/logic/implies' {
