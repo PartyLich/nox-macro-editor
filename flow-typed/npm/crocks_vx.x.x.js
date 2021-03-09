@@ -720,7 +720,14 @@ declare module 'crocks/logic/ifElse' {
 }
 
 declare module 'crocks/logic/implies' {
-  declare module.exports: any;
+  import type { PredLike } from 'crocks/internal';
+
+  // implies :: ((a -> Boolean) | Pred a) -> ((a -> Boolean) | Pred a) ->
+  //     a -> Boolean
+  declare function implies<A>(PredLike): (PredLike) => (A) => boolean;
+  declare function implies<A>(PredLike, PredLike): (A) => boolean;
+
+  declare module.exports: typeof implies;
 }
 
 declare module 'crocks/logic' {
