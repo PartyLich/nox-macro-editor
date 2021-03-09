@@ -94,7 +94,11 @@ declare module 'crocks/combinators/converge' {
 }
 
 declare module 'crocks/combinators/flip' {
-  declare module.exports: any;
+  // flip :: (a -> b -> c) -> b -> a -> c
+  declare function flip<A, B, C>((A, B) => C): (B) => (A) => C;
+  declare function flip<A, B, C>((A, B) => C): (B, A) => C;
+
+  declare module.exports: typeof flip;
 }
 
 declare module 'crocks/combinators/identity' {
