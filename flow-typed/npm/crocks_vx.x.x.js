@@ -719,7 +719,11 @@ declare module 'crocks/logic' {
 }
 
 declare module 'crocks/logic/not' {
-  declare module.exports: any;
+  import type { Predicate, PredLike } from 'crocks/internal';
+
+  declare function not(PredLike): Predicate;
+
+  declare module.exports: typeof not;
 }
 
 declare module 'crocks/logic/or' {
