@@ -3,7 +3,13 @@
 
 // internal
 declare module 'crocks/internal' {
+  import type Pred from 'crocks/core/Pred';
+
   declare export type Predicate = (any) => boolean;
+
+  declare type PredLike =
+    | Predicate
+    | Pred
 
   declare export type NullaryFunction<T: mixed> = () => T;
 
@@ -689,8 +695,15 @@ declare module 'crocks/List/maybeToList' {
   declare module.exports: any;
 }
 
+// and :: ((a -> Boolean) | Pred a) -> ((a -> Boolean) | Pred a) -> a -> Boolean
 declare module 'crocks/logic/and' {
-  declare module.exports: any;
+  import type { Predicate, PredLike } from 'crocks/internal';
+
+  declare function and(PredLike): ((PredLike) => ((mixed) => boolean))
+  declare function and(PredLike, PredLike): ((mixed) => boolean)
+  declare function and(PredLike, PredLike, mixed) : boolean
+
+  declare module.exports: typeof and;
 }
 
 declare module 'crocks/logic/ifElse' {
