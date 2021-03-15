@@ -818,7 +818,13 @@ declare module 'crocks/Maybe/getPath' {
 }
 
 declare module 'crocks/Maybe/getProp' {
-  declare module.exports: any;
+  import type Maybe from 'crocks/core/Maybe';
+
+  // getProp :: (String | Integer) -> a -> Maybe b
+  declare function getProp(string | number): ({}) => Maybe;
+  declare function getProp(string | number, {}): Maybe;
+
+  declare module.exports: typeof getProp;
 }
 
 declare module 'crocks/Maybe' {
