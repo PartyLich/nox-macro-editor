@@ -26,6 +26,8 @@
   "rules": {
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
+    "flowtype/semi": ["error", "always"],
+    "flowtype/no-weak-types": "warn",
     "new-cap": [
       "error",
       {

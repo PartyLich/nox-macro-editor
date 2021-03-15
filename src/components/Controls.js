@@ -1,19 +1,19 @@
 // @flow
-import React from 'react';
+import React, { type Node } from 'react';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 import { IntegerInput } from '.';
-import { isInBounds } from '../util';
-import type { Coord } from '../actions';
+import { isInBounds } from '../util/';
+import type { Action, Coord } from '../actions';
 
 import styles from './Controls.module.scss';
 
 
 type Props = {
-  actions: Array<Object>,
+  actions: Array<Action>,
   resolution: Coord,
   selected: ?number,
   updateAction: (number, number, number) => void,
@@ -22,7 +22,9 @@ type Props = {
   addWait: (number) => void,
 };
 
-const Controls = ({
+type signature = (Props) => Node;
+
+const Controls: signature = ({
   actions = [],
   resolution: { x: resX, y: resY } = { x: 0, y: 0 },
   selected,
@@ -30,15 +32,18 @@ const Controls = ({
   addClick,
   addDrag,
   addWait,
-}: Props) => {
-  let x = 0;
-  let y = 0;
-  let duration = 0;
+}) => {
+  let x: number = 0;
+  let y: number = 0;
+  let duration: number = 0;
 
   // TODO: switch to optional chaining instead of bounds check?
-  if (typeof selected === 'number' && isInBounds(selected, actions)) {
+  if (typeof selected === 'number' && isInBounds(actions, selected)) {
+    // $FlowExpectedErrort[incompatible-type] we know `.x` may be undefined
     x = actions[selected].x || x;
+    // $FlowExpectedErrort[incompatible-type] we know `.y` may be undefined
     y = actions[selected].y || y;
+    // $FlowExpectedErrort[incompatible-type] ...we know
     duration = actions[selected].duration || duration;
   }
 

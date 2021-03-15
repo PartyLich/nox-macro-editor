@@ -1,12 +1,14 @@
 // @flow
-import React from 'react';
+import React, { type Element } from 'react';
 
 import styles from './Header.module.scss';
 
 
-type Props = {}
+type Props = {};
 
-const Header = ({}: Props) => {
+type signature = (Props) => Element<"header">;
+
+const Header: signature = ({}) => {
   return (
     <header>
       <nav className={styles.navbar}>

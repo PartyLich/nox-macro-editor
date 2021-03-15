@@ -1,5 +1,5 @@
 // @flow
-import React, { useState } from 'react';
+import React, { type Element, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -9,26 +9,28 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import SaveIcon from '@material-ui/icons/Save';
 
 import { ConfirmDialog, FileInput } from '.';
-import { pipe } from '../util';
+import { pipe } from '../util/';
 
 import styles from './FileControls.module.scss';
 
 
 type Props = {
   filename: string,
-  onFileSelect: function,
+  onFileSelect: (SyntheticEvent<HTMLInputElement>) => void,
   handleLoad: () => void,
   handleImport: () => void,
   saveFile: () => void,
 };
 
-const FileControls = ({
+type signature = (Props) => Element<"div">;
+
+const FileControls: signature = ({
   filename,
   onFileSelect,
   handleLoad,
   handleImport,
   saveFile,
-}: Props) => {
+}) => {
   const DESCRIPTION = `Loading the selected file will overwrite any macro currently in the editor.`;
   const TITLE = 'Replace the current macro?';
   const [isAlertOpen, setAlertOpen] = useState(false);
@@ -37,10 +39,12 @@ const FileControls = ({
 
   const openAlert = () => setAlertOpen(true);
 
-  const loadFile = pipe(
+  const loadFile: () => void = pipe(
       handleLoad,
       closeAlert,
   );
+
+  const noop = () => null;
 
   return (
     <div className={[styles.container, styles.controls].join(' ')}>
@@ -51,7 +55,7 @@ const FileControls = ({
       <div className={styles.container}>
         <Button
           color="primary"
-          onClick={openAlert}
+          onClick={(filename) ? openAlert : noop}
           variant="contained"
           size="small"
           startIcon={<InsertDriveFileIcon />}
@@ -60,7 +64,7 @@ const FileControls = ({
         <Box >
           <Button
             color="primary"
-            onClick={handleImport}
+            onClick={(filename) ? handleImport : noop}
             variant="contained"
             size="small"
             startIcon={<AddToPhotosIcon />}

@@ -1,5 +1,5 @@
 // @flow
-import React, { type Node } from 'react';
+import React, { type Node, type Element } from 'react';
 import Head from 'next/head';
 
 import { Layout } from '.';
@@ -9,9 +9,14 @@ import styles from './Page.module.scss';
 type Props = {
   children: Node,
   title?: string,
-}
+};
 
-const Page = ({ children, title = 'This is the default title' }: Props) => (
+type signature = (Props) => Element<"section">;
+
+const Page: signature = ({
+  children,
+  title = 'This is the default title',
+}) => (
   <section className={styles.body}>
     <Head>
       <title>{title}</title>

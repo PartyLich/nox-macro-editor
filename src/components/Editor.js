@@ -1,100 +1,117 @@
 // @flow
-import React, { useState } from 'react';
+import React, { type Node, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 
-import {
-  importFile,
-  loadFile,
-  updateAction,
-  addClick,
-  addDrag,
-  addWait,
-} from '../core';
-import {
-  pipe,
-  reorder,
-  removeAt,
-  download,
-} from '../util';
-import { serialize } from '../serialize';
+import { download, pipe } from '../util/';
 import { ActionList, Controls, FileControls } from '.';
 import type { Action, Coord } from '../actions';
+import type { Editor as EditorType } from '../editor';
 
 
-// convert file to text on selection
-const onFileSelect = (setStateFn: function) => (evt) => {
-  const fileList = evt.target.files;
-  const file = fileList.item(0);
-  if (!file) return;
-
-  file
-      .text()
-      .then((text) => setStateFn({
-        text,
-        name: file.name,
-      }));
+type FileState = {
+  text: string,
+  name: string,
 };
 
+// convert file to text on selection
+const onFileSelect = (setStateFn: (FileState) => void) =>
+  (evt: SyntheticEvent<HTMLInputElement>) => {
+    const fileList = evt.currentTarget.files;
+    const file = fileList.item(0);
+    if (!file) {
+    // reset file state
+      setStateFn({
+        text: '',
+        name: '',
+      });
+      return;
+    }
 
-const Editor = () => {
-  const [actions: Array<Action>, setActions] = useState([]);
+    file
+        .text()
+        .then((text) => setStateFn({
+          text,
+          name: file.name,
+        }));
+  };
+
+
+type Props = {
+  editor: EditorType,
+  actions: Array<Action>,
+  resolution: Coord,
+};
+
+type signature = (Props) => Node;
+
+const Editor: signature = ({
+  editor,
+  actions,
+  resolution,
+}) => {
   const [selected: ?number, setSelected] = useState(null);
-  const [file: {text: string, name: string}, setFile] = useState({ text: '', name: '' });
-  const [resolution: Coord, setResolution] = useState({ x: 900, y: 1600 });
+  const [file: FileState, setFile] = useState({ text: '', name: '' });
 
   // initiate download of the current Action list
   const saveFile = () => {
-    const macro = serialize(resolution, actions);
+    const macro = editor.serialize();
     const filename = 'nox_macro';
     // it's a text file, but we don't want to add a default .txt extension
     download('application/octet-stream', macro, filename);
   };
 
   // load macro then reset selection
-  const loadHandler = pipe(
-      loadFile(setActions, setResolution)(file.text),
+  const handleLoad: () => void = pipe(
+      () => editor.loadFile(file.text),
       setSelected,
   );
 
-  // load if Action list is currently empty
-  const importHandler = (!actions.length)
-              ? loadFile(setActions, setResolution)(file.text)
-              : importFile(setActions)(
-                  actions,
-                  selected,
-                  resolution,
-                  file.text,
-              );
+  const handleImport = () => editor.importFile(file.text, selected);
 
   const getIndex = () => (selected == null)
       ? actions.length
       : selected + 1;
 
-  const addClickHandler = (coord: Coord) => pipe(
+  const handleAddClick = (coord: Coord) => pipe(
       getIndex,
-      addClick(coord, actions),
-      setActions,
+      editor.addClick(coord),
   );
 
-  const addDragHandler = (coord: Coord) => pipe(
+  const handleAddDrag = (coord: Coord) => pipe(
       getIndex,
-      addDrag(coord, actions),
-      setActions,
+      editor.addDrag(coord),
   );
 
-  const addWaitHandler = (duration: number) => pipe(
+  const handleAddWait = (duration: number) => pipe(
       getIndex,
-      addWait(duration, actions),
-      setActions,
+      editor.addWait(duration),
   );
+
+  const getNextItem = (ind: number) => Math.min(ind, actions.length - 2);
+
+  type HandleRemove = (ind: number) => void;
+
+  const handleRemove: HandleRemove = pipe(
+      editor.removeAction,
+      getNextItem,
+      setSelected,
+  );
+
+  const handleReorder = (from: number, to: number) => {
+    editor.reorder(from, to);
+    setSelected(to);
+  };
+
+  const handleUpdate = (x, y, duration) =>
+    editor.updateAction(x, y, duration, selected);
 
   return (
     <>
       <FileControls {...{
         filename: file.name,
         onFileSelect: onFileSelect(setFile),
-        handleLoad: loadHandler,
-        handleImport: importHandler,
+        handleLoad,
+        handleImport,
         saveFile,
       }}
       />
@@ -110,15 +127,8 @@ const Editor = () => {
             actions,
             selected,
             setSelected,
-            reorder: (from: number, to: number) => {
-              setActions(reorder(from, to)(actions));
-              setSelected(to);
-            },
-            remove: (ind: number) => {
-              setActions(removeAt(ind, actions));
-              const nextItem = Math.min(ind, actions.length - 2);
-              setSelected(nextItem);
-            },
+            reorder: handleReorder,
+            remove: handleRemove,
           }}
           />
         </Grid>
@@ -127,13 +137,10 @@ const Editor = () => {
             actions,
             resolution,
             selected,
-            updateAction: (x, y, duration) => pipe(
-                updateAction(selected, x, y, duration),
-                setActions,
-            )(actions),
-            addClick: addClickHandler,
-            addWait: addWaitHandler,
-            addDrag: addDragHandler,
+            updateAction: handleUpdate,
+            addClick: handleAddClick,
+            addWait: handleAddWait,
+            addDrag: handleAddDrag,
           }}
           />
         </Grid>

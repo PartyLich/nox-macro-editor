@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { type Node } from 'react';
 import {
   DragDropContext,
   Droppable,
@@ -20,13 +20,15 @@ type Props = {
   remove: (number) => void,
 };
 
-const ActionList = ({
+type signature = (Props) => Node;
+
+const ActionList: signature = ({
   actions = [],
   selected,
   setSelected,
   reorder,
   remove,
-}: Props) => {
+}) => {
   const handleDragEnd = ({ destination, source }) => {
     if (!destination) return;
     if (destination.index === source.index) return;

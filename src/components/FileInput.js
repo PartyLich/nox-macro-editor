@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { type Element } from 'react';
 import Button from '@material-ui/core/Button';
 import { useId } from 'react-id-generator';
 
@@ -7,12 +7,14 @@ import styles from './FileInput.module.scss';
 
 
 type Props = {
-  onChange: function,
-}
+  onChange: (SyntheticEvent<HTMLInputElement>) => void
+};
 
-const FileInput = ({
+type signature = (Props) => Element<"div">;
+
+const FileInput: signature = ({
   onChange,
-}: Props) => {
+}) => {
   const [id] = useId();
 
   return (

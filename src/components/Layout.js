@@ -1,5 +1,5 @@
 // @flow
-import React, { type Node } from 'react';
+import React, { type Node, type Element } from 'react';
 import Container from '@material-ui/core/Container';
 
 import { Header, Footer } from './';
@@ -8,9 +8,11 @@ import styles from './Layout.module.scss';
 
 type Props = {
   children: Node,
-}
+};
 
-const Layout = ({ children }: Props) => (
+type signature = (Props) => Element<"div">;
+
+const Layout: signature = ({ children }) => (
   <div className={styles.container}>
     <Header />
     <Container maxWidth="md">

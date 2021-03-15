@@ -8,22 +8,29 @@ import {
 } from '../src/core';
 
 
+const idToBool = (a) => ({
+  ...a,
+  id: !!a.id,
+});
+
 test('addClick()', (t) => {
   {
     const msg = 'adds a click, wait, and release to empty array';
     const coord = { x: 0, y: 0 };
     const data = [];
     const expected = [
-      { type: types.CLICK, ...coord },
-      { type: types.WAIT, duration: 1 },
-      { type: types.MRELEASE },
+      { id: true, type: types.CLICK, ...coord },
+      { id: true, type: types.WAIT, duration: 1 },
+      { id: true, type: types.MRELEASE },
     ];
-    const actual = addClick(coord, data, 0);
+    const actual = addClick(coord, data, 0)
+        .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
 
     {
-      const actual = addClick(coord)(data)(0);
+      const actual = addClick(coord)(data)(0)
+          .map(idToBool);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
@@ -34,16 +41,18 @@ test('addClick()', (t) => {
     const coord = undefined;
     const data = [];
     const expected = [
-      { type: types.CLICK, ...{ x: 0, y: 0 } },
-      { type: types.WAIT, duration: 1 },
-      { type: types.MRELEASE },
+      { id: true, type: types.CLICK, ...{ x: 0, y: 0 } },
+      { id: true, type: types.WAIT, duration: 1 },
+      { id: true, type: types.MRELEASE },
     ];
-    const actual = addClick(coord, data, 0);
+    const actual = addClick(coord, data, 0)
+        .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
 
     {
-      const actual = addClick(coord)(data)(0);
+      const actual = addClick(coord)(data)(0)
+          .map(idToBool);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
@@ -58,16 +67,18 @@ test('addDrag()', (t) => {
     const coord = { x: 0, y: 0 };
     const data = [];
     const expected = [
-      { type: types.MDRAG, ...coord },
-      { type: types.WAIT, duration: 16 },
-      { type: types.MRELEASE },
+      { id: true, type: types.MDRAG, ...coord },
+      { id: true, type: types.WAIT, duration: 16 },
+      { id: true, type: types.MRELEASE },
     ];
-    const actual = addDrag(coord, data, 0);
+    const actual = addDrag(coord, data, 0)
+        .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
 
     {
-      const actual = addDrag(coord)(data)(0);
+      const actual = addDrag(coord)(data)(0)
+          .map(idToBool);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
@@ -78,16 +89,18 @@ test('addDrag()', (t) => {
     const coord = undefined;
     const data = [];
     const expected = [
-      { type: types.MDRAG, ...{ x: 0, y: 0 } },
-      { type: types.WAIT, duration: 16 },
-      { type: types.MRELEASE },
+      { id: true, type: types.MDRAG, ...{ x: 0, y: 0 } },
+      { id: true, type: types.WAIT, duration: 16 },
+      { id: true, type: types.MRELEASE },
     ];
-    const actual = addDrag(coord, data, 0);
+    const actual = addDrag(coord, data, 0)
+        .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
 
     {
-      const actual = addDrag(coord)(data)(0);
+      const actual = addDrag(coord)(data)(0)
+          .map(idToBool);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
@@ -102,14 +115,16 @@ test('addWait()', (t) => {
     const duration = 1;
     const data = [];
     const expected = [
-      { type: types.WAIT, duration },
+      { id: true, type: types.WAIT, duration },
     ];
-    const actual = addWait(duration, data, 0);
+    const actual = addWait(duration, data, 0)
+        .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
 
     {
-      const actual = addWait(duration)(data)(0);
+      const actual = addWait(duration)(data)(0)
+          .map(idToBool);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
@@ -120,14 +135,16 @@ test('addWait()', (t) => {
     const duration = undefined;
     const data = [];
     const expected = [
-      { type: types.WAIT, duration: 1 },
+      { id: true, type: types.WAIT, duration: 1 },
     ];
-    const actual = addWait(duration, data, 0);
+    const actual = addWait(duration, data, 0)
+        .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
 
     {
-      const actual = addWait(duration)(data)(0);
+      const actual = addWait(duration)(data)(0)
+          .map(idToBool);
       t.deepEqual(actual, expected, '(curried)' + msg);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
