@@ -86,7 +86,10 @@ declare module 'crocks/combinators/composeB' {
 }
 
 declare module 'crocks/combinators/constant' {
-  declare module.exports: any;
+  // constant :: a -> () -> a
+  declare function constant<T>(val: T): () => T;
+
+  declare module.exports: typeof constant;
 }
 
 declare module 'crocks/combinators/converge' {
