@@ -1,5 +1,5 @@
-// @flow
-import React, { type Node } from 'react';
+import * as React from 'react';
+import { ReactElement } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -10,14 +10,14 @@ import { useId } from 'react-id-generator';
 
 
 type Props = {
-  description: string,
-  handleYes: () => void,
-  handleNo: () => void,
-  open: boolean,
-  title: string,
+  description: string;
+  handleYes: () => void;
+  handleNo: () => void;
+  open: boolean;
+  title: string;
 };
 
-type signature = (Props) => Node;
+type signature = (props: Props) => ReactElement;
 
 const ConfirmDialog: signature = ({
   description,

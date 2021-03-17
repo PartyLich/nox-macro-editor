@@ -1,5 +1,5 @@
-// @flow
-import React, { type Node, useState, useEffect } from 'react';
+import * as React from 'react';
+import { ReactElement, useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 
 import { isInt } from '../util/';
@@ -8,13 +8,13 @@ import styles from './IntegerInput.module.scss';
 
 
 type Props = {
-  classNames: Array<string>,
-  label: string,
-  value: number,
-  update: (number) => void,
+  classNames?: Array<string>;
+  label: string;
+  value: number;
+  update: (val: number) => void;
 };
 
-type signature = (Props) => Node;
+type signature = (props: Props) => ReactElement;
 
 const IntegerInput: signature = ({
   classNames = [],
@@ -22,12 +22,12 @@ const IntegerInput: signature = ({
   value = 0,
   update,
 }) => {
-  const [displayVal: string, setDisplayVal] = useState(`${ value }`);
-  const [isValid: boolean, setValid] = useState(true);
+  const [displayVal, setDisplayVal] = useState(`${ value }`);
+  const [isValid, setValid] = useState(true);
 
   // validate input and update as appropriate
-  const handleChange = (evt) => {
-    const text = evt.target.value;
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+    const text = evt.currentTarget.value;
     setDisplayVal(text);
 
     if (!isInt(text)) {

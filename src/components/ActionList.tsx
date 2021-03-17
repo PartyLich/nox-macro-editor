@@ -1,26 +1,27 @@
-// @flow
-import React, { type Node } from 'react';
+import * as React from 'react';
+import { ReactElement } from 'react';
 import {
   DragDropContext,
   Droppable,
+  DropResult,
 } from 'react-beautiful-dnd';
 import Paper from '@material-ui/core/Paper';
 
 import { ActionItem } from '.';
-import type { Action } from '../actions';
+import { Action } from '../types';
 
 import styles from './ActionList.module.scss';
 
 
 type Props = {
-  actions: Array<Action>,
-  selected: ?number,
-  setSelected: (number) => void,
-  reorder: (number, number) => void,
-  remove: (number) => void,
+  actions: Array<Action>;
+  selected: number | null | undefined;
+  setSelected: (ind: number) => void;
+  reorder: (from: number, to: number) => void;
+  remove: (ind: number) => void;
 };
 
-type signature = (Props) => Node;
+type signature = (props: Props) => ReactElement;
 
 const ActionList: signature = ({
   actions = [],
@@ -29,7 +30,7 @@ const ActionList: signature = ({
   reorder,
   remove,
 }) => {
-  const handleDragEnd = ({ destination, source }) => {
+  const handleDragEnd = ({ destination, source }: DropResult) => {
     if (!destination) return;
     if (destination.index === source.index) return;
 

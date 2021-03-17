@@ -1,23 +1,23 @@
-// @flow
-import React, { type Node } from 'react';
+import * as React from 'react';
+import { ReactNode } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 
 type Props = {
-  selected: boolean,
-  remove: () => void,
-  children: ?Node,
+  selected: boolean;
+  remove: () => void;
+  children: ReactNode | null | undefined;
 };
 
-type signature = (Props) => Node;
+type signature = (props: Props) => ReactNode;
 
 const RemovableItem: signature = ({
   selected = false,
   remove,
   children,
 }) => {
-  const handleClick = (e) => {
+  const handleClick = (e: React.SyntheticEvent) => {
     e.stopPropagation();
     remove();
   };

@@ -1,18 +1,15 @@
-// @flow
-import React, { type Node } from 'react';
-import {
-  Draggable,
-} from 'react-beautiful-dnd';
+import * as React from 'react';
+import { ReactNode, ReactElement } from 'react';
+import { Draggable } from 'react-beautiful-dnd';
 
-import type {
+import {
   Action,
-  ActionType,
   ClickAction,
   DragAction,
   MReleaseAction,
   WaitAction,
-} from '../actions';
-import { types } from '../actions';
+  types,
+} from '../types';
 import { RemovableItem } from '.';
 
 import styles from './ActionItem.module.scss';
@@ -57,15 +54,12 @@ const Wait = ({
   </>
 );
 
-const actionMap: {[ActionType]: function} = {
-  [types.WAIT]: Wait,
-  [types.CLICK]: Click,
-  [types.MRELEASE]: MRelease,
-  [types.MDRAG]: Click,
-};
 
 // row click handler
-const handleClick = (setSelected: (number) => void, i: ?number) => () => {
+const handleClick = (
+    setSelected: (ind: number) => void,
+    i: number | null | undefined,
+) => () => {
   if (typeof i === 'number') {
     setSelected(i);
   }
@@ -73,29 +67,40 @@ const handleClick = (setSelected: (number) => void, i: ?number) => () => {
 
 
 type Props = Action;
+
 type signature = (
-    selected: ?number,
-    setSelected: (number) => void,
-    remove: (number) => void,
-) => ((action: Props, ind: number) => Node);
+  selected: number | null | undefined,
+  setSelected: (ind: number) => void,
+  remove: (ind: number) => void
+) => (action: Props, ind: number) => ReactElement;
 
 const ActionItem: signature = (selected, setSelected, remove) =>
   (action, ind) => {
     const isSelected = (selected === ind);
-    let children: string | Node = action.type;
+    let children: string | ReactNode = action.type;
 
     switch (action.type) {
       case types.CLICK:
+        // intentional fallthrough
       case types.MDRAG:
+        children = Click(action);
+        break;
+
       case types.MRELEASE:
+        children = MRelease(action);
+        break;
+
       case types.WAIT:
-        children = RemovableItem({
-          selected: isSelected,
-          remove: () => remove(ind),
-          children: actionMap[action.type](action),
-        });
+        children = Wait(action);
         break;
     }
+
+    children = RemovableItem({
+      selected: isSelected,
+      remove: () => remove(ind),
+      children,
+    });
+
     const rowModifier: string = (isSelected)
           ? styles.row__selected
           : '';

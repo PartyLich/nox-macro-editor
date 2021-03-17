@@ -1,5 +1,5 @@
-// @flow
-import React, { type Element, useState } from 'react';
+import * as React from 'react';
+import { ReactElement, useState } from 'react';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -15,14 +15,14 @@ import styles from './FileControls.module.scss';
 
 
 type Props = {
-  filename: string,
-  onFileSelect: (SyntheticEvent<HTMLInputElement>) => void,
-  handleLoad: () => void,
-  handleImport: () => void,
-  saveFile: () => void,
+  filename: string;
+  onFileSelect: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
+  handleLoad: () => void;
+  handleImport: () => void;
+  saveFile: () => void;
 };
 
-type signature = (Props) => Element<"div">;
+type signature = (props: Props) => ReactElement<'div'>;
 
 const FileControls: signature = ({
   filename,

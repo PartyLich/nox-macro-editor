@@ -1,5 +1,5 @@
-// @flow
-import React, { type Node } from 'react';
+import * as React from 'react';
+import { ReactElement } from 'react';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -7,22 +7,22 @@ import Box from '@material-ui/core/Box';
 
 import { IntegerInput } from '.';
 import { isInBounds } from '../util/';
-import type { Action, Coord } from '../actions';
+import { Action, Coord } from '../types';
 
 import styles from './Controls.module.scss';
 
 
 type Props = {
-  actions: Array<Action>,
-  resolution: Coord,
-  selected: ?number,
-  updateAction: (number, number, number) => void,
-  addClick: (Coord) => void,
-  addDrag: (Coord) => void,
-  addWait: (number) => void,
+  actions: Array<Action>;
+  resolution: Coord;
+  selected: number | null | undefined;
+  updateAction: (x: number, y: number, duration: number) => void;
+  addClick: (coord: Coord) => () => void;
+  addDrag: (coord: Coord) => () => void;
+  addWait: (duration: number) => () => void;
 };
 
-type signature = (Props) => Node;
+type signature = (props: Props) => ReactElement;
 
 const Controls: signature = ({
   actions = [],
@@ -33,17 +33,17 @@ const Controls: signature = ({
   addDrag,
   addWait,
 }) => {
-  let x: number = 0;
-  let y: number = 0;
-  let duration: number = 0;
+  let x = 0;
+  let y = 0;
+  let duration = 0;
 
   // TODO: switch to optional chaining instead of bounds check?
   if (typeof selected === 'number' && isInBounds(actions, selected)) {
-    // $FlowExpectedErrort[incompatible-type] we know `.x` may be undefined
+    // @ts-expect-error we know `.x` may be undefined
     x = actions[selected].x || x;
-    // $FlowExpectedErrort[incompatible-type] we know `.y` may be undefined
+    // @ts-expect-error we know `.y` may be undefined
     y = actions[selected].y || y;
-    // $FlowExpectedErrort[incompatible-type] ...we know
+    // @ts-expect-error we know
     duration = actions[selected].duration || duration;
   }
 
