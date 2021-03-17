@@ -1,19 +1,20 @@
-// @flow
-import React, { type Node, useEffect, useState } from 'react';
+import * as React from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 
 import { Editor, Page } from '../components';
 import { makeEditor } from '../editor';
 import noxSerializer from '../nox-serializer/';
+import { Action } from '../types';
 
 
 const TITLE = 'Macro Editor';
-const INITIAL_STATE = [];
+const INITIAL_STATE: Array<Action> = [];
 const editor = makeEditor(noxSerializer())(INITIAL_STATE);
 
-type signature = () => Node;
+type signature = () => ReactElement;
 
 const Index: signature = () => {
-  const [, setDirty] = useState();
+  const [, setDirty] = useState<Array<unknown>>();
   const actions = editor.actions();
   const resolution = editor.resolution();
 

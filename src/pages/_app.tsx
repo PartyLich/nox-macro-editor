@@ -1,5 +1,5 @@
-// import App from 'next/app'
-import React from 'react';
+import * as React from 'react';
+import { AppProps } from 'next/app';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
@@ -7,7 +7,7 @@ import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import '../components/styles.scss';
 
 
-const MyApp = ({ Component, pageProps }) => {
+const App = ({ Component, pageProps }: AppProps): JSX.Element => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
   const theme = React.useMemo(
@@ -38,4 +38,4 @@ const MyApp = ({ Component, pageProps }) => {
 //   return { ...appProps }
 // }
 
-export default MyApp;
+export default App;
