@@ -1,4 +1,3 @@
-// @flow
 import chain from 'crocks/pointfree/chain';
 import constant from 'crocks/combinators/constant';
 import curry from 'crocks/helpers/curry';
@@ -11,13 +10,10 @@ import pipeK from 'crocks/helpers/pipeK';
 import safeLift from 'crocks/Maybe/safeLift';
 import fanout from 'crocks/Pair/fanout';
 
-import { types } from '../actions';
-import { deserialize } from '../nox-serializer/deserialize';
+import { types, Action, Coord } from '../types';
+import { deserialize, ParsedActions } from '../nox-serializer/deserialize';
 import { scale, shallowEqual } from './';
 import { inc, insert, map, pipe } from '../util/';
-
-import type { Action, Coord } from '../actions';
-import type { ParsedActions } from '../nox-serializer/deserialize';
 
 
 // scale an action from one resolution (`fromRes`) to another (`toRes`)
@@ -50,20 +46,20 @@ const firstResolution = pipeK(
     getProp(1),
 );
 
-const getResolution: ParsedActions => Coord = pipe(
+const getResolution: (actions: ParsedActions) => Coord = pipe(
     firstResolution,
     option({ x: 0, y: 0 }),
 );
 
-const getActions: ParsedActions => Array<Action> = pipe(
+const getActions: (actions: ParsedActions) => Array<Action> = pipe(
     map(getProp(0)),
     chain(maybeToArray),
 );
 
 // import a macro, inserting its Actions after the selected index
-const importFile = (setStateFn: (Array<Action>) => void) => (
+const importFile = (setStateFn: (actions: Array<Action>) => void) => (
     actions: Array<Action>,
-    selected: ?number,
+    selected: number | null | undefined,
     resolution: Coord,
     fileText: string,
 ) => () => {
@@ -92,6 +88,6 @@ const importFile = (setStateFn: (Array<Action>) => void) => (
 };
 
 // curry all the things
-const cImportFile: any = curry(importFile);
+const cImportFile = curry(importFile);
 
 export default cImportFile;

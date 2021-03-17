@@ -1,5 +1,7 @@
-// @flow
-type signature = ({}, {}) => boolean;
+type signature = (
+    a: Record<string, unknown>,
+    b: Record<string, unknown>
+) => boolean;
 
 // shallow object comparison. true if `b` contains all the keys of `a` with
 // matching values

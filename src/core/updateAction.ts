@@ -1,22 +1,30 @@
-// @flow
 import and from 'crocks/logic/and';
 import curry from 'crocks/helpers/curry';
 import isNumber from 'crocks/predicates/isNumber';
 import option from 'crocks/pointfree/option';
 import safe from 'crocks/Maybe/safe';
 
-import { types } from '../actions';
-import { isInBounds, map, pipe } from '../util/';
+import {
+  types,
+  Action,
+  ClickAction,
+  DragAction,
+  WaitAction,
+} from '../types';
+import {
+  isInBounds,
+  map,
+  pipe,
+  PredicateFn,
+} from '../util/';
 
-import type { Action } from '../actions';
-import type { PredicateFn } from '../util/';
 
-
-const validIndex: PredicateFn<?number> = and(isNumber, isInBounds);
+const validIndex: PredicateFn<number | null | undefined> =
+  and(isNumber, isInBounds);
 
 // Update an item in an Action array
 const updateAction = (
-    index: ?number,
+    index: number | null | undefined,
     x: number,
     y: number,
     duration: number,
@@ -27,7 +35,7 @@ const updateAction = (
       const res = arr.slice();
       switch (res[index].type) {
         case types.CLICK:
-          res[index] = {
+          res[index] = <ClickAction>{
             ...res[index],
             x,
             y,
@@ -35,7 +43,7 @@ const updateAction = (
           break;
 
         case types.MDRAG:
-          res[index] = {
+          res[index] = <DragAction>{
             ...res[index],
             x,
             y,
@@ -46,7 +54,7 @@ const updateAction = (
           break;
 
         case types.WAIT:
-          res[index] = {
+          res[index] = <WaitAction>{
             ...res[index],
             duration,
           };
@@ -59,6 +67,6 @@ const updateAction = (
 )(index);
 
 // curry all the things
-const cUpdateAction: any = curry(updateAction);
+const cUpdateAction = curry(updateAction);
 
 export default cUpdateAction;

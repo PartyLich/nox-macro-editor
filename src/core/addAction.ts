@@ -1,4 +1,3 @@
-// @flow
 import curry from 'crocks/helpers/curry';
 
 import {
@@ -6,10 +5,10 @@ import {
   dragAction,
   releaseAction,
   waitAction,
-} from '../actions';
+  Action,
+  Coord,
+} from '../types';
 import { insert, pipe } from '../util/';
-
-import type { Action, Coord } from '../actions';
 
 
 // add a new click (with mouse release)
@@ -41,9 +40,9 @@ const addWait = (duration: number, actions: Array<Action>, ind: number) => pipe(
 )();
 
 // curry all the things
-const cAddClick: any = curry(addClick);
-const cAddDrag: any = curry(addDrag);
-const cAddWait: any = curry(addWait);
+const cAddClick = curry(addClick);
+const cAddDrag = curry(addDrag);
+const cAddWait = curry(addWait);
 
 export {
   cAddClick as addClick,

@@ -1,4 +1,3 @@
-// @flow
 import and from 'crocks/logic/and';
 import isNumber from 'crocks/predicates/isNumber';
 import option from 'crocks/pointfree/option';
