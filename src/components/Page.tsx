@@ -1,5 +1,5 @@
-// @flow
-import React, { type Node, type Element } from 'react';
+import * as React from 'react';
+import { ReactElement } from 'react';
 import Head from 'next/head';
 
 import { Layout } from '.';
@@ -7,11 +7,11 @@ import styles from './Page.module.scss';
 
 
 type Props = {
-  children: Node,
-  title?: string,
+  children: ReactElement;
+  title?: string;
 };
 
-type signature = (Props) => Element<"section">;
+type signature = (props: Props) => ReactElement<'section'>;
 
 const Page: signature = ({
   children,

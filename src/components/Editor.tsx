@@ -1,23 +1,24 @@
-// @flow
-import React, { type Node, useState } from 'react';
+import * as React from 'react';
+import { useState, ReactElement } from 'react';
 import Grid from '@material-ui/core/Grid';
 
 import { download, pipe } from '../util/';
 import { ActionList, Controls, FileControls } from '.';
-import type { Action, Coord } from '../actions';
-import type { Editor as EditorType } from '../editor';
+import { Action, Coord } from '../types';
+import { Editor as EditorType } from '../editor';
 
 
 type FileState = {
-  text: string,
-  name: string,
+  text: string;
+  name: string;
 };
 
 // convert file to text on selection
-const onFileSelect = (setStateFn: (FileState) => void) =>
-  (evt: SyntheticEvent<HTMLInputElement>) => {
+const onFileSelect = (setStateFn: (state: FileState) => void) =>
+  (evt: React.SyntheticEvent<HTMLInputElement>) => {
     const fileList = evt.currentTarget.files;
-    const file = fileList.item(0);
+    const file = fileList?.item(0);
+
     if (!file) {
     // reset file state
       setStateFn({
@@ -37,20 +38,20 @@ const onFileSelect = (setStateFn: (FileState) => void) =>
 
 
 type Props = {
-  editor: EditorType,
-  actions: Array<Action>,
-  resolution: Coord,
+  editor: EditorType;
+  actions: Array<Action>;
+  resolution: Coord;
 };
 
-type signature = (Props) => Node;
+type signature = (props: Props) => ReactElement;
 
 const Editor: signature = ({
   editor,
   actions,
   resolution,
 }) => {
-  const [selected: ?number, setSelected] = useState(null);
-  const [file: FileState, setFile] = useState({ text: '', name: '' });
+  const [selected, setSelected] = useState<number | null>(null);
+  const [file, setFile] = useState<FileState>({ text: '', name: '' });
 
   // initiate download of the current Action list
   const saveFile = () => {
@@ -102,7 +103,7 @@ const Editor: signature = ({
     setSelected(to);
   };
 
-  const handleUpdate = (x, y, duration) =>
+  const handleUpdate = (x: number, y: number, duration: number) =>
     editor.updateAction(x, y, duration, selected);
 
   return (

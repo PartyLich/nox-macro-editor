@@ -1,12 +1,14 @@
-// @flow
-import React, { type Element } from 'react';
+import React from 'react';
+import { ReactElement } from 'react';
 
 import styles from './Header.module.scss';
 
 
-type Props = {};
+type Props = {
+  [key: string]: never,
+};
 
-type signature = (Props) => Element<"header">;
+type signature = (props: Props) => ReactElement<'header'>;
 
 const Header: signature = ({}) => {
   return (

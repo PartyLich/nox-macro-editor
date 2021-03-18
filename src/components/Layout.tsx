@@ -1,16 +1,17 @@
-// @flow
-import React, { type Node, type Element } from 'react';
+import * as React from 'react';
+import { ReactElement } from 'react';
 import Container from '@material-ui/core/Container';
 
 import { Header, Footer } from './';
 
 import styles from './Layout.module.scss';
 
+
 type Props = {
-  children: Node,
+  children: ReactElement;
 };
 
-type signature = (Props) => Element<"div">;
+type signature = (props: Props) => ReactElement<'div'>;
 
 const Layout: signature = ({ children }) => (
   <div className={styles.container}>
