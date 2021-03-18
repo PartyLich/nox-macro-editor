@@ -1,7 +1,10 @@
-// @flow
 import {
   types as actType,
-} from '../actions';
+  Action,
+  Coord,
+  ClickAction,
+  DragAction,
+} from '../types';
 import {
   MOD_DRAG,
   MOD_CLICK,
@@ -11,31 +14,18 @@ import {
   NOX_SEPARATOR,
 } from './constants';
 
-import type {
-  Action,
-  Coord,
-  ClickAction,
-  DragAction,
-} from '../actions';
-
 
 const basicLine = (
     resolution: Coord,
     time: number,
     actionText: string,
-): string =>
-  `0${ NOX_SEPARATOR }${ [resolution.x, resolution.y, actionText].join('|') }${ NOX_SEPARATOR }${ time }`;
-
-type mousedown = (
-    Coord,
-    number,
-    ClickAction | DragAction,
-  ) => string;
-
-type signature = (string) => mousedown;
+): string => {
+  const actionBlock = [resolution.x, resolution.y, actionText].join('|');
+  return `0${ NOX_SEPARATOR }${ actionBlock }${ NOX_SEPARATOR }${ time }`;
+};
 
 // Serialize mouse down actions to Nox macro format
-const mdownLine: signature = (mod: string) => (
+const mdownLine = (mod: string) => (
     resolution: Coord,
     time: number,
     action: ClickAction | DragAction,
@@ -45,10 +35,10 @@ const mdownLine: signature = (mod: string) => (
 };
 
 // Serialize a Click to Nox macro format
-const clickLine: mousedown = mdownLine(MOD_CLICK);
+const clickLine = mdownLine(MOD_CLICK);
 
 // Serialize a Drag to Nox macro format
-const mdragLine: mousedown = mdownLine(MOD_DRAG);
+const mdragLine = mdownLine(MOD_DRAG);
 
 // Serialize a Mouse Release to Nox macro format
 const mreleaseLine = (resolution: Coord, time: number): string => {
@@ -62,7 +52,7 @@ const serialize = (resolution: Coord, actions: Array<Action>): string => {
   let time = 0;
 
   return actions.reduce(
-      (acc: string, action: Action, ind: number) => {
+      (acc: string, action: Action) => {
         const linebreak = acc.length > 0
           ? LINEBREAK
           : '';

@@ -1,4 +1,3 @@
-// @flow
 import Result, { Ok } from 'crocks/Result';
 import bichain from 'crocks/pointfree/bichain';
 import chain from 'crocks/pointfree/chain';
@@ -20,7 +19,9 @@ import {
   releaseAction,
   waitAction,
   types as actType,
-} from '../actions';
+  Action,
+  Coord,
+} from '../types';
 import {
   KB_PRESS,
   KB_RELEASE,
@@ -32,14 +33,13 @@ import {
   NOX_SEPARATOR,
 } from './constants';
 
-import type { PredicateFn } from '../util/';
-import type { Action, Coord } from '../actions';
+import { PredicateFn } from '../util/';
 
 
 type ResultType = typeof Result;
 
 // Returns false if a string is empty, true otherwise
-const notEmpty = (str: string | Array<mixed>): boolean => !isEmpty(str);
+const notEmpty = (str: string | Array<unknown>): boolean => !isEmpty(str);
 
 // Split a string at newline characters
 const splitLines = (str: string): Array<string> => str.split(/\r?\n/);
@@ -52,17 +52,16 @@ const splitSeparators = (arr: Array<string>): Array<string> =>
   arr.flatMap((x) => x.split(NOX_SEPARATOR));
 
 //
-const tokenize: (string) => Array<string> = pipe(
+const tokenize: (str: string) => Array<string> = flow(
     splitPipes,
     splitSeparators,
 );
-
 
 // mixed -> Err<Array<string>>
 const parseErr = wrappedErr('unable to parse');
 
 // string -> Result<Array<string>, number>
-const tryParseInt: (string => ResultType) = pipe(
+const tryParseInt: (str: string) => ResultType = pipe(
     flip(parseInt)(10),
     ifElse(isNumber, Ok, parseErr),
 );
@@ -80,9 +79,9 @@ const parseCoordErr = wrappedErr('invalid input');
 
 // Array<string> -> Result<string, Coord>
 const tryParseCoord: (arr: Array<string>) => ResultType = pipe(
-    ifElse((a) => a.length > 1, Ok, parseCoordErr),
+    ifElse((a: Array<string>) => a.length > 1, Ok, parseCoordErr),
     chain(traverse(Result, tryParseInt)),
-    map((arr) => ({
+    map((arr: Array<number>) => ({
       x: arr[0],
       y: arr[1],
     })),
@@ -90,11 +89,11 @@ const tryParseCoord: (arr: Array<string>) => ResultType = pipe(
 
 // attempt to parse an Action from the provided string. returns Ok if
 // successful, err otherwise
-const tryParseAction: (str: string) => Action = pipe(
+const tryParseAction: (str: string) => ResultType = pipe(
     ensure(isString),
     bichain(wrappedErr('tryParseAction expected a string, got: '), Ok),
-    map((str) => str.split(':')),
-    chain((parts) => {
+    map((str: string) => str.split(':')),
+    chain((parts: Array<string>) => {
       const word = parts.shift();
       switch (word) {
         case MOUSE_DOWN:
@@ -138,11 +137,11 @@ const tokenErr = wrappedErr('unable to parse action:');
 // (arr: Array<string>): Result<[number, Action, Coord]>
 const tryTokenToObj: (arr: Array<string>) => ResultType = pipe(
     ifElse(validTokens, Ok, tokenErr),
-    map((arr) => arr.slice(1)),
-    map((arr) => {
+    map((arr: Array<string>) => arr.slice(1)),
+    map((arr: Array<string>) => {
       const resolution = tryParseCoord(arr.splice(0, 2));
-      const action = tryParseAction(arr.shift());
-      const time = tryParseInt(arr.shift());
+      const action = tryParseAction(arr.shift() || '');
+      const time = tryParseInt(arr.shift() || '');
 
       return [
         time,
@@ -158,7 +157,7 @@ type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>;
 // Array<string> -> Array<[Action, Coord]>
 const actionGenerator = function* (): ActionGenerator {
   let time = 0;
-  const result = [];
+  const result: Array<[Action, Coord]> = [];
 
   while (true) {
     const tokens = yield result.slice();
@@ -194,17 +193,17 @@ const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
   );
 };
 
-const tokenizeLines: (Array<string>) => Array<Array<string>> = pipe(
+const tokenizeLines: (lines: Array<string>) => Array<Array<string>> = pipe(
     filter(notEmpty),
     map(tokenize),
 );
 
 // deserialize a Nox macro
-const deserialize: (lines: string) => ParsedActions = pipe(
+const deserialize: (lines: string) => ParsedActions = flow(
     splitLines,
     tokenizeLines,
     linesToActions,
-    filter(([a, _]: [Action, Coord]) => a.type !== actType.NONE),
+    filter(([a]: [Action, Coord]) => a.type !== actType.NONE),
 );
 
 export {

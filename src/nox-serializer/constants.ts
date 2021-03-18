@@ -1,4 +1,3 @@
-// @flow
 const NOX_SEPARATOR = 'ScRiPtSePaRaToR';
 
 // actions
