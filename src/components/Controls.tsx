@@ -38,7 +38,7 @@ const Controls: signature = ({
   let duration = 0;
 
   // TODO: switch to optional chaining instead of bounds check?
-  if (typeof selected === 'number' && isInBounds(actions, selected)) {
+  if (typeof selected === 'number' && isInBounds(actions)(selected)) {
     // @ts-expect-error we know `.x` may be undefined
     x = actions[selected].x || x;
     // @ts-expect-error we know `.y` may be undefined

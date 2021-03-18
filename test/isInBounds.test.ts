@@ -1,6 +1,6 @@
 import test from 'tape';
 
-import { isInBounds } from '../src/util/';
+import { isInBounds } from '../src/util/isInBounds';
 
 
 test('isInBounds()', (t) => {
