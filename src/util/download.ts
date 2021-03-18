@@ -1,20 +1,22 @@
-import curry from 'crocks/helpers/curry';
-
-
 // initiate a file download with the specified `contentType` and `content`
 // all over the net. versions on blogs, SO, etc. No idea who the originator was
-const download = (contentType: string, content: BlobPart, filename: string) => {
-  const file = new Blob([content], { type: contentType });
-  const a = document.createElement('a');
+export const cDownload = (contentType: string) => (content: BlobPart) =>
+  (filename: string): void => {
+    const file = new Blob([content], { type: contentType });
+    const a = document.createElement('a');
 
-  a.href = URL.createObjectURL(file);
-  a.download = filename;
-  a.click();
+    a.href = URL.createObjectURL(file);
+    a.download = filename;
+    a.click();
 
-  URL.revokeObjectURL(a.href);
-};
+    URL.revokeObjectURL(a.href);
+  };
 
-// curry functions
-const cDownload = curry(download);
+// uncurry function
+export const download = (
+    contentType: string,
+    content: BlobPart,
+    filename: string,
+): void => cDownload(contentType)(content)(filename);
 
-export default cDownload;
+export default download;
