@@ -1,4 +1,3 @@
-// @flow
 import { nanoid } from 'nanoid';
 
 
@@ -6,28 +5,30 @@ import { nanoid } from 'nanoid';
 const nextId = () => nanoid(10);
 
 // actions
-const CLICK: 'CLICK' = 'CLICK';
-const MRELEASE: 'MRELEASE' = 'MRELEASE';
-const MDRAG: 'MDRAG' = 'MDRAG';
-const WAIT: 'WAIT' = 'WAIT';
-const NONE: 'NONE' = 'NONE';
+const CLICK = 'CLICK';
+const MRELEASE = 'MRELEASE';
+const MDRAG = 'MDRAG';
+const WAIT = 'WAIT';
+const NONE = 'NONE';
 
-export type Coord = {|
-  x: number,
-  y: number,
-|};
 
-type ActionA<Type, Payload> = {
-  id: string,
-  type: Type,
-  ...Payload,
+export type Coord = {
+  x: number;
+  y: number;
 };
 
-type Empty = {||};
+type ActionA<Type, Payload> = {
+  id: string;
+  type: Type;
+} & Payload;
 
-type Wait = {|
-  duration: number,
-|};
+const EMPTY = {} as const;
+type Empty = typeof EMPTY;
+
+type Wait = {
+  duration: number;
+};
+
 export type WaitAction = ActionA<typeof WAIT, Wait>;
 
 export type ClickAction = ActionA<typeof CLICK, Coord>;
@@ -53,7 +54,7 @@ export type ActionType =
   ;
 
 // Wait action creator
-export const waitAction = (duration: number = 1): WaitAction => ({
+export const waitAction = (duration = 1): WaitAction => ({
   id: nextId(),
   type: WAIT,
   duration,
@@ -94,4 +95,4 @@ export const types = {
   MRELEASE,
   MDRAG,
   NONE,
-};
+} as const;
