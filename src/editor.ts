@@ -1,6 +1,5 @@
-// @flow
-import type { Action, Coord } from './actions';
-import type { Serializer } from './serializer';
+import { Action, Coord } from './types';
+import { Serializer } from './serializer';
 
 import {
   addClick,
@@ -15,26 +14,31 @@ import Pubsub from './pubsub';
 
 
 export interface Editor {
-  actions(): Array<Action>;
-  resolution(): Coord;
+  actions: () => Array<Action>;
+  resolution: () => Coord;
   addDrag: (coord: Coord) => (index: number) => void;
   addClick: (coord: Coord) => (index: number) => void;
   addWait: (duration: number) => (index: number) => void;
-  loadFile(fileText: string): void;
-  importFile(fileText: string, index: ?number): void;
-  serialize(): string;
-  updateAction(x: number, y: number, duration: number, index: ?number): void;
-  removeAction(index: number): number;
-  reorder(from: number, to: number): void;
-  subscribe: (() => void) => (()=>void)
+  loadFile: (fileText: string) => void;
+  importFile: (fileText: string, index: number | null | undefined) => void;
+  serialize: () => string;
+  updateAction: (
+    x: number,
+    y: number,
+    duration: number,
+    index: number | null | undefined
+  ) => void;
+  removeAction: (index: number) => number;
+  reorder: (from: number, to: number) => void;
+  subscribe: (fn: () => void) => () => void;
 }
 
-type signature = (Serializer) => ((initialState?: Array<Action>) => Editor);
+type signature = (ser: Serializer) => (initialState?: Array<Action>) => Editor;
 
 const makeEditor: signature = (serializer) => (initialState = []) => {
   let actions: Array<Action> = initialState.slice();
   let resolution: Coord = { x: 900, y: 1600 };
-  const { publish, subscribe } = Pubsub();
+  const { publish, subscribe } = Pubsub<void>();
 
   const setActions = (_actions: Array<Action>) => {
     actions = _actions.slice();
@@ -51,24 +55,27 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
 
     resolution: () => ({ ...resolution }),
 
-    addDrag: (coord) => pipe(
+    addDrag: (coord: Coord) => pipe(
         addDrag(coord, actions),
         setActions,
     ),
 
-    addClick: (coord) => pipe(
+    addClick: (coord: Coord) => pipe(
         addClick(coord, actions),
         setActions,
     ),
 
-    addWait: (duration) => pipe(
+    addWait: (duration: number) => pipe(
         addWait(duration, actions),
         setActions,
     ),
 
     loadFile: loadFile(setActions, setResolution),
 
-    importFile: (fileText, index) => {
+    importFile: (
+        fileText: string,
+        index: number | null | undefined,
+    ) => {
       if (!actions.length) {
         loadFile(setActions, setResolution, fileText);
         return;
@@ -82,17 +89,22 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
       )();
     },
 
-    removeAction: (ind) => {
+    removeAction: (ind: number) => {
       setActions(removeAt(ind, actions));
       return ind;
     },
 
-    updateAction: (x, y, duration, index) => pipe(
+    updateAction: (
+        x: number,
+        y: number,
+        duration: number,
+        index: number | null | undefined,
+    ) => pipe(
         updateAction(index, x, y, duration),
         setActions,
     )(actions),
 
-    reorder: (from, to) => {
+    reorder: (from: number, to: number) => {
       setActions(reorder(from, to)(actions));
     },
 
