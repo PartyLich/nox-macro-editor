@@ -1,7 +1,5 @@
 import test from 'tape';
-// import {
-//   pubsub,
-// } from '../src/pubsub';
+
 import pubsub, { noop } from '../src/pubsub';
 
 
@@ -17,11 +15,11 @@ test('pubsub()', (t) => {
 
   {
     const msg = `publish value`;
-    const caster = pubsub();
-    const actual = [];
+    const caster = pubsub<string>();
+    const actual: Array<string> = [];
     const value = 'foo';
 
-    const notify = (x) => actual.push(x);
+    const notify = (x: string) => actual.push(x);
 
     const unsub = caster.subscribe(notify);
     caster.publish(value);
@@ -39,9 +37,9 @@ test('pubsub()', (t) => {
 
   {
     const msg = `publish to multiple subscribers`;
-    const caster = pubsub();
-    const subA = [];
-    const subB = [];
+    const caster = pubsub<string>();
+    const subA: Array<string> = [];
+    const subB: Array<string> = [];
     const value1 = 'foo';
     const value2 = 'bar';
 
@@ -58,9 +56,9 @@ test('pubsub()', (t) => {
 
   {
     const msg = `unsubscribe with multiple subscribers`;
-    const caster = pubsub();
-    const subA = [];
-    const subB = [];
+    const caster = pubsub<string>();
+    const subA: Array<string> = [];
+    const subB: Array<string> = [];
     const value1 = 'foo';
     const value2 = 'bar';
 

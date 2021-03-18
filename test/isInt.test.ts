@@ -1,4 +1,3 @@
-// @flow
 import test from 'tape';
 
 import { isInt } from '../src/util/';
@@ -6,7 +5,7 @@ import { isInt } from '../src/util/';
 
 test('isInt()', (t) => {
   {
-    const msg = (data) => `returns false for non-integer: "${ data }"`;
+    const msg = (data: string) => `returns false for non-integer: "${ data }"`;
     const expected = false;
     {
       const data = '1.2';
@@ -25,7 +24,7 @@ test('isInt()', (t) => {
     }
   }
   {
-    const msg = (data) => `returns true for non-integer: "${ data }"`;
+    const msg = (data: string) => `returns true for non-integer: "${ data }"`;
     const expected = true;
     {
       const data = '12';

@@ -1,4 +1,3 @@
-// @flow
 import test from 'tape';
 
 import shallowEqual from '../src/core/shallowEqual';

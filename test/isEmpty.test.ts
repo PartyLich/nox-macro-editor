@@ -7,7 +7,7 @@ test('isEmpty()', (t) => {
   {
     const msg = `returns true for empty array`;
     const expected = true;
-    const data = [];
+    const data: Array<unknown> = [];
     const actual = isEmpty(data);
     t.equal(actual, expected, msg);
   }

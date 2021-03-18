@@ -1,7 +1,6 @@
 import test from 'tape';
 
 import {
-  // notEmpty,
   parseCoord,
   splitLines,
   splitPipes,
@@ -13,7 +12,7 @@ import {
 } from '../src/nox-serializer/deserialize';
 
 
-const identity = (x) => x;
+const identity = <T>(x: T): T => x;
 
 test('splitLines()', (t) => {
   {
@@ -161,7 +160,7 @@ test('tryTokenToObj()', (t) => {
   {
     const msg = 'returns Err with < 5 tokens';
     const expected = /unable to parse action: /;
-    const data = [];
+    const data: Array<string> = [];
     const actual = tryTokenToObj(data).either(identity, () => 'non match');
     t.match(actual[0], expected, msg);
   }

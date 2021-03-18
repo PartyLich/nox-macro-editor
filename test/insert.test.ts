@@ -1,4 +1,3 @@
-// @flow
 import test from 'tape';
 
 import { insert } from '../src/util/';

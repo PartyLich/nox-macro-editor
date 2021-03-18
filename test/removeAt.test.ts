@@ -1,4 +1,3 @@
-// @flow
 import test from 'tape';
 
 import { removeAt } from '../src/util/';
@@ -23,12 +22,12 @@ test('removeAt()', (t) => {
       t.deepEqual(actual, expected, msg);
     }
     {
-      // $FlowExpectedError[incompatible-call]
+      // @ts-expect-error intentional bad arg for test
       const actual = removeAt(undefined, [1, 2, 3]);
       t.deepEqual(actual, expected, msg);
     }
     {
-      // $FlowExpectedError[incompatible-call]
+      // @ts-expect-error intentional bad arg for test
       const actual = removeAt(null, [1, 2, 3]);
       t.deepEqual(actual, expected, msg);
     }

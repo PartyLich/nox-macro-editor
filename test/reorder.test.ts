@@ -1,9 +1,6 @@
-// @flow
 import test from 'tape';
 
-import {
-  reorder,
-} from '../src/util/';
+import { reorder } from '../src/util/';
 
 
 test('reorder()', (t) => {

@@ -1,4 +1,3 @@
-// @flow
 import test from 'tape';
 
 import scale from '../src/core/scale';

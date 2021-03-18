@@ -1,10 +1,9 @@
-// @flow
 import test from 'tape';
 
 import wrappedErr from '../src/util/wrappedErr';
 
 
-const identity = (x) => x;
+const identity = <T>(x: T): T => x;
 
 test('wrappedErr', (t) => {
   {

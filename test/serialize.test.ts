@@ -1,4 +1,3 @@
-// @flow
 import test from 'tape';
 
 import {
@@ -6,7 +5,7 @@ import {
   mdragLine,
   mreleaseLine,
 } from '../src/nox-serializer/serialize';
-import {types} from '../src/actions'
+import { types } from '../src/types';
 
 
 test('clickLine()', (t) => {

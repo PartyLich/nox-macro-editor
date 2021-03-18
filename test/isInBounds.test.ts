@@ -1,4 +1,3 @@
-// @flow
 import test from 'tape';
 
 import { isInBounds } from '../src/util/';
@@ -6,7 +5,7 @@ import { isInBounds } from '../src/util/';
 
 test('isInBounds()', (t) => {
   {
-    const msg = (ind, arr) =>
+    const msg = (ind: number, arr: Array<unknown>) =>
       `returns true if index (${ ind }) is in array bounds (${ 0 }, ${ arr.length - 1 })`;
     const expected = true;
     const data = [1, 2, 3];
@@ -20,7 +19,7 @@ test('isInBounds()', (t) => {
     }
   }
   {
-    const msg = (ind, arr) =>
+    const msg = (ind: number, arr: Array<unknown>) =>
       `returns false if index (${ ind }) is out of bounds (${ 0 }, ${ arr.length - 1 })`;
     const expected = false;
     const data = [1, 2, 3];
