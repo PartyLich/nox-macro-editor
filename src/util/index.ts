@@ -1,5 +1,4 @@
-// @flow
-export type PredicateFn<T> = (T) => boolean;
+export type PredicateFn<T> = (a: T) => boolean;
 
 export { default as download } from './download';
 

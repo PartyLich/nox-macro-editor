@@ -1,5 +1,4 @@
-// @flow
-import { type PredicateFn } from './';
+import { PredicateFn } from './';
 
 
 // return true if string contains an integer (base 10)

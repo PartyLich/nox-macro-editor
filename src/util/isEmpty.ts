@@ -1,10 +1,9 @@
-// @flow
-import type{ PredicateFn } from './';
+import { PredicateFn } from './';
 
 
-type signature = PredicateFn<string | Array<mixed>>;
+type signature = PredicateFn<string | Array<unknown>>;
 
-// Returns true if a string is empty, false otherwise
+// Returns true if a string or array is empty, false otherwise
 const isEmpty: signature = (str) => str.length === 0;
 
 export default isEmpty;

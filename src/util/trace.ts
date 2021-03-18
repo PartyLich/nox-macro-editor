@@ -1,8 +1,7 @@
-// @flow
-type signature = (string) => (<T>(val: T) => T);
+type signature = (msg?: string) => <T>(val: T) => T;
 
 // log within a pipe
-const trace: signature = (msg = 'trace') => <T>(val: T): T => {
+const trace: signature = (msg = 'trace') => (val) => {
   console.log(`${ msg }: ${ JSON.stringify(val) || 'undef' }`);
   return val;
 };

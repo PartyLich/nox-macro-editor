@@ -1,5 +1,4 @@
-// @flow
-type numericCompare = (number) => ((number) => boolean);
+type numericCompare = (a: number) => (b: number) => boolean;
 
 // return true if b is >= a
 const gte: numericCompare = (a) => (b) => b >= a;

@@ -1,11 +1,10 @@
-// @flow
 import curry from 'crocks/helpers/curry';
 
 
-const isInBounds = (list: Array<mixed>, index: number): boolean =>
+const isInBounds = (list: Array<unknown>, index: number): boolean =>
   index >= 0 && index < list.length;
 
 // curry functions
-const cIsInBounds: any = curry(isInBounds);
+const cIsInBounds = curry(isInBounds);
 
 export default cIsInBounds;
