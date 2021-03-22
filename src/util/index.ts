@@ -26,6 +26,7 @@ export { default as trace } from './trace';
 export { default as isEmpty } from './isEmpty';
 export { default as isInBounds } from './isInBounds';
 export { default as isInt } from './isInt';
+export { default as isNumber } from './isNumber';
 
 // Result
 export { default as ensure } from './ensure';
