@@ -1,19 +1,17 @@
-import chain from 'crocks/pointfree/chain';
-import constant from 'crocks/combinators/constant';
-import curry from 'crocks/helpers/curry';
-import getProp from 'crocks/Maybe/getProp';
-import isNumber from 'crocks/predicates/isNumber';
-import maybeToArray from 'crocks/Maybe/maybeToArray';
-import merge from 'crocks/pointfree/merge';
-import option from 'crocks/pointfree/option';
-import pipeK from 'crocks/helpers/pipeK';
-import safeLift from 'crocks/Maybe/safeLift';
-import fanout from 'crocks/Pair/fanout';
+import { constant, flow, pipe } from 'fp-ts/function';
+import { bimap, fst, snd } from 'fp-ts/Tuple';
+import { lookup, map as aMap } from 'fp-ts/lib/Array';
+import {
+  map,
+  getOrElse,
+  fromPredicate,
+  Option,
+} from 'fp-ts/Option';
 
 import { types, Action, Coord } from '../types';
 import { deserialize, ParsedActions } from '../nox-serializer/deserialize';
 import { scale, shallowEqual } from './';
-import { inc, insert, map, pipe } from '../util/';
+import { isNumber, inc, insert } from '../util/';
 
 
 // scale an action from one resolution (`fromRes`) to another (`toRes`)
@@ -40,21 +38,20 @@ const scaleAction = (fromRes: Coord, toRes: Coord) =>
     }
   };
 
-// ParsedActions -> Maybe<Coord>
-const firstResolution = pipeK(
-    getProp(0),
-    getProp(1),
+// try to get the first resolution Coord in the provided ParsedActions
+const firstResolution: (actions: ParsedActions) => Option<Coord> = flow(
+    lookup(0),
+    map(snd),
 );
 
-const getResolution: (actions: ParsedActions) => Coord = pipe(
+// get the resolution of the provided ParsedActions or return a default Coord
+const getResolution: (actions: ParsedActions) => Coord = flow(
     firstResolution,
-    option({ x: 0, y: 0 }),
+    getOrElse(constant({ x: 0, y: 0 })),
 );
 
-const getActions: (actions: ParsedActions) => Array<Action> = pipe(
-    map(getProp(0)),
-    chain(maybeToArray),
-);
+// get the Actions array from the provided ParsedActions
+const getActions: (actions: ParsedActions) => Array<Action> = flow(aMap(fst));
 
 // import a macro, inserting its Actions after the selected index
 const importFile = (setStateFn: (actions: Array<Action>) => void) => (
@@ -62,32 +59,31 @@ const importFile = (setStateFn: (actions: Array<Action>) => void) => (
     selected: number | null | undefined,
     resolution: Coord,
     fileText: string,
-) => () => {
+) => (): void => {
   if (!fileText.length) return;
 
   const ind: number = pipe(
-      constant(selected),
-      safeLift(isNumber, inc),
-      option(actions.length),
-  )();
+      selected,
+      fromPredicate(isNumber),
+      map(inc),
+      getOrElse(constant(actions.length)),
+  );
 
   pipe(
-      constant(fileText),
+      fileText,
       deserialize,
-      fanout(getResolution, getActions),
-      merge((importedRes: Coord, importedActions: Array<Action>) => {
+      (a): [ParsedActions, ParsedActions] => [a, a],
+      bimap(getActions, getResolution),
+      ([importedRes, importedActions]) => {
         if (!shallowEqual(resolution, importedRes)) {
           return importedActions.map(scaleAction(importedRes, resolution));
         }
 
         return importedActions;
-      }),
+      },
       insert(actions, ind),
       setStateFn,
-  )();
+  );
 };
 
-// curry all the things
-const cImportFile = curry(importFile);
-
-export default cImportFile;
+export default importFile;
