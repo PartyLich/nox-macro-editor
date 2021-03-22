@@ -1,19 +1,25 @@
-import and from 'crocks/logic/and';
-import isNumber from 'crocks/predicates/isNumber';
-import option from 'crocks/pointfree/option';
-import safe from 'crocks/Maybe/safe';
+import {
+  fromPredicate as safe,
+  getOrElse,
+  map,
+} from 'fp-ts/Option';
+import { constant } from 'fp-ts/function';
 
-import { map, pipe } from '../util/';
-import type { PredicateFn } from '../util/';
+import {
+  and,
+  flow,
+  isNumber,
+  PredicateFn,
+} from '../util/';
 
 
 const notZero: PredicateFn<number> = (x) => x !== 0;
 
-const scale = (from: number, to: number, num: number): number => pipe(
+const scale = (from: number, to: number, num: number): number => flow(
     safe(and(isNumber, notZero)),
     map((from: number) => to / from),
     map((factor: number) => factor * num),
-    option(0),
+    getOrElse(constant(0)),
 )(from);
 
 export default scale;
