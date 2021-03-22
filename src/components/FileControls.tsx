@@ -9,7 +9,7 @@ import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import SaveIcon from '@material-ui/icons/Save';
 
 import { ConfirmDialog, FileInput } from '.';
-import { pipe } from '../util/';
+import { flow } from '../util/';
 
 import styles from './FileControls.module.scss';
 
@@ -39,7 +39,7 @@ const FileControls: signature = ({
 
   const openAlert = () => setAlertOpen(true);
 
-  const loadFile: () => void = pipe(
+  const loadFile: () => void = flow(
       handleLoad,
       closeAlert,
   );
