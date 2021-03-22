@@ -8,6 +8,7 @@ export { default as removeAt } from './removeAt';
 
 // Logic
 export * from './compare';
+export { default as and } from './and';
 
 // Number
 export * from './numbers';
