@@ -5,6 +5,9 @@ import {
   addClick,
   addDrag,
   addWait,
+  nAddClick,
+  nAddDrag,
+  nAddWait,
 } from '../src/core';
 
 
@@ -23,7 +26,7 @@ test('addClick()', (t) => {
       { id: true, type: types.WAIT, duration: 1 },
       { id: true, type: types.MRELEASE },
     ];
-    const actual = addClick(coord, data, 0)
+    const actual = nAddClick(coord, data, 0)
         .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
@@ -45,7 +48,7 @@ test('addClick()', (t) => {
       { id: true, type: types.WAIT, duration: 1 },
       { id: true, type: types.MRELEASE },
     ];
-    const actual = addClick(coord, data, 0)
+    const actual = nAddClick(coord, data, 0)
         .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
@@ -71,7 +74,7 @@ test('addDrag()', (t) => {
       { id: true, type: types.WAIT, duration: 16 },
       { id: true, type: types.MRELEASE },
     ];
-    const actual = addDrag(coord, data, 0)
+    const actual = nAddDrag(coord, data, 0)
         .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
@@ -93,7 +96,7 @@ test('addDrag()', (t) => {
       { id: true, type: types.WAIT, duration: 16 },
       { id: true, type: types.MRELEASE },
     ];
-    const actual = addDrag(coord, data, 0)
+    const actual = nAddDrag(coord, data, 0)
         .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
@@ -117,7 +120,7 @@ test('addWait()', (t) => {
     const expected = [
       { id: true, type: types.WAIT, duration },
     ];
-    const actual = addWait(duration, data, 0)
+    const actual = nAddWait(duration, data, 0)
         .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');
@@ -137,7 +140,7 @@ test('addWait()', (t) => {
     const expected = [
       { id: true, type: types.WAIT, duration: 1 },
     ];
-    const actual = addWait(duration, data, 0)
+    const actual = nAddWait(duration, data, 0)
         .map(idToBool);
     t.deepEqual(actual, expected, msg);
     t.notDeepEqual(actual, data, 'does not mutate input');

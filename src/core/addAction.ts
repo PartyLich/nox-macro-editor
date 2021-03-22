@@ -1,5 +1,3 @@
-import curry from 'crocks/helpers/curry';
-
 import {
   clickAction,
   dragAction,
@@ -12,40 +10,60 @@ import { insert, pipe } from '../util/';
 
 
 // add a new click (with mouse release)
-const addClick = (coord: Coord, actions: Array<Action>, ind: number) => pipe(
-    () => [
-      clickAction(coord),
-      waitAction(),
-      releaseAction(),
-    ],
-    insert(actions, ind),
-)();
+const addClick = (coord?: Coord) => (actions: Array<Action>) =>
+  (ind: number): Array<Action> => pipe(
+      [
+        clickAction(coord),
+        waitAction(),
+        releaseAction(),
+      ],
+      insert(actions, ind),
+  );
 
 // add a new drag (with mouse release)
-const addDrag = (coord: Coord, actions: Array<Action>, ind: number) => pipe(
-    () => [
-      dragAction(coord),
-      waitAction(16),
-      releaseAction(),
-    ],
-    insert(actions, ind),
-)();
+const addDrag = (coord?: Coord) => (actions: Array<Action>) =>
+  (ind: number): Array<Action> => pipe(
+      [
+        dragAction(coord),
+        waitAction(16),
+        releaseAction(),
+      ],
+      insert(actions, ind),
+  );
 
 // add a new wait
-const addWait = (duration: number, actions: Array<Action>, ind: number) => pipe(
-    () => [
-      waitAction(duration),
-    ],
-    insert(actions, ind),
-)();
+const addWait = (duration?: number) => (actions: Array<Action>) =>
+  (ind: number): Array<Action> => pipe(
+      [
+        waitAction(duration),
+      ],
+      insert(actions, ind),
+  );
 
-// curry all the things
-const cAddClick = curry(addClick);
-const cAddDrag = curry(addDrag);
-const cAddWait = curry(addWait);
+// uncurry all the things
+const nAddWait = (
+    duration: number | undefined,
+    actions: Array<Action>,
+    ind: number,
+): Array<Action> => addWait(duration)(actions)(ind);
+
+const nAddClick = (
+    coord: Coord | undefined,
+    actions: Array<Action>,
+    ind: number,
+): Array<Action> => addClick(coord)(actions)(ind);
+
+const nAddDrag = (
+    coord: Coord | undefined,
+    actions: Array<Action>,
+    ind: number,
+): Array<Action> => addDrag(coord)(actions)(ind);
 
 export {
-  cAddClick as addClick,
-  cAddDrag as addDrag,
-  cAddWait as addWait,
+  addClick,
+  addDrag,
+  addWait,
+  nAddWait,
+  nAddClick,
+  nAddDrag,
 };

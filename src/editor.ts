@@ -56,17 +56,17 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
     resolution: () => ({ ...resolution }),
 
     addDrag: (coord: Coord) => pipe(
-        addDrag(coord, actions),
+        addDrag(coord)(actions),
         setActions,
     ),
 
     addClick: (coord: Coord) => pipe(
-        addClick(coord, actions),
+        addClick(coord)(actions),
         setActions,
     ),
 
     addWait: (duration: number) => pipe(
-        addWait(duration, actions),
+        addWait(duration)(actions),
         setActions,
     ),
 
