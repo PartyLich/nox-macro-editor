@@ -9,7 +9,7 @@ import {
   loadFile,
   updateAction,
 } from './core/';
-import { pipe, reorder, removeAt } from './util/';
+import { flow, reorder, removeAt } from './util/';
 import Pubsub from './pubsub';
 
 
@@ -55,17 +55,17 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
 
     resolution: () => ({ ...resolution }),
 
-    addDrag: (coord: Coord) => pipe(
+    addDrag: (coord: Coord) => flow(
         addDrag(coord)(actions),
         setActions,
     ),
 
-    addClick: (coord: Coord) => pipe(
+    addClick: (coord: Coord) => flow(
         addClick(coord)(actions),
         setActions,
     ),
 
-    addWait: (duration: number) => pipe(
+    addWait: (duration: number) => flow(
         addWait(duration)(actions),
         setActions,
     ),
@@ -99,7 +99,7 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
         y: number,
         duration: number,
         index: number | null | undefined,
-    ) => pipe(
+    ) => flow(
         updateAction(index, x, y, duration),
         setActions,
     )(actions),
