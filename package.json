@@ -1,6 +1,6 @@
 {
   "name": "nox-macro",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "An editor for Nox android emulator macros.",
   "author": "Arthur E. Jones",
   "license": "MIT",
