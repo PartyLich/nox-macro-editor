@@ -7,7 +7,7 @@
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/PartyLich/nox-macro-editor"
   },
   "scripts": {
     "dev": "next",
