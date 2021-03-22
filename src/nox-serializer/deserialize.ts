@@ -87,6 +87,33 @@ const tryParseCoord: (arr: Array<string>) => Either<WrappedErr, Coord> = flow(
     })),
 );
 
+const coordTo = (fn: (c: Coord) => Action) =>
+  chain<WrappedErr, Coord, Action>(flow(
+      fn,
+      right,
+  ));
+
+const mouseDownAction = (parts: Array<string>): Either<WrappedErr, Action> => {
+  const mouseState = parts.shift();
+
+  if (mouseState === MSTATE_DOWN) {
+    // mouse down
+    const modifier = parts.shift();
+    const coord = tryParseCoord(parts);
+
+    switch (modifier) {
+      case MOD_CLICK:
+        // mouse down
+        return coordTo(clickAction)(coord);
+      case MOD_DRAG:
+        // mouse drag
+        return coordTo(dragAction)(coord);
+    }
+  }
+
+  return right(noneAction());
+};
+
 // attempt to parse an Action from the provided string. returns Ok if
 // successful, err otherwise
 const tryParseAction: (str: string) => Either<WrappedErr, Action> = flow(
@@ -96,27 +123,8 @@ const tryParseAction: (str: string) => Either<WrappedErr, Action> = flow(
       const word = parts.shift();
       switch (word) {
         case MOUSE_DOWN:
-          const mouseState = parts.shift();
-          if (mouseState === MSTATE_DOWN) {
-            // mouse down
-            const modifier = parts.shift();
-            const coord = tryParseCoord(parts);
-            const coordTo = (fn: (c: Coord) => Action) =>
-              chain<WrappedErr, Coord, Action>(flow(
-                  fn,
-                  right,
-              ));
-
-            switch (modifier) {
-              case MOD_CLICK:
-                // mouse down
-                return coordTo(clickAction)(coord);
-              case MOD_DRAG:
-                // mouse drag
-                return coordTo(dragAction)(coord);
-            }
-          }
-          return right(noneAction());
+          // mouse click or drag
+          return mouseDownAction(parts);
 
         case MOUSE_RELEASE:
           // mouse release
@@ -124,6 +132,7 @@ const tryParseAction: (str: string) => Either<WrappedErr, Action> = flow(
 
         case KB_PRESS:
         case KB_RELEASE:
+          // keyboard action
           return right(noneAction());
 
         default:
