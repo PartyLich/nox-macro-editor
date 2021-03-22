@@ -30,5 +30,4 @@ export { default as isNumber } from './isNumber';
 export { default as isString } from './isString';
 
 // Result
-export { default as ensure } from './ensure';
 export { default as wrappedErr } from './wrappedErr';
