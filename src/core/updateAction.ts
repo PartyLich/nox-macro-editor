@@ -1,8 +1,5 @@
-import and from 'crocks/logic/and';
-import curry from 'crocks/helpers/curry';
-import isNumber from 'crocks/predicates/isNumber';
-import option from 'crocks/pointfree/option';
-import safe from 'crocks/Maybe/safe';
+import { constant, pipe } from 'fp-ts/function';
+import { map, getOrElse, fromPredicate as safe } from 'fp-ts/Option';
 
 import {
   types,
@@ -11,16 +8,12 @@ import {
   DragAction,
   WaitAction,
 } from '../types';
-import {
-  isInBounds,
-  map,
-  pipe,
-  PredicateFn,
-} from '../util/';
+import { isInBounds, isNumber } from '../util/';
 
 
-const validIndex: PredicateFn<number | null | undefined> =
-  and(isNumber, isInBounds);
+const validIndex = (arr: Array<unknown>) =>
+  (val: number | null | undefined): val is number =>
+    isNumber(val) && isInBounds(arr)(val);
 
 // Update an item in an Action array
 const updateAction = (
@@ -28,9 +21,9 @@ const updateAction = (
     x: number,
     y: number,
     duration: number,
-    arr: Array<Action>,
-): Array<Action> => pipe(
-    safe(validIndex),
+) => (arr: Array<Action>): Array<Action> => pipe(
+    index,
+    safe(validIndex(arr)),
     map((index: number) => {
       const res = arr.slice();
       switch (res[index].type) {
@@ -63,10 +56,7 @@ const updateAction = (
 
       return res;
     }),
-    option(arr),
-)(index);
+    getOrElse(constant(arr)),
+);
 
-// curry all the things
-const cUpdateAction = curry(updateAction);
-
-export default cUpdateAction;
+export default updateAction;
