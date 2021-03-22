@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, ReactElement } from 'react';
 import Grid from '@material-ui/core/Grid';
 
-import { download, pipe } from '../util/';
+import { download, flow } from '../util/';
 import { ActionList, Controls, FileControls } from '.';
 import { Action, Coord } from '../types';
 import { Editor as EditorType } from '../editor';
@@ -50,7 +50,7 @@ const Editor: signature = ({
   actions,
   resolution,
 }) => {
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<number | null | undefined>(null);
   const [file, setFile] = useState<FileState>({ text: '', name: '' });
 
   // initiate download of the current Action list
@@ -62,8 +62,12 @@ const Editor: signature = ({
   };
 
   // load macro then reset selection
-  const handleLoad: () => void = pipe(
-      () => editor.loadFile(file.text),
+  const handleLoad: () => void = flow(
+      (): undefined => {
+        editor.loadFile(file.text);
+        // because loadFile is a void function... -_-
+        return;
+      },
       setSelected,
   );
 
@@ -73,17 +77,17 @@ const Editor: signature = ({
       ? actions.length
       : selected + 1;
 
-  const handleAddClick = (coord: Coord) => pipe(
+  const handleAddClick = (coord: Coord) => flow(
       getIndex,
       editor.addClick(coord),
   );
 
-  const handleAddDrag = (coord: Coord) => pipe(
+  const handleAddDrag = (coord: Coord) => flow(
       getIndex,
       editor.addDrag(coord),
   );
 
-  const handleAddWait = (duration: number) => pipe(
+  const handleAddWait = (duration: number) => flow(
       getIndex,
       editor.addWait(duration),
   );
@@ -92,7 +96,7 @@ const Editor: signature = ({
 
   type HandleRemove = (ind: number) => void;
 
-  const handleRemove: HandleRemove = pipe(
+  const handleRemove: HandleRemove = flow(
       editor.removeAction,
       getNextItem,
       setSelected,
