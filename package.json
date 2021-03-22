@@ -1,6 +1,6 @@
 {
   "name": "nox-macro",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "An editor for Nox android emulator macros.",
   "author": "Arthur E. Jones",
   "license": "MIT",
@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build && next export",
-    "prebuild": "npm run lint && npm run flow",
+    "prebuild": "npm run lint && npm run types",
     "start": "next start",
     "test": "NODE_ENV=dev ts-node node_modules/tape/bin/tape src/**/*.test.ts test/**/*.test.ts | tap-summary",
     "cov": "nyc babel-tape-runner src/**/*.test.js test/**/*.test.js",
