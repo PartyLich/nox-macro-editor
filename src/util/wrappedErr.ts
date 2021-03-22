@@ -1,15 +1,11 @@
-import Result, { Err } from 'crocks/Result';
+export type WrappedErr = Array<string>;
 
+type signature = (message: string) => (val: unknown) => WrappedErr
 
-type ResultType = typeof Result;
-
-// returns an Err<Array<T>> to take advantage of Array concatenation for
+// returns an Array<string> to take advantage of Array concatenation for
 // multiple errors
-// string -> mixed -> Err<Array<T>>
-type signature = (message: string) => (val: unknown) => ResultType;
-
-const wrappedErr: signature = (message) => (val) => Err([
+const wrappedErr: signature = (message) => (val) => [
   `Error: ${ message } '${ JSON.stringify(val) }'`,
-]);
+];
 
 export default wrappedErr;
