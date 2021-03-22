@@ -1,17 +1,30 @@
-import Result, { Ok } from 'crocks/Result';
-import bichain from 'crocks/pointfree/bichain';
-import chain from 'crocks/pointfree/chain';
-import constant from 'crocks/combinators/constant';
-import ifElse from 'crocks/logic/ifElse';
-import isNumber from 'crocks/predicates/isNumber';
-import isString from 'crocks/predicates/isString';
-import filter from 'crocks/pointfree/filter';
-import flip from 'crocks/combinators/flip';
-import map from 'crocks/pointfree/map';
-import sequence from 'crocks/pointfree/sequence';
-import traverse from 'crocks/pointfree/traverse';
+import {
+  chain,
+  Either,
+  either,
+  fromPredicate,
+  left,
+  right,
+  map,
+} from 'fp-ts/Either';
+import {
+  traverse as arrTraverse,
+  map as arrMap,
+} from 'fp-ts/Array';
+import { sequenceT } from 'fp-ts/lib/Apply';
+import { tupled } from 'fp-ts/function';
 
-import { ensure, isEmpty, pipe, wrappedErr } from '../util/';
+import {
+  filter,
+  flow,
+  isEmpty,
+  isNumber,
+  isString,
+  pipe,
+  PredicateFn,
+  wrappedErr,
+} from '../util/';
+import { WrappedErr } from '../util/wrappedErr';
 import {
   clickAction,
   dragAction,
@@ -33,10 +46,6 @@ import {
   NOX_SEPARATOR,
 } from './constants';
 
-import { PredicateFn } from '../util/';
-
-
-type ResultType = typeof Result;
 
 // Returns false if a string is empty, true otherwise
 const notEmpty = (str: string | Array<unknown>): boolean => !isEmpty(str);
@@ -57,30 +66,21 @@ const tokenize: (str: string) => Array<string> = flow(
     splitSeparators,
 );
 
-// mixed -> Err<Array<string>>
-const parseErr = wrappedErr('unable to parse');
+// unknown -> Array<string>
+const parseIntErr = wrappedErr('unable to parse');
 
-// string -> Result<Array<string>, number>
-const tryParseInt: (str: string) => ResultType = pipe(
-    flip(parseInt)(10),
-    ifElse(isNumber, Ok, parseErr),
+// attempt to parse an integer from a string
+const tryParseInt = (str: string): Either<WrappedErr, number> => pipe(
+    parseInt(str, 10),
+    fromPredicate(isNumber, parseIntErr),
 );
-
-// parse a coordinate from a string array
-const parseCoord = (arr: Array<string>): Coord => {
-  // TODO: remove all uses and delete
-  return {
-    x: parseInt(arr[0], 10),
-    y: parseInt(arr[1], 10),
-  };
-};
 
 const parseCoordErr = wrappedErr('invalid input');
 
-// Array<string> -> Result<string, Coord>
-const tryParseCoord: (arr: Array<string>) => ResultType = pipe(
-    ifElse((a: Array<string>) => a.length > 1, Ok, parseCoordErr),
-    chain(traverse(Result, tryParseInt)),
+// attempt to parse a coordinate from a string array
+const tryParseCoord: (arr: Array<string>) => Either<WrappedErr, Coord> = flow(
+    fromPredicate((a: Array<string>) => a.length > 1, parseCoordErr),
+    chain(arrTraverse(either)(tryParseInt)),
     map((arr: Array<number>) => ({
       x: arr[0],
       y: arr[1],
@@ -89,9 +89,8 @@ const tryParseCoord: (arr: Array<string>) => ResultType = pipe(
 
 // attempt to parse an Action from the provided string. returns Ok if
 // successful, err otherwise
-const tryParseAction: (str: string) => ResultType = pipe(
-    ensure(isString),
-    bichain(wrappedErr('tryParseAction expected a string, got: '), Ok),
+const tryParseAction: (str: string) => Either<WrappedErr, Action> = flow(
+    fromPredicate(isString, wrappedErr('tryParseAction expected a string, got: ')),
     map((str: string) => str.split(':')),
     chain((parts: Array<string>) => {
       const word = parts.shift();
@@ -101,30 +100,34 @@ const tryParseAction: (str: string) => ResultType = pipe(
           if (mouseState === MSTATE_DOWN) {
             // mouse down
             const modifier = parts.shift();
-            // TODO: use the safe version
-            const coord = parseCoord(parts);
+            const coord = tryParseCoord(parts);
+            const coordTo = (fn: (c: Coord) => Action) =>
+              chain<WrappedErr, Coord, Action>(flow(
+                  fn,
+                  right,
+              ));
 
-            if (modifier === MOD_CLICK) {
-              // mouse down
-              return Ok(clickAction(coord));
-            }
-            if (modifier === MOD_DRAG) {
-              // mouse drag
-              return Ok(dragAction(coord));
+            switch (modifier) {
+              case MOD_CLICK:
+                // mouse down
+                return coordTo(clickAction)(coord);
+              case MOD_DRAG:
+                // mouse drag
+                return coordTo(dragAction)(coord);
             }
           }
-          return Ok(noneAction());
+          return right(noneAction());
 
         case MOUSE_RELEASE:
           // mouse release
-          return Ok(releaseAction());
+          return right(releaseAction());
 
         case KB_PRESS:
         case KB_RELEASE:
-          return Ok(noneAction());
+          return right(noneAction());
 
         default:
-          return wrappedErr(`unrecognized action:`)(word);
+          return left(wrappedErr(`unrecognized action:`)(word));
       }
     }),
 );
@@ -133,23 +136,33 @@ const validTokens: PredicateFn<Array<string>> = (arr) => arr.length === 5;
 
 const tokenErr = wrappedErr('unable to parse action:');
 
-// convert token array to object
-// (arr: Array<string>): Result<[number, Action, Coord]>
-const tryTokenToObj: (arr: Array<string>) => ResultType = pipe(
-    ifElse(validTokens, Ok, tokenErr),
-    map((arr: Array<string>) => arr.slice(1)),
-    map((arr: Array<string>) => {
-      const resolution = tryParseCoord(arr.splice(0, 2));
-      const action = tryParseAction(arr.shift() || '');
-      const time = tryParseInt(arr.shift() || '');
+const tryParseTokens = (arr: Array<string>): [
+          Either<WrappedErr, number>,
+          Either<WrappedErr, Action>,
+          Either<WrappedErr, Coord>
+      ] => {
+  const resolution = tryParseCoord(arr.splice(0, 2));
+  const action = tryParseAction(arr.shift() || '');
+  const time = tryParseInt(arr.shift() || '');
 
-      return [
-        time,
-        action,
-        resolution,
-      ];
-    }),
-    chain(sequence(Result)),
+  return [
+    time,
+    action,
+    resolution,
+  ];
+};
+
+const sequenceTEither = tupled(sequenceT(either));
+
+type TryTokenObj = (arr: Array<string>) =>
+  Either<WrappedErr, [number, Action, Coord]>
+
+// convert token array to object
+const tryTokenToObj: TryTokenObj = flow(
+    fromPredicate(validTokens, tokenErr),
+    map((arr: Array<string>) => arr.slice(1)),
+    map(tryParseTokens),
+    chain(sequenceTEither),
 );
 
 type ActionGenerator = Generator<Array<[Action, Coord]>, void, Array<string>>;
@@ -164,9 +177,9 @@ const actionGenerator = function* (): ActionGenerator {
     result.length = 0;
 
     pipe(
-        constant(tokens),
+        tokens,
         tryTokenToObj,
-        map(([actionTime, action, resolution]: [number, Action, Coord]) => {
+        map(([actionTime, action, resolution]): [Action, Coord] => {
           if (actionTime > time) {
             const duration = actionTime - time;
             result.push([waitAction(duration), resolution]);
@@ -175,8 +188,8 @@ const actionGenerator = function* (): ActionGenerator {
 
           return [action, resolution];
         }),
-        map((a: [Action, Coord]) => result.push(a)),
-    )();
+        map((a) => result.push(a)),
+    );
   }
 };
 
@@ -193,9 +206,9 @@ const linesToActions = (lines: Array<Array<string>>): ParsedActions => {
   );
 };
 
-const tokenizeLines: (lines: Array<string>) => Array<Array<string>> = pipe(
-    filter(notEmpty),
-    map(tokenize),
+const tokenizeLines: (lines: Array<string>) => Array<Array<string>> = flow(
+    filter((str) => !!str.length),
+    arrMap(tokenize),
 );
 
 // deserialize a Nox macro
@@ -208,7 +221,6 @@ const deserialize: (lines: string) => ParsedActions = flow(
 
 export {
   notEmpty,
-  parseCoord,
   splitLines,
   splitPipes,
   splitSeparators,

@@ -1,7 +1,8 @@
 import test from 'tape';
 
+import { isLeft } from 'fp-ts/Either';
+
 import {
-  parseCoord,
   splitLines,
   splitPipes,
   splitSeparators,
@@ -11,8 +12,6 @@ import {
   tryParseInt,
 } from '../src/nox-serializer/deserialize';
 
-
-const identity = <T>(x: T): T => x;
 
 test('splitLines()', (t) => {
   {
@@ -57,23 +56,8 @@ test('splitSeparators()', (t) => {
   t.end();
 });
 
-
-test('parseCoord()', (t) => {
-  {
-    const msg = 'parses Coord from array of strings';
-    const expected = { x: 10, y: 42 };
-    const data = ['10', '42'];
-    const actual = parseCoord(data);
-    t.deepEqual(actual, expected, msg);
-    t.equal(typeof actual, 'object', 'returns an object');
-  }
-
-  t.end();
-});
-
 test('tryParseAction()', (t) => {
   {
-    const msg = 'parses click Action from string';
     const data = 'MULTI:1:0:360:640';
     const expected = {
       id: true,
@@ -81,15 +65,22 @@ test('tryParseAction()', (t) => {
       x: 360,
       y: 640,
     };
-    const actual = tryParseAction(data).either(identity, identity);
-    actual.id = Boolean(actual.id);
+    const result = tryParseAction(data);
 
-    t.deepEqual(actual, expected, msg);
-    t.equal(typeof actual, 'object', 'returns an object');
+    if (isLeft(result)) {
+      t.fail('expected a Right, received Left');
+    } else {
+      const actual = {
+        ...result.right,
+        id: !!result.right.id,
+      };
+
+      t.equal(typeof result.right, 'object', 'returns an object');
+      t.deepEqual(actual, expected, 'parses click Action from string');
+    }
   }
 
   {
-    const msg = 'parses drag Action from string';
     const data = 'MULTI:1:2:342:666';
     const expected = {
       id: true,
@@ -97,59 +88,59 @@ test('tryParseAction()', (t) => {
       x: 342,
       y: 666,
     };
-    const actual = tryParseAction(data).either(identity, identity);
-    actual.id = Boolean(actual.id);
+    const result = tryParseAction(data);
 
-    t.deepEqual(actual, expected, msg);
-    t.equal(typeof actual, 'object', 'returns an object');
+    if (isLeft(result)) {
+      t.fail('expected a Right, received Left');
+    } else {
+      const actual = {
+        ...result.right,
+        id: !!(result.right.id),
+      };
+
+      t.equal(typeof result.right, 'object', 'returns an object');
+      t.deepEqual(actual, expected, 'parses drag Action from string');
+    }
   }
 
   {
-    const msg = 'parses release Action from string';
     const data = 'MSBRL:0:0';
     const expected = {
       id: true,
       type: 'MRELEASE',
     };
-    const actual = tryParseAction(data).either(identity, identity);
-    actual.id = Boolean(actual.id);
+    const result = tryParseAction(data);
 
-    t.deepEqual(actual, expected, msg);
-    t.equal(typeof actual, 'object', 'returns an object');
+    if (isLeft(result)) {
+      t.fail('expected a Right, received Left');
+    } else {
+      const actual = {
+        ...result.right,
+        id: !!(result.right.id),
+      };
+
+      t.equal(typeof result.right, 'object', 'returns an object');
+      t.deepEqual(actual, expected, 'parses release Action from string');
+    }
   }
 
   {
-    const msg = 'returns an Err';
-    const expected = /Err /i;
+    const data = [
+      'foobar:0:0:321:435',
+      null,
+      0,
+    ];
 
-    {
-      const data = 'foobar:0:0:321:435';
-      const actual = tryParseAction(data);
-      t.match(actual.toString(), expected, msg);
-      t.ok(
-          Array.isArray(actual.either(identity, identity)),
-          'returns array of errors',
-      );
-    }
+    for (const datum of data) {
+      // @ts-expect-error intentional bad data
+      const result = tryParseAction(datum);
 
-    {
-      const data = null;
-      const actual = tryParseAction(data);
-      t.match(actual.toString(), expected, msg);
-      t.ok(
-          Array.isArray(actual.either(identity, identity)),
-          'returns array of errors',
-      );
-    }
-
-    {
-      const data = 0;
-      const actual = tryParseAction(data);
-      t.match(actual.toString(), expected, msg);
-      t.ok(
-          Array.isArray(actual.either(identity, identity)),
-          'returns array of errors',
-      );
+      if (isLeft(result)) {
+        const actual = result.left;
+        t.ok(Array.isArray(actual), 'returns array of error messages');
+      } else {
+        t.fail('expected a Left, received Right');
+      }
     }
   }
 
@@ -158,15 +149,19 @@ test('tryParseAction()', (t) => {
 
 test('tryTokenToObj()', (t) => {
   {
-    const msg = 'returns Err with < 5 tokens';
     const expected = /unable to parse action: /;
     const data: Array<string> = [];
-    const actual = tryTokenToObj(data).either(identity, () => 'non match');
-    t.match(actual[0], expected, msg);
+    const result = tryTokenToObj(data);
+
+    if (isLeft(result)) {
+      const actual = result.left;
+      t.match(actual[0], expected, 'returns Err with < 5 tokens');
+    } else {
+      t.fail('expected a Left, received Right');
+    }
   }
 
   {
-    const msg = 'parses string tokens to objects';
     const time = 0;
     const resX = 720;
     const resY = 720;
@@ -181,17 +176,31 @@ test('tryTokenToObj()', (t) => {
       action,
       { x: resX, y: resY },
     ];
-    const data = ['0', `${ resX }`, `${ resY }`, 'MULTI:1:0:360:640', `${ time }`];
-    const actual = tryTokenToObj(data).either(identity, identity);
-    // existence only check for random id
-    actual[1] = {
-      ...actual[1],
-      id: !!actual[1].id,
-    };
+    const data = [
+      '0',
+      `${ resX }`,
+      `${ resY }`,
+      'MULTI:1:0:360:640',
+      `${ time }`,
+    ];
+    const result = tryTokenToObj(data);
 
-    t.deepEqual(actual, expected, msg);
-    t.ok(Array.isArray(actual), 'returns array');
-    t.equal(actual.length, 3, 'returns tuple length 3');
+    if (isLeft(result)) {
+      t.fail('expected a Right, received Left');
+    } else {
+      const actual = result.right;
+      const actualAction = {
+        ...actual[1],
+        // existence only check for random id
+        id: !!(actual[1].id),
+      };
+
+      t.ok(Array.isArray(actual), 'returns array');
+      t.equal(actual.length, 3, 'returns tuple length 3');
+      t.deepEqual(result.right[0], expected[0], 'parses time from string');
+      t.deepEqual(actualAction, expected[1], 'parses Action from string');
+      t.deepEqual(result.right[2], expected[2], 'parses Coord from string');
+    }
   }
 
   t.end();
@@ -199,20 +208,28 @@ test('tryTokenToObj()', (t) => {
 
 test('tryParseInt()', (t) => {
   {
-    const msg = '';
     const expected = 10;
-    const actual = tryParseInt('10').either(identity, identity);
-    t.equal(actual, expected, msg);
-    t.equal(typeof actual, 'number', 'returns a number');
+    const result = tryParseInt('10');
+
+    if (isLeft(result)) {
+      t.fail('expected a Right, received Left');
+    } else {
+      const actual = result.right;
+      t.equal(typeof actual, 'number', 'returns a number');
+      t.equal(actual, expected, `expected the parsed value ${ expected }`);
+    }
   }
 
   {
-    const msg = 'returns an Err';
-    const expected = /error/i;
-    const actual = tryParseInt('foo')
-        .either(identity, () => 'no match');
-    t.match(actual[0], expected, msg);
-    t.ok(Array.isArray(actual), 'returns array of errors');
+    const result = tryParseInt('foo');
+
+    if (isLeft(result)) {
+      const actual = result.left;
+      t.ok(Array.isArray(actual), 'returns array of errors');
+      t.match(actual[0], /error/i, 'left contains error description(s)');
+    } else {
+      t.fail('expected a Left, received Right');
+    }
   }
 
   t.end();
@@ -220,37 +237,36 @@ test('tryParseInt()', (t) => {
 
 test('tryParseCoord()', (t) => {
   {
-    const msg = '';
     const expected = { x: 10, y: 42 };
     const data = ['10', '42'];
-    const actual = tryParseCoord(data).either(identity, identity);
-    t.deepEqual(actual, expected, msg);
-    t.equal(typeof actual, 'object', 'returns an object');
+    const result = tryParseCoord(data);
+
+    if (isLeft(result)) {
+      t.fail('expected a Right, received Left');
+    } else {
+      const actual = result.right;
+      t.equal(typeof actual, 'object', 'returns an object');
+      t.deepEqual(actual, expected, 'parses a Coord from string');
+    }
   }
 
   {
-    const msg = 'returns an Err';
-    const expected = /error/i;
-    const data = ['10', 'foo'];
-    const actual = tryParseCoord(data)
-        .either(identity, () => 'no match');
-    t.match(actual[0], expected, msg);
-    t.ok(Array.isArray(actual), 'returns array of errors');
+    const cases = [
+      ['10', 'foo'],
+      ['bar', 'foo'],
+      ['foo'],
+    ];
 
-    {
-      const data = ['bar', 'foo'];
-      const actual = tryParseCoord(data)
-          .either(identity, () => 'no match');
-      t.match(actual[0], expected, msg);
-      t.ok(Array.isArray(actual), 'returns array of errors');
-    }
+    for (const datum of cases) {
+      const result = tryParseCoord(datum);
 
-    {
-      const data = ['foo'];
-      const actual = tryParseCoord(data)
-          .either(identity, () => 'no match');
-      t.match(actual[0], expected, msg);
-      t.ok(Array.isArray(actual), 'returns array of errors');
+      if (isLeft(result)) {
+        const actual = result.left;
+        t.ok(Array.isArray(actual), 'returns array of errors');
+        t.match(actual[0], /error/i, 'left contains error description(s)');
+      } else {
+        t.fail('expected a Left, received Right');
+      }
     }
   }
 
