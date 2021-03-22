@@ -14,8 +14,7 @@
     "build": "next build && next export",
     "prebuild": "npm run lint && npm run flow",
     "start": "next start",
-    "client": "NODE_ENV=production webpack --progress",
-    "test": "NODE_ENV=dev babel-tape-runner src/**/*.test.js test/**/*.test.js | tap-summary",
+    "test": "NODE_ENV=dev ts-node node_modules/tape/bin/tape src/**/*.test.ts test/**/*.test.ts | tap-summary",
     "cov": "nyc babel-tape-runner src/**/*.test.js test/**/*.test.js",
     "cov:flow": "flow batch-coverage src/",
     "lint": "eslint ./src --ext .js,.ts,.tsx && echo Lint Complete",
@@ -65,6 +64,7 @@
     "stylelint-config-sass-guidelines": "^7.1.0",
     "tap-summary": "^4.0.0",
     "tape": "^4.11.0",
+    "ts-node": "^9.1.1",
     "typescript": "^4.2.3",
     "watch": "^1.0.2",
     "webpack": "^4.42.0"
