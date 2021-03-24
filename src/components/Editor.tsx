@@ -121,6 +121,7 @@ const Editor: signature = ({
         onFileSelect: onFileSelect(setFile),
         handleLoad,
         handleImport,
+        hasActions: !!actions.length,
         saveFile,
       }}
       />
