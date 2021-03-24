@@ -12,6 +12,7 @@ type Props = {
   label: string;
   value: number;
   update: (val: number) => void;
+  style?: React.CSSProperties,
 };
 
 type signature = (props: Props) => ReactElement;
@@ -21,6 +22,7 @@ const IntegerInput: signature = ({
   label = 'Integer Input',
   value = 0,
   update,
+  style,
 }) => {
   const [displayVal, setDisplayVal] = useState(`${ value }`);
   const [isValid, setValid] = useState(true);
@@ -61,6 +63,7 @@ const IntegerInput: signature = ({
       size="small"
       value={displayVal}
       variant="outlined"
+      style={style}
     />
   );
 };
