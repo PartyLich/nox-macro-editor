@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ReactElement } from 'react';
+import { ReactElement, useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 import { IntegerInput } from '.';
-import { isInBounds } from '../util/';
+import { isInBounds, isNumber } from '../util/';
 import { Action, Coord } from '../types';
 
 import styles from './Controls.module.scss';
@@ -20,19 +20,22 @@ type Props = {
   addClick: (coord: Coord) => () => void;
   addDrag: (coord: Coord) => () => void;
   addWait: (duration: number) => () => void;
+  updateResolution: (coord: Coord) => () => void;
 };
 
 type signature = (props: Props) => ReactElement;
 
 const Controls: signature = ({
   actions = [],
-  resolution: { x: resX, y: resY } = { x: 0, y: 0 },
+  resolution = { x: 0, y: 0 },
   selected,
   updateAction,
   addClick,
   addDrag,
   addWait,
+  updateResolution,
 }) => {
+  const [displayRes, setDisplayRes] = useState<Coord>(resolution);
   let x = 0;
   let y = 0;
   let duration = 0;
@@ -46,6 +49,14 @@ const Controls: signature = ({
     // @ts-expect-error we know
     duration = actions[selected].duration || duration;
   }
+
+  // reset display state if resolution prop changes
+  useEffect(
+      () => {
+        setDisplayRes(resolution);
+      },
+      [resolution],
+  );
 
   return (
     <Box className={styles.controls}>
@@ -82,14 +93,24 @@ const Controls: signature = ({
         </Typography>
         <IntegerInput
           label="Resolution X"
-          value={resX}
-          update={ (_x) => _x }
+          value={displayRes.x}
+          update={(resX) => {
+            setDisplayRes((res) => ({ ...res, x: resX }));
+          }}
         />
         <IntegerInput
           label="Resolution Y"
-          value={resY}
-          update={ (_y) => _y }
+          value={displayRes.y}
+          update={(resY) => {
+            setDisplayRes((res) => ({ ...res, y: resY }));
+          }}
         />
+        <Button
+          onClick={updateResolution(displayRes)}
+          variant="outlined"
+          size="small"
+        >Update
+        </Button>
       </Paper>
       <Paper elevation={2} className={styles.controls__inputs}>
         <Typography variant="subtitle2" className={styles.controls__title}>
