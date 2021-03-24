@@ -1,3 +1,5 @@
+import { map as mapA } from 'fp-ts/Array';
+
 import { Action, Coord } from './types';
 import { Serializer } from './serializer';
 
@@ -8,8 +10,9 @@ import {
   importFile,
   loadFile,
   updateAction,
+  scaleAction,
 } from './core/';
-import { flow, reorder, removeAt } from './util/';
+import { flow, pipe, reorder, removeAt } from './util/';
 import Pubsub from './pubsub';
 
 
@@ -22,6 +25,7 @@ export interface Editor {
   loadFile: (fileText: string) => void;
   importFile: (fileText: string, index: number | null | undefined) => void;
   serialize: () => string;
+  changeResolution: (res: Coord) => void;
   updateAction: (
     x: number,
     y: number,
@@ -106,6 +110,15 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
 
     reorder: (from: number, to: number) => {
       setActions(reorder(from, to)(actions));
+    },
+
+    changeResolution: (toRes: Coord): void => {
+      pipe(
+          actions,
+          mapA(scaleAction(resolution, toRes)),
+          setActions,
+      );
+      setResolution(toRes);
     },
 
     serialize: () => serializer.serialize(resolution, actions),

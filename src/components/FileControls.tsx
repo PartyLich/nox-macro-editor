@@ -19,6 +19,7 @@ type Props = {
   onFileSelect: (evt: React.SyntheticEvent<HTMLInputElement>) => void;
   handleLoad: () => void;
   handleImport: () => void;
+  hasActions: boolean;
   saveFile: () => void;
 };
 
@@ -29,6 +30,7 @@ const FileControls: signature = ({
   onFileSelect,
   handleLoad,
   handleImport,
+  hasActions,
   saveFile,
 }) => {
   const DESCRIPTION = `Loading the selected file will overwrite any macro currently in the editor.`;
@@ -46,6 +48,15 @@ const FileControls: signature = ({
 
   const noop = () => null;
 
+  // only prompt if data will be overwritten
+  const onLoadClick = () => {
+    if (!filename) return noop;
+
+    return (hasActions)
+      ? openAlert
+      : loadFile;
+  };
+
   return (
     <div className={[styles.container, styles.controls].join(' ')}>
       <FileInput onChange={onFileSelect} />
@@ -55,7 +66,7 @@ const FileControls: signature = ({
       <div className={styles.container}>
         <Button
           color="primary"
-          onClick={(filename) ? openAlert : noop}
+          onClick={onLoadClick()}
           variant="contained"
           size="small"
           startIcon={<InsertDriveFileIcon />}

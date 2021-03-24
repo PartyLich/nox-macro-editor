@@ -110,6 +110,10 @@ const Editor: signature = ({
   const handleUpdate = (x: number, y: number, duration: number) =>
     editor.updateAction(x, y, duration, selected);
 
+  const handleResChange = (res: Coord) => () => {
+    editor.changeResolution(res);
+  };
+
   return (
     <>
       <FileControls {...{
@@ -117,6 +121,7 @@ const Editor: signature = ({
         onFileSelect: onFileSelect(setFile),
         handleLoad,
         handleImport,
+        hasActions: !!actions.length,
         saveFile,
       }}
       />
@@ -146,6 +151,7 @@ const Editor: signature = ({
             addClick: handleAddClick,
             addWait: handleAddWait,
             addDrag: handleAddDrag,
+            updateResolution: handleResChange,
           }}
           />
         </Grid>
