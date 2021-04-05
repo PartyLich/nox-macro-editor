@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { ReactNode, ReactElement } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
