@@ -8,15 +8,20 @@ import { Action, types } from '../types';
 
 
 // map an Action to a TreeItem
-const actionToTreeItem = (action: Action): TreeItem => ({
-  id: action.id,
-  children: [],
-  data: action,
-});
+const actionToTreeItem = (isExpanded: boolean) =>
+  (action: Action): TreeItem => ({
+    id: action.id,
+    children: [],
+    data: action,
+    isExpanded,
+  });
 
 
 // map and reduce Array<Action> to a TreeData structure
-const makeTree = (actions: Array<Action>): TreeData => {
+const makeTree = (
+    actions: Array<Action>,
+    expandMap: Record<string, boolean>,
+): TreeData => {
   const baseTree: TreeData = {
     rootId: '1',
     items: {
@@ -59,7 +64,7 @@ const makeTree = (actions: Array<Action>): TreeData => {
 
     tree.items = {
       ...tree.items,
-      [action.id]: actionToTreeItem(action),
+      [action.id]: actionToTreeItem(expandMap[action.id])(action),
     };
 
     return tree;

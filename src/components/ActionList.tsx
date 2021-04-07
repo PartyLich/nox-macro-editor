@@ -37,13 +37,14 @@ const ActionList: signature = ({
   reorder,
   remove,
 }) => {
-  const [tree, setTree] = useState<TreeData>(makeTree(actions));
+  const [expandMap, setExpandMap] = useState<Record<string, boolean>>({});
+  const [tree, setTree] = useState<TreeData>(makeTree(actions, expandMap));
   const [indexMap, setIndexMap] = useState(mapIndices(actions));
 
   // reset local state if actions prop changes
   useEffect(
       () => {
-        setTree(makeTree(actions));
+        setTree(makeTree(actions, expandMap));
         setIndexMap(mapIndices(actions));
       },
       [actions],
@@ -68,6 +69,10 @@ const ActionList: signature = ({
 
   const setExpand = (isExpanded: boolean) => (itemId: ItemId) => {
     setTree(mutateTree(tree, itemId, { isExpanded }));
+    setExpandMap({
+      ...expandMap,
+      [itemId]: isExpanded,
+    });
   };
 
   const onExpand = setExpand(true);
