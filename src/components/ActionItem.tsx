@@ -1,13 +1,5 @@
 import { ReactNode, ReactElement } from 'react';
-import {
-  RenderItemParams,
-  TreeItem,
-  ItemId,
-} from '@atlaskit/tree';
-import IconButton from '@material-ui/core/IconButton';
-import RemoveIcon from '@material-ui/icons/Remove';
-import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
-import UnfoldLessIcon from '@material-ui/icons/UnfoldLess';
+import { RenderItemParams } from '@atlaskit/tree';
 
 import {
   Action,
@@ -17,7 +9,7 @@ import {
   WaitAction,
   types,
 } from '../types';
-import { RemovableItem } from '.';
+import { ExpandIcon, RemovableItem } from '.';
 
 import styles from './ActionItem.module.scss';
 
@@ -70,47 +62,6 @@ const handleClick = (
   if (typeof i === 'number') {
     setSelected(i);
   }
-};
-
-
-const hasChildren = (item: TreeItem) =>
-  (item.children && item.children.length > 0);
-
-const getIcon = (
-    item: TreeItem,
-    onExpand: (itemId: ItemId) => void,
-    onCollapse: (itemId: ItemId) => void,
-) => {
-  if (hasChildren(item)) {
-    return item.isExpanded
-        ? (
-          <IconButton
-            aria-label="collapse"
-            color="secondary"
-            onClick={() => onCollapse(item.id)}
-            size="small"
-          >
-            <UnfoldLessIcon fontSize="small" />
-          </IconButton>
-        )
-          : (
-          <IconButton
-            aria-label="expand"
-            color="secondary"
-            onClick={() => onExpand(item.id)}
-            size="small"
-          >
-            <UnfoldMoreIcon fontSize="small" />
-          </IconButton>
-          );
-  }
-
-  return (
-    <RemoveIcon
-      color="secondary"
-      fontSize="small"
-    />
-  );
 };
 
 
@@ -179,7 +130,7 @@ const ActionItem: signature = (
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      {getIcon(item, onExpand, onCollapse)}
+      {ExpandIcon(item, onExpand, onCollapse)}
       {children}
     </div>
   );
