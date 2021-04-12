@@ -7,6 +7,7 @@ import {
   addClick,
   addDrag,
   addWait,
+  addRelease,
   importFile,
   loadFile,
   updateAction,
@@ -22,6 +23,7 @@ export interface Editor {
   addDrag: (coord: Coord) => (index: number) => void;
   addClick: (coord: Coord) => (index: number) => void;
   addWait: (duration: number) => (index: number) => void;
+  addRelease: () => (index: number) => void;
   loadFile: (fileText: string) => void;
   importFile: (fileText: string, index: number | null | undefined) => void;
   serialize: () => string;
@@ -71,6 +73,11 @@ const makeEditor: signature = (serializer) => (initialState = []) => {
 
     addWait: (duration: number) => flow(
         addWait(duration)(actions),
+        setActions,
+    ),
+
+    addRelease: () => flow(
+        addRelease()(actions),
         setActions,
     ),
 
