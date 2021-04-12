@@ -13,3 +13,6 @@ export { default as Layout } from './Layout';
 export { default as Page } from './Page';
 
 export { default as RemovableItem } from './RemovableItem';
+export { default as ExpandIcon } from './ExpandIcon';
+
+export { default as makeTree } from './makeTree';

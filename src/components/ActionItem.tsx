@@ -1,6 +1,5 @@
-import * as React from 'react';
 import { ReactNode, ReactElement } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
+import { RenderItemParams } from '@atlaskit/tree';
 
 import {
   Action,
@@ -10,7 +9,7 @@ import {
   WaitAction,
   types,
 } from '../types';
-import { RemovableItem } from '.';
+import { ExpandIcon, RemovableItem } from '.';
 
 import styles from './ActionItem.module.scss';
 
@@ -66,66 +65,75 @@ const handleClick = (
 };
 
 
-type Props = Action;
-
 type signature = (
   selected: number | null | undefined,
   setSelected: (ind: number) => void,
-  remove: (ind: number) => void
-) => (action: Props, ind: number) => ReactElement;
+  remove: (ind: number) => void,
+  indexMap: Record<string, number>,
+  // onExpand: (itemId: ItemId) => void,
+  // onCollapse: (itemId: ItemId) => void,
+) => ({
+  item,
+  onExpand,
+  onCollapse,
+  provided,
+}: RenderItemParams) => ReactElement;
 
-const ActionItem: signature = (selected, setSelected, remove) =>
-  (action, ind) => {
-    const isSelected = (selected === ind);
-    let children: string | ReactNode = action.type;
+const ActionItem: signature = (
+    selected,
+    setSelected,
+    remove,
+    indexMap,
+) => ({
+  item,
+  onExpand,
+  onCollapse,
+  provided,
+}: RenderItemParams) => {
+  const action: Action = item.data;
+  const ind = indexMap[item.id];
+  const isSelected = (selected === ind);
+  let children: string | ReactNode = action.type;
 
-    switch (action.type) {
-      case types.CLICK:
-        // intentional fallthrough
-      case types.MDRAG:
-        children = Click(action);
-        break;
+  switch (action.type) {
+    case types.CLICK:
+      // intentional fallthrough
+    case types.MDRAG:
+      children = Click(action);
+      break;
 
-      case types.MRELEASE:
-        children = MRelease(action);
-        break;
+    case types.MRELEASE:
+      children = MRelease(action);
+      break;
 
-      case types.WAIT:
-        children = Wait(action);
-        break;
-    }
+    case types.WAIT:
+      children = Wait(action);
+      break;
+  }
 
-    children = RemovableItem({
-      selected: isSelected,
-      remove: () => remove(ind),
-      children,
-    });
+  children = RemovableItem({
+    selected: isSelected,
+    remove: () => remove(ind),
+    children,
+  });
 
-    const rowModifier: string = (isSelected)
+  const rowModifier: string = (isSelected)
           ? styles.row__selected
           : '';
-    const className = [styles.row, rowModifier].join(' ');
-    const id = action.id;
+  const className = [styles.row, rowModifier].join(' ');
 
-    return (
-      <Draggable
-        key={id}
-        draggableId={id}
-        index={ind}
-      >
-        {(provided) => (
-          <li
-            className={className}
-            onClick={handleClick(setSelected, ind)}
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
-            {children}
-          </li>
-        )}
-      </Draggable>
-    );
-  };
+  return (
+    <div
+      className={className}
+      onClick={handleClick(setSelected, ind)}
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+    >
+      {ExpandIcon(item, onExpand, onCollapse)}
+      {children}
+    </div>
+  );
+};
 
 export default ActionItem;
