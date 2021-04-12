@@ -36,27 +36,30 @@ const makeTree = (
 
   // nesting state
   const { rootId } = baseTree;
-  let parentId: ItemId = rootId;
+  const parentStack = [rootId];
 
   return actions.reduce((tree, action) => {
+    const parentId: ItemId = parentStack[parentStack.length - 1];
     const parent = tree.items[parentId];
     parent.children.push(action.id);
     parent.hasChildren = true;
 
     switch (action.type) {
       case types.CLICK:
-        parentId = action.id;
+        parentStack.push(action.id);
         break;
 
       case types.MDRAG:
         // single nesting level for drags
         if (parentId === rootId) {
-          parentId = action.id;
+          parentStack.push(action.id);
         }
         break;
 
       case types.MRELEASE:
-        parentId = rootId;
+        if (parentStack.length > 1) {
+          parentStack.pop();
+        }
         break;
 
       default:
