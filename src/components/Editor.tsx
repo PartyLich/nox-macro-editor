@@ -92,6 +92,11 @@ const Editor: signature = ({
       editor.addWait(duration),
   );
 
+  const handleAddRelease = () => flow(
+      getIndex,
+      editor.addRelease(),
+  );
+
   const getNextItem = (ind: number) => Math.min(ind, actions.length - 2);
 
   type HandleRemove = (ind: number) => void;
@@ -151,6 +156,7 @@ const Editor: signature = ({
             addClick: handleAddClick,
             addWait: handleAddWait,
             addDrag: handleAddDrag,
+            addRelease: handleAddRelease,
             updateResolution: handleResChange,
           }}
           />
