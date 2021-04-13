@@ -41,6 +41,7 @@ type Props = {
   editor: EditorType;
   actions: Array<Action>;
   resolution: Coord;
+  md: string;
 };
 
 type signature = (props: Props) => ReactElement;
@@ -49,6 +50,7 @@ const Editor: signature = ({
   editor,
   actions,
   resolution,
+  md,
 }) => {
   const [selected, setSelected] = useState<number | null | undefined>(null);
   const [file, setFile] = useState<FileState>({ text: '', name: '' });
@@ -144,6 +146,7 @@ const Editor: signature = ({
             setSelected,
             reorder: handleReorder,
             remove: handleRemove,
+            md,
           }}
           />
         </Grid>
