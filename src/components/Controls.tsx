@@ -20,6 +20,7 @@ type Props = {
   addClick: (coord: Coord) => () => void;
   addDrag: (coord: Coord) => () => void;
   addWait: (duration: number) => () => void;
+  addRelease: () => () => void;
   updateResolution: (coord: Coord) => () => void;
 };
 
@@ -33,6 +34,7 @@ const Controls: signature = ({
   addClick,
   addDrag,
   addWait,
+  addRelease,
   updateResolution,
 }) => {
   const [displayRes, setDisplayRes] = useState<Coord>(resolution);
@@ -84,6 +86,14 @@ const Controls: signature = ({
             variant="outlined"
             size="small"
           >Wait
+          </Button>
+        </Box>
+        <Box>
+          <Button
+            onClick={addRelease()}
+            variant="outlined"
+            size="small"
+          >Release
           </Button>
         </Box>
       </Paper>

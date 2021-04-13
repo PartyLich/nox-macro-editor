@@ -40,6 +40,13 @@ const addWait = (duration?: number) => (actions: Array<Action>) =>
       insert(actions, ind),
   );
 
+// add a new mouse release
+const addRelease = () => (actions: Array<Action>) =>
+  (ind: number): Array<Action> => pipe(
+      [releaseAction()],
+      insert(actions, ind),
+  );
+
 // uncurry all the things
 const nAddWait = (
     duration: number | undefined,
@@ -59,11 +66,18 @@ const nAddDrag = (
     ind: number,
 ): Array<Action> => addDrag(coord)(actions)(ind);
 
+const nAddRelease = (
+    actions: Array<Action>,
+    ind: number,
+): Array<Action> => addRelease()(actions)(ind);
+
 export {
   addClick,
   addDrag,
   addWait,
+  addRelease,
   nAddWait,
   nAddClick,
   nAddDrag,
+  nAddRelease,
 };

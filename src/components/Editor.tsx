@@ -41,6 +41,7 @@ type Props = {
   editor: EditorType;
   actions: Array<Action>;
   resolution: Coord;
+  md: string;
 };
 
 type signature = (props: Props) => ReactElement;
@@ -49,6 +50,7 @@ const Editor: signature = ({
   editor,
   actions,
   resolution,
+  md,
 }) => {
   const [selected, setSelected] = useState<number | null | undefined>(null);
   const [file, setFile] = useState<FileState>({ text: '', name: '' });
@@ -90,6 +92,11 @@ const Editor: signature = ({
   const handleAddWait = (duration: number) => flow(
       getIndex,
       editor.addWait(duration),
+  );
+
+  const handleAddRelease = () => flow(
+      getIndex,
+      editor.addRelease(),
   );
 
   const getNextItem = (ind: number) => Math.min(ind, actions.length - 2);
@@ -139,6 +146,7 @@ const Editor: signature = ({
             setSelected,
             reorder: handleReorder,
             remove: handleRemove,
+            md,
           }}
           />
         </Grid>
@@ -151,6 +159,7 @@ const Editor: signature = ({
             addClick: handleAddClick,
             addWait: handleAddWait,
             addDrag: handleAddDrag,
+            addRelease: handleAddRelease,
             updateResolution: handleResChange,
           }}
           />

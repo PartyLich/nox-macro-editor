@@ -5,9 +5,11 @@ import {
   addClick,
   addDrag,
   addWait,
+  addRelease,
   nAddClick,
   nAddDrag,
   nAddWait,
+  nAddRelease,
 } from '../src/core';
 
 
@@ -149,6 +151,29 @@ test('addWait()', (t) => {
       const actual = addWait(duration)(data)(0)
           .map(idToBool);
       t.deepEqual(actual, expected, '(curried)' + msg);
+      t.notDeepEqual(actual, data, 'does not mutate input');
+    }
+  }
+
+  t.end();
+});
+
+test('addRelease()', (t) => {
+  {
+    const msg = 'adds a mrelease to empty array';
+    const data: Array<Action> = [];
+    const expected = [
+      { id: true, type: types.MRELEASE },
+    ];
+    const actual = nAddRelease(data, 0)
+        .map(idToBool);
+    t.deepEqual(actual, expected, msg);
+    t.notDeepEqual(actual, data, 'does not mutate input');
+
+    {
+      const actual = addRelease()(data)(0)
+          .map(idToBool);
+      t.deepEqual(actual, expected, `(curried) ${ msg }`);
       t.notDeepEqual(actual, data, 'does not mutate input');
     }
   }
